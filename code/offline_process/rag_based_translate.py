@@ -194,6 +194,7 @@ def translate_by_llm(file_content, model_id):
     retriever = TerminologyRetriever(REGION)
 
     dest_content_list = []
+    mapping_metainfo = []
     for content in src_content_list:
         prompt, multilingual_term_mapping = construct_translate_prompt(content, src_lang, dest_lang, retriever)
         print("prompt:")
@@ -201,9 +202,10 @@ def translate_by_llm(file_content, model_id):
 
         result = invoke_bedrock(model_id, prompt)
         dest_content_list.append(result)
+        mapping_metainfo.append(multilingual_term_mapping)
 
     json_obj["dest_content"] = dest_content_list
-    json_obj["term_mapping"] = multilingual_term_mapping
+    json_obj["term_mapping"] = mapping_metainfo
     return json_obj
 
 def get_output_path_from_objectkey(object_key):
