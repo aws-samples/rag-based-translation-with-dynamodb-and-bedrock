@@ -6,7 +6,7 @@
 
 实现方式：整个方案全部是离线的，元数据摄入和RAG pipeline 均通过Glue Job进行调度
 
-部署文档：[飞书](https://amzn-chn.feishu.cn/docx/LJ93deoBNoeZ4bxvjwGcz2lpn9c?from=from_copylink)
+部署文档：[飞书](https://amzn-chn.feishu.cn/docx/HxO8dK41UosPFvxAylScW6Xunah?from=from_copylink)
 
 原型效果参考：
 
