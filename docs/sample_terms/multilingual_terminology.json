@@ -1,0 +1,13 @@
+{
+	"type" : "multilingual_terminology",
+	"author" : "",
+	"data": [
+		{
+			"mapping" : {			
+				"CN" : "香奈儿",
+				"EN" : "CHANEL"
+			},
+			"entity_type": "Brand"
+		}
+	]
+}

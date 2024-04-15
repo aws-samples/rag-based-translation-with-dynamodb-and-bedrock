@@ -1,0 +1,18 @@
+{
+	"type" : "crosslingual_terminology",
+	"author" : "",
+	"data": [
+		{ 
+			"terms": ["SageMaker", "EC2"], 
+			"entity_type" : "Service"
+		},
+		{ 
+			"terms": ["Data Wrangler", "Ground Truth"], 
+			"entity_type" : "Feature"
+		},
+		{ 
+			"terms": ["Diona", "Mona", "Keqing"], 
+			"entity_type" : "Characters"
+		}
+	]
+}
