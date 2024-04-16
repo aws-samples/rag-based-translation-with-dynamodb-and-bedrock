@@ -7,11 +7,14 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecr from 'aws-cdk-lib/aws-ecr';
 import { VpcStack } from './vpc-stack.js';
-import { AttributeType, Table, } from "aws-cdk-lib/aws-dynamodb";
 import * as glue from  '@aws-cdk/aws-glue-alpha';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 import * as dotenv from "dotenv";
+
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+const { AttributeType, BillingMode, Table } = dynamodb;
+
 dotenv.config();
 
 import path from "path";
@@ -160,6 +163,7 @@ export class DynamoDBRagStack extends Stack {
       },
       tableName:'rag_translate_en_table',
       removalPolicy: RemovalPolicy.DESTROY,
+      billingMode: BillingMode.PAY_PER_REQUEST,
     });
 
     const rag_meta_chs_table = new Table(this, "rag-meta-chs-table", {
@@ -169,6 +173,7 @@ export class DynamoDBRagStack extends Stack {
       },
       tableName:'rag_translate_chs_table',
       removalPolicy: RemovalPolicy.DESTROY,
+      billingMode: BillingMode.PAY_PER_REQUEST,
     });
 
     rag_meta_en_table.grantReadWriteData(ingest_ddb_job);
