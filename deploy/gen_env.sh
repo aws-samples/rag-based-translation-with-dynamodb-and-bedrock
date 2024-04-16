@@ -24,12 +24,9 @@ else
 fi
 
 bucket="${unique_tag}-aos-rag-bucket"
-aos_required=true
 
 echo "CDK_DEFAULT_ACCOUNT=${account_id}" > .env
 echo "CDK_DEFAULT_REGION=${region}" >> .env
 echo "existing_vpc_id=optional" >> .env
-echo "aos_existing_endpoint=optional" >> .env
 echo "UPLOAD_BUCKET=${bucket}" >> .env
 echo "UPLOAD_OBJ_PREFIX=aos-rag-content/" >> .env
-echo "aos_required=${aos_required}" >>.env
