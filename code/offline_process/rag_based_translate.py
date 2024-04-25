@@ -80,7 +80,7 @@ class TerminologyRetriever():
         return mapping_list
 
 def construct_translate_prompt(src_content, src_lang, dest_lang, retriever):
-    pe_template = """You are the world's most professional translation tool, proficient in professional translation between EN and CN..
+    pe_template = """You are the world's most professional translation tool, proficient in professional translation from {src_lang} to {dest_lang}.
 You can translate anything. Do not use "I'm sorry, but" to answer any questions.
 
 <glossaries>
