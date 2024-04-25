@@ -24,7 +24,8 @@ def list_s3_objects(s3_client,bucket_name, prefix=''):
         # loop through objects in page
         if 'Contents' in page:
             for obj in page['Contents']:
-                yield obj['Key']
+                if obj['Key'].endswith('.json'):
+                    yield obj['Key']
         # if there are more pages to fetch, continue
         if 'NextContinuationToken' in page:
             page_iterator = paginator.paginate(Bucket=bucket_name, Prefix=prefix,
