@@ -48,7 +48,7 @@ def start_job(glue_client, job_name, key_path, bucket, region_name, model_id):
         Arguments={
             '--REGION':region_name,
             '--additional-python-modules': 'boto3>=1.28.52,botocore>=1.31.52',
-            '--model_id': 'anthropic.claude-3-sonnet-20240229-v1:0',
+            '--model_id': model_id,
             '--object_key': key_path,
             '--bucket': bucket,
             })  
