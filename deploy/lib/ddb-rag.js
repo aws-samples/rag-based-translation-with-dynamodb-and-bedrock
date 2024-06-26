@@ -52,13 +52,13 @@ export class DynamoDBRagStack extends Stack {
       }]
     });
 
-    const lambda_segmentor = new DockerImageFunction(this,
-      "lambda_segmentor", {
-      code: DockerImageCode.fromImageAsset(join(__dirname, "../../code/segmentor")),
+    const online_processor = new DockerImageFunction(this,
+      "lambda_online_processor", {
+      code: DockerImageCode.fromImageAsset(join(__dirname, "../../code/online_process")),
       timeout: Duration.minutes(15),
       memorySize: 1024,
       runtime: 'python3.9',
-      functionName: 'jieba_segmentor',
+      functionName: 'translate_tool',
       vpc:vpc,
       vpcSubnets:subnets,
       securityGroups:securityGroups,
@@ -69,12 +69,13 @@ export class DynamoDBRagStack extends Stack {
       },
     });
 
-    lambda_segmentor.addToRolePolicy(new iam.PolicyStatement({
+    online_processor.addToRolePolicy(new iam.PolicyStatement({
       // principals: [new iam.AnyPrincipal()],
         actions: [ 
           "s3:List*",
           "s3:Put*",
-          "s3:Get*"
+          "s3:Get*",
+          "bedrock:*"
           ],
         effect: iam.Effect.ALLOW,
         resources: ['*'],
@@ -180,6 +181,8 @@ export class DynamoDBRagStack extends Stack {
     rag_meta_chs_table.grantReadWriteData(ingest_ddb_job);
     rag_meta_en_table.grantReadWriteData(rag_job);
     rag_meta_chs_table.grantReadWriteData(rag_job);
+    rag_meta_en_table.grantReadWriteData(online_processor);
+    rag_meta_chs_table.grantReadWriteData(online_processor);
 
     new CfnOutput(this,'VPC',{value:vpc.vpcId});
     new CfnOutput(this,'region',{value:process.env.CDK_DEFAULT_REGION});
