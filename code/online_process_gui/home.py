@@ -1,7 +1,6 @@
 import streamlit as st
 from utils import translate_tool as trans
 
-
 # 设置页面标题
 st.set_page_config(page_title="LLM Translator")
 
