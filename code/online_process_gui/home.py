@@ -1,5 +1,6 @@
 import streamlit as st
-from utils import rag_based_translate as trans
+from utils import translate_tool as trans
+
 
 # 设置页面标题
 st.set_page_config(page_title="LLM Translator")
@@ -11,7 +12,7 @@ input_text = st.text_area("输入要翻译的文本", height=200)
 languages = ["English", "中文", "Español", "Français", "Deutsch", "Русский"]
 lang_options ={
     "English": "EN",
-    "简体中文": "CN",
+    "简体中文": "CHS",
     "Español": "es",
     "Français": "fr",
     "Deutsch": "de",
