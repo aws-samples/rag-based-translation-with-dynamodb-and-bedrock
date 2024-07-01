@@ -4,10 +4,43 @@
 	"data": [
 		{
 			"mapping" : {			
-				"CHS" : "香奈儿",
-				"EN" : "CHANEL"
+				"CHS" : "奇怪的渔人吐司",
+				"CHT" : "奇怪的漁人吐司",
+				"DE" : "Misslungene Fischerschnitte",
+				"EN": "Suspicious Fisherman’s Toast",
+				"ES" : "Tostada del pescador extraña",
+				"FR": "Toast du pêcheur (suspect)",
+				"ID" : "Suspicious Fisherman’s Toast",
+				"IT" : "Toast del pescatore sospetto",
+				"JP" : "微妙な漁師トースト",
+				"KR" : "이상한 어부 토스트",
+				"PT" : "Torrada do Pescador Estranha",
+				"RU" : "Странный рыбацкий бутерброд",
+				"TH" : "Fisherman’s Toast รสประหลาด",
+				"TR" : "Balıkçı Tostu (Tuhaf)",
+				"VI" : "Bánh Người Cá Kỳ Lạ"
 			},
-			"entity_type": "Brand"
+			"entity_type": "Character"
+		},
+		{
+			"mapping" : {			
+				"CHS" : "赤魔王",
+				"CHT" : "赤魔王",
+				"DE" : "Akai Maou",
+				"EN" : "Akai Maou",
+				"ES" : "Akai Maou",
+				"FR" : "Akai Maou",
+				"ID" : "Akai Maou",
+				"IT" : "Akai Maou",
+				"JP" : "赤魔王",
+				"KR" : "붉은 마왕 가시고기",
+				"PT" : "Akai Maou",
+				"RU" : "Алый дьявол",
+				"TH" : "Akai Maou",
+				"TR" : "Kızıl Şeytan",
+				"VI" : "Xích Ma Vương"
+			},
+			"entity_type": "Character"
 		}
 	]
 }

@@ -47,13 +47,13 @@
 
         参考payload
         ```json
-        {
-            "src_content":"奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗",
-            "src_lang":"CHS",
-            "dest_lang":"EN",
-            "request_type":"term_mapping",
-            "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
-        }
+		{
+		    "src_content":"奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗",
+		    "src_lang":"CHS",
+		    "dest_lang":"EN",
+		    "request_type":"term_mapping",
+		    "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
+		}
         ```
         参考response
         ```json
