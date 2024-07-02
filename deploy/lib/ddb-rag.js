@@ -100,7 +100,6 @@ export class DynamoDBRagStack extends Stack {
         connections:[connection],
         maxCapacity:1,
         defaultArguments:{
-            '--dynamodb_table_name':'rag-translate-table',
             '--REGION':region,
             '--additional-python-modules': 'boto3>=1.28.52,botocore>=1.31.52',
             '--bucket': '687752207838-24-04-10-02-26-15-aos-rag-bucket',
