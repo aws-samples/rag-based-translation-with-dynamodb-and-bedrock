@@ -9,23 +9,9 @@ import time
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-s3 = boto3.client('s3')
-
-bucket = os.environ.get('user_dict_bucket')
-s3_path = os.environ.get('user_dict_path')
-local_file = '/tmp/user_dict.txt' # /tmp 只有这个路径是可以写的
-
-# 下载文件
-try:
-    s3.download_file(bucket, s3_path, local_file)
-    print(f'File downloaded successfully: {local_file}')
-except Exception as e:
-    print(f'Error downloading file: {e}')
-
-dynamodb = boto3.resource('dynamodb')
+dictionary_info_dict = {}
 bedrock = boto3.client(service_name='bedrock-runtime')
-ddb_en_table = dynamodb.Table('rag_translate_en_table')
-ddb_chs_table = dynamodb.Table('rag_translate_chs_table')
+
 
 class APIException(Exception):
     def __init__(self, message, code: str = None):
@@ -163,14 +149,72 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
 
     return None
 
+def mfm_segment(text, dictionary):
+    words = []
+    while text:
+        for i in range(len(text), 0, -1):
+            if text[:i] in dictionary:
+                words.append(text[:i])
+                text = text[i:]
+                break
+        else:
+            text = text[1:]
+    return list(set(words))
+
+def get_dictionary_status(bucket, s3_prefix, dictionary_id):
+    s3 = boto3.client('s3')
+    s3_key = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
+
+    response = s3.head_object(Bucket=bucket, Key=s3_key)
+    last_modified = response['LastModified']
+
+    if dictionary_id in dictionary_info_dict:
+        prev_last_modified = dictionary_info_dict['dictionary_id'].get('last_modified', '1970-00-00 00:00:00+00:00')
+        if last_modified == prev_last_modified:
+            return False, last_modified
+
+    return True, last_modified
+
+def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
+    global dictionary_info_dict
+
+    try:
+        assert dictionary_id is not None
+
+        is_updated, last_modified = get_dictionary_status(bucket, s3_prefix, dictionary_id)
+
+        if is_updated:
+            s3 = boto3.client('s3')
+            dict_file_path = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
+            local_file = f'/tmp/{dictionary_id}/user_dict.txt' # /tmp 只有这个路径是可以写的
+
+            # 下载文件
+            try:
+                s3.download_file(bucket, dict_file_path, local_file)
+                with open(local_file, 'r') as file:
+                    lines = file.readlines()
+                    dictionary_info_dict[dictionary_id] = {"last_modified" : last_modified, "terms" : [ item.strip() for item in lines ]}
+
+                print(f'File downloaded successfully: {local_file}')
+            except Exception as e:
+                print(f'Error downloading file: {e}')
+
+        if dictionary_id not in dictionary_info_dict:
+            raise RuntimeError(f"There is no data for {dictionary_id}")
+
+        return True
+
+    except Exception as e:
+        return False
+
+
 # 对文本进行分词
 @handle_error
 def lambda_handler(event, context):
-    jieba.load_userdict(local_file)
-
     src_content = event.get('src_content')
     src_lang = event.get('src_lang')
     dest_lang = event.get('dest_lang')
+    dictionary_id = event.get('dictionary_id') # dictionary_id is table 
     request_type = event.get('request_type')
     model_id = event.get('model_id')
 
@@ -183,9 +227,17 @@ def lambda_handler(event, context):
     if request_type not in ['segment_only', 'term_mapping', 'translate']:
         return {"error": "request_type should be ['segment_only', '，term_mapping', 'translate']"}
     
-    result = pseg.cut(src_content.replace(' ', '_'))
-    words = list(set([ item.word.replace('_', ' ') for item in result if item.flag == 'term' ]))
+    bucket = os.environ.get('user_dict_bucket')
+    s3_prefix = os.environ.get('user_dict_prefix')
 
+    succeded = refresh_dictionary(bucket, s3_prefix, dictionary_id)
+
+    if not succeded:
+        return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
+
+    global dictionary_info_dict
+
+    words = mfm_segment(src_content, dictionary_info_dict.get(dictionary_id))
     if request_type == 'segment_only':
         return {'words': words}
 

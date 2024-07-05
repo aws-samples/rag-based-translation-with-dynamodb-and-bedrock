@@ -23,10 +23,9 @@ else
     arn="arn:aws:"
 fi
 
-bucket="${unique_tag}-aos-rag-bucket"
+bucket="${unique_tag}-dynamodb-rag-bucket"
 
 echo "CDK_DEFAULT_ACCOUNT=${account_id}" > .env
 echo "CDK_DEFAULT_REGION=${region}" >> .env
 echo "existing_vpc_id=optional" >> .env
 echo "UPLOAD_BUCKET=${bucket}" >> .env
-echo "UPLOAD_OBJ_PREFIX=aos-rag-content/" >> .env
