@@ -10,8 +10,9 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dictionary_info_dict = {}
+ddb_table_dict = {}
 bedrock = boto3.client(service_name='bedrock-runtime')
-
+dynamodb = boto3.resource('dynamodb')
 
 class APIException(Exception):
     def __init__(self, message, code: str = None):
@@ -38,16 +39,8 @@ def handle_error(func):
 
     return wrapper
 
-def retrieve_term_mapping(term_list, src_lang, dest_lang):
+def retrieve_term_mapping(term_list, ddb_table, dest_lang):
     mapping_list = []
-    ddb_table = None
-    global ddb_en_table, ddb_chs_table
-    if src_lang == 'EN':
-        ddb_table = ddb_en_table
-    elif src_lang == 'CHS':
-        ddb_table = ddb_chs_table
-    else:
-        raise RuntimeError(f"unsupported {src_lang}")
 
     for term in term_list:
         print(f"find mapping of {term}")
@@ -163,13 +156,14 @@ def mfm_segment(text, dictionary):
 
 def get_dictionary_status(bucket, s3_prefix, dictionary_id):
     s3 = boto3.client('s3')
+
     s3_key = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
 
     response = s3.head_object(Bucket=bucket, Key=s3_key)
     last_modified = response['LastModified']
 
     if dictionary_id in dictionary_info_dict:
-        prev_last_modified = dictionary_info_dict['dictionary_id'].get('last_modified', '1970-00-00 00:00:00+00:00')
+        prev_last_modified = dictionary_info_dict[dictionary_id].get('last_modified', '1970-00-00 00:00:00+00:00')
         if last_modified == prev_last_modified:
             return False, last_modified
 
@@ -181,19 +175,25 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
     try:
         assert dictionary_id is not None
 
+        user_dict_s3_key = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
+        print(f'bucket: {bucket}')
+        print(f'user_dict_s3_key: {user_dict_s3_key}')
+
         is_updated, last_modified = get_dictionary_status(bucket, s3_prefix, dictionary_id)
 
         if is_updated:
             s3 = boto3.client('s3')
-            dict_file_path = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
-            local_file = f'/tmp/{dictionary_id}/user_dict.txt' # /tmp 只有这个路径是可以写的
+            # /tmp 只有这个路径是可以写的
+            local_file = f'/tmp/{dictionary_id}_user_dict.txt'
 
             # 下载文件
             try:
-                s3.download_file(bucket, dict_file_path, local_file)
+                s3.download_file(bucket, user_dict_s3_key, local_file)
                 with open(local_file, 'r') as file:
                     lines = file.readlines()
-                    dictionary_info_dict[dictionary_id] = {"last_modified" : last_modified, "terms" : [ item.strip() for item in lines ]}
+                    terms = list(set([ item.strip() for item in lines ]))
+                    # print(f"terms: {terms}")
+                    dictionary_info_dict[dictionary_id] = {"last_modified" : last_modified, "terms" : terms}
 
                 print(f'File downloaded successfully: {local_file}')
             except Exception as e:
@@ -205,6 +205,7 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
         return True
 
     except Exception as e:
+        print(f'refresh_dictionary err: {e}')
         return False
 
 
@@ -224,6 +225,8 @@ def lambda_handler(event, context):
         return {'error': 'src_lang is required'}
     if not dest_lang:
         return {'error': 'dest_lang is required'}
+    if not dictionary_id:
+        return {'error': 'dictionary_id is required'}    
     if request_type not in ['segment_only', 'term_mapping', 'translate']:
         return {"error": "request_type should be ['segment_only', '，term_mapping', 'translate']"}
     
@@ -235,15 +238,20 @@ def lambda_handler(event, context):
     if not succeded:
         return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
 
-    global dictionary_info_dict
+    global dictionary_info_dict, ddb_table_dict
 
-    words = mfm_segment(src_content, dictionary_info_dict.get(dictionary_id))
+    term_list = dictionary_info_dict.get(dictionary_id).get('terms')
+    print(f"term_list: {term_list}")
+
+    words = mfm_segment(src_content, term_list)
     if request_type == 'segment_only':
         return {'words': words}
 
-    json_obj = {}
+    if dictionary_id not in ddb_table_dict:
+        ddb_table_dict[dictionary_id] = dynamodb.Table(dictionary_id)
 
-    multilingual_term_mapping = retrieve_term_mapping(words, src_lang, dest_lang)
+    json_obj = {}
+    multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
     json_obj["term_mapping"] = multilingual_term_mapping
     if request_type == 'term_mapping':
         return json_obj

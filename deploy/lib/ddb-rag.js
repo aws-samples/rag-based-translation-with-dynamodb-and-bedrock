@@ -65,7 +65,7 @@ export class DynamoDBRagStack extends Stack {
       architecture: Architecture.X86_64,
       environment: {
         user_dict_bucket:`${process.env.UPLOAD_BUCKET}`,
-        user_dict_prefix:'user_dict/'
+        user_dict_prefix:'translate/'
       },
     });
 
@@ -75,7 +75,8 @@ export class DynamoDBRagStack extends Stack {
           "s3:List*",
           "s3:Put*",
           "s3:Get*",
-          "bedrock:*"
+          "bedrock:*",
+          "dynamodb:GetItem"
           ],
         effect: iam.Effect.ALLOW,
         resources: ['*'],
@@ -104,7 +105,7 @@ export class DynamoDBRagStack extends Stack {
             '--additional-python-modules': 'boto3>=1.28.52,botocore>=1.31.52',
             '--table_name': 'dictionary_1',
             '--bucket': process.env.UPLOAD_BUCKET,
-            '--object_key': 'translate/multilingual_terminology.json'
+            '--object_key': 'translate/dictionary_1/multilingual_terminology.json'
         }
     })
 

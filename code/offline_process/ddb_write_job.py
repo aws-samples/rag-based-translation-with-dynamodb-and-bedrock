@@ -71,7 +71,7 @@ def update_dictionary_keys(table_name, bucket, object_key, key_list):
 
         path = os.path.dirname(object_key)
 
-        dict_file_path = f"{path}/{table_name}/user_dict.txt"
+        dict_file_path = f"{path}/user_dict.txt"
 
         def file_exists(bucket, key):
             response = s3.list_objects_v2(Bucket=bucket, Prefix=key, MaxKeys=1)
