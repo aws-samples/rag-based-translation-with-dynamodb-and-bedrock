@@ -4,6 +4,7 @@
 import boto3
 import random
 import json
+import time
 from awsglue.utils import getResolvedOptions
 import sys
 import hashlib
@@ -17,27 +18,29 @@ import numpy as np
 from urllib.parse import unquote
 from datetime import datetime
 
-args = getResolvedOptions(sys.argv, ['bucket', 'object_key','REGION', 'table_name'])
+args = getResolvedOptions(sys.argv, ['bucket', 'object_key','REGION', 'dictionary_name'])
 s3 = boto3.resource('s3')
 BUCKET = args['bucket']
 OBJECT_KEY = args['object_key']
-TABLE_NAME = args['table_name']
+dictionary_name = args['dictionary_name']
+TABLE_NAME = f"translate_mapping_{dictionary_name}"
 
 REGION = args['REGION']
 
 bedrock = boto3.client(service_name='bedrock-runtime',
                        region_name=REGION)
 
+dynamodb_client = boto3.client('dynamodb', REGION)
 dynamodb = boto3.resource('dynamodb', REGION)
 
 publish_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def table_exists(table_name):
     try:
-        dynamodb.describe_table(TableName=table_name)
+        dynamodb_client.describe_table(TableName=table_name)
         return True
     except Exception as e:
-        print(f"Error table_exists: {str(e)}")
+        print(f"Table - {table_name} is not existed.")
         return False
 
 def create_dynamodb_table_if_not_exist(table_name):
@@ -59,13 +62,22 @@ def create_dynamodb_table_if_not_exist(table_name):
                 ],
                 BillingMode='PAY_PER_REQUEST'
             )
-            print("Table created successfully.")
+
+            while True:
+                try:
+                    response = dynamodb_client.describe_table(TableName=table_name)
+                    if response['Table']['TableStatus'] == 'ACTIVE':
+                        print("Table created successfully.")
+                        break
+                except dynamodb.exceptions.ResourceNotFoundException:
+                    print("Table is being created...")
+                time.sleep(5)
         except Exception as e:
             print(f"Error creating table: {str(e)}")
     else:
         print(f"Table {table_name} already exists. Skipping creation.")
 
-def update_dictionary_keys(table_name, bucket, object_key, key_list):
+def update_dictionary_keys(bucket, object_key, key_list):
     try:
         s3 = boto3.client('s3')
 
@@ -106,9 +118,10 @@ def ingest_all_items(file_content, object_key):
             for key, value in item['mapping'].items():
                 kv_data[value] = item
 
-        update_dictionary_keys(table_name=TABLE_NAME, bucket=BUCKET, object_key=object_key, key_list=kv_data.keys())
+        update_dictionary_keys(bucket=BUCKET, object_key=object_key, key_list=kv_data.keys())
         kv_data_size = len(kv_data.keys())
         print(f"kv_data_size: {kv_data_size}")
+        print(f"TABLE_NAME: {TABLE_NAME}")
 
         ddb_table = dynamodb.Table(TABLE_NAME)
         with ddb_table.batch_writer() as batch:

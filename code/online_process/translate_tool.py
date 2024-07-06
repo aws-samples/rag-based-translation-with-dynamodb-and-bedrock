@@ -248,7 +248,8 @@ def lambda_handler(event, context):
         return {'words': words}
 
     if dictionary_id not in ddb_table_dict:
-        ddb_table_dict[dictionary_id] = dynamodb.Table(dictionary_id)
+        ddb_table_name = f"translate_mapping_{dictionary_id}"
+        ddb_table_dict[dictionary_id] = dynamodb.Table(ddb_table_name)
 
     json_obj = {}
     multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)

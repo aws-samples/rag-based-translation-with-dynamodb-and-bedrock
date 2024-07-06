@@ -1,0 +1,46 @@
+{
+    "type":"multilingual_terminology",
+    "author":"",
+    "data":[
+        {
+            "mapping":{
+                "CHS":"霹雳收藏家",
+                "CHT":"霹靂收藏家",
+                "DE":"Elektro-Teilchen-Sammler",
+                "EN":"Lightning Bottler",
+                "ES":"Coleccionista de relámpagos",
+                "FR":"Embouteilleur de foudre",
+                "ID":"Kolektor Halilintar",
+                "JP":"霹靂収集家",
+                "KR":"번개 수집가",
+                "PT":"Apanhador de Relâmpagos",
+                "RU":"Ловец молний",
+                "TH":"ผู้รวบรวมสายฟ้า",
+                "VI":"Nhà Sưu Tập Sấm Sét",
+                "TR":"Yıldırım Toplayıcı",
+                "IT":"Cattura il fulmine"
+            },
+            "entity_type":"Task"
+        },
+        {
+            "mapping":{
+                "CHS":"攀高危险",
+                "CHT":"攀高危險",
+                "DE":"Gefährliche Kletteraktion",
+                "EN":"Increasing Danger",
+                "ES":"Peligro inminente",
+                "FR":"Escalade dangereuse",
+                "ID":"Bahaya Meningkat",
+                "JP":"高いところ危険",
+                "KR":"위험한 등반",
+                "PT":"Perigo ao Escalar",
+                "RU":"Растущая угроза",
+                "TH":"ภัยที่ขยายตัวขึ้น",
+                "VI":"Nguy Hiểm Leo Thang",
+                "TR":"Artan Tehlike",
+                "IT":"Pericolo in aumento"
+            },
+            "entity_type":"Task"
+        }
+    ]
+}
