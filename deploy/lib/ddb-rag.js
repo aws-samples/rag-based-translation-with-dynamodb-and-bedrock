@@ -101,7 +101,6 @@ export class DynamoDBRagStack extends Stack {
         connections:[connection],
         maxCapacity:1,
         defaultArguments:{
-            '--REGION':region,
             '--additional-python-modules': 'boto3>=1.28.52,botocore>=1.31.52',
             '--dictionary_name': 'dictionary_1',
             '--bucket': process.env.UPLOAD_BUCKET,

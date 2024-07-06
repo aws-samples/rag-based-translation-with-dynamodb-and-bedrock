@@ -1,5 +1,3 @@
 boto3
 streamlit
-# pandas
-# langchain
-# matplotlib
+pandas

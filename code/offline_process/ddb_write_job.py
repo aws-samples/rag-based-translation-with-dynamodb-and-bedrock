@@ -18,20 +18,17 @@ import numpy as np
 from urllib.parse import unquote
 from datetime import datetime
 
-args = getResolvedOptions(sys.argv, ['bucket', 'object_key','REGION', 'dictionary_name'])
+args = getResolvedOptions(sys.argv, ['bucket', 'object_key', 'dictionary_name'])
 s3 = boto3.resource('s3')
 BUCKET = args['bucket']
 OBJECT_KEY = args['object_key']
 dictionary_name = args['dictionary_name']
 TABLE_NAME = f"translate_mapping_{dictionary_name}"
 
-REGION = args['REGION']
+bedrock = boto3.client(service_name='bedrock-runtime')
 
-bedrock = boto3.client(service_name='bedrock-runtime',
-                       region_name=REGION)
-
-dynamodb_client = boto3.client('dynamodb', REGION)
-dynamodb = boto3.resource('dynamodb', REGION)
+dynamodb_client = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 
 publish_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
