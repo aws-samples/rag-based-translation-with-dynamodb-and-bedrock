@@ -9,14 +9,24 @@ col1, col2 = st.columns(2)
 all_dictionaries = list_translate_mapping_tables()
 model_id_list = ['anthropic.claude-3-sonnet-20240229-v1:0', 'anthropic.claude-3-5-sonnet-20240620-v1:0', 'anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-opus-20240229-v1:0']
 
+if not all_dictionaries:
+    all_dictionaries = ['default_dictionary']
+
 dictionary_name = None
 with col1:
     dictionary_name = st.selectbox("选择专词映射表", all_dictionaries)
 
 random_item = get_random_item(dictionary_name)
-languages = list(random_item["mapping"].keys())
-en_index = languages.index('EN')
-chs_index = languages.index('CHS')
+
+if random_item:
+    languages = list(random_item["mapping"].keys())
+    en_index = languages.index('EN')
+    chs_index = languages.index('CHS')
+else:
+    languages = ['-']
+    en_index = 0
+    chs_index = 0
+
 
 # 在第一列中放置第一个 selectbox
 with col1:

@@ -22,12 +22,17 @@ print(f"bucket of translate service: {bucket}")
 
 all_dictionaries = list_translate_mapping_tables()
 
+if not all_dictionaries:
+    all_dictionaries = ['default_dictionary']
+
 col1, col2 = st.columns(2)
 with col1:
     dictionary_name = st.selectbox("选择现有专词映射表", all_dictionaries)
 
 with col2:
     new_dictionary_name = st.text_input(label="构建新的专词映射表", value="")
+    if ' ' in new_dictionary_name:
+        st.error("映射字典名称不能存在空格")
 
 dictionary_name = new_dictionary_name if new_dictionary_name else dictionary_name
 # 文件上传组件

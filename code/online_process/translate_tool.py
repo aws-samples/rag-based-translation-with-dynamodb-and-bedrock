@@ -191,7 +191,7 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
                 s3.download_file(bucket, user_dict_s3_key, local_file)
                 with open(local_file, 'r') as file:
                     lines = file.readlines()
-                    terms = list(set([ item.strip() for item in lines ]))
+                    terms = set([ item.strip() for item in lines ])
                     # print(f"terms: {terms}")
                     dictionary_info_dict[dictionary_id] = {"last_modified" : last_modified, "terms" : terms}
 
@@ -233,7 +233,11 @@ def lambda_handler(event, context):
     bucket = os.environ.get('user_dict_bucket')
     s3_prefix = os.environ.get('user_dict_prefix')
 
+    start_time = time.time()
     succeded = refresh_dictionary(bucket, s3_prefix, dictionary_id)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[1] Elapsed time: {elapsed_time} seconds")
 
     if not succeded:
         return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
@@ -241,9 +245,14 @@ def lambda_handler(event, context):
     global dictionary_info_dict, ddb_table_dict
 
     term_list = dictionary_info_dict.get(dictionary_id).get('terms')
-    print(f"term_list: {term_list}")
+    # print(f"term_list: {term_list}")
 
+    start_time = time.time()
     words = mfm_segment(src_content, term_list)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[2] Elapsed time: {elapsed_time} seconds")
+
     if request_type == 'segment_only':
         return {'words': words}
 
@@ -252,17 +261,27 @@ def lambda_handler(event, context):
         ddb_table_dict[dictionary_id] = dynamodb.Table(ddb_table_name)
 
     json_obj = {}
+
+    start_time = time.time()
     multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[3] Elapsed time: {elapsed_time} seconds")
+
     json_obj["term_mapping"] = multilingual_term_mapping
     if request_type == 'term_mapping':
         return json_obj
 
+    start_time = time.time()
     prompt = construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping)
     print("prompt:")
     print(prompt)
 
     result = invoke_bedrock(model_id, prompt)
     json_obj["result"] = result
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[4] Elapsed time: {elapsed_time} seconds")
     
     return json_obj
     
