@@ -1,5 +1,16 @@
 # DynamoDB-RAG
 
+## 界面演示效果
+
+![demo](./demo.gif) 
+
+- 界面启动方式
+```
+cd code/web_ui
+pip install -r requirement.txt
+streamlit run home.py
+```
+
 ### 目标：
 
 利用RAG召回的元数据，更好的支持翻译, VOC等任务。
