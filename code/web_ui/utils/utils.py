@@ -44,7 +44,7 @@ def list_translate_mapping_tables():
     for page in page_iterator:
         for table_name in page['TableNames']:
             if table_name.startswith(TABLE_PREFIX):
-                translate_mapping_tables.append(table_name.lstrip(TABLE_PREFIX))
+                translate_mapping_tables.append(table_name.removeprefix(TABLE_PREFIX))
 
     return translate_mapping_tables
 
