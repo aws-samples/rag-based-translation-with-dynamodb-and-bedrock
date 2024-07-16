@@ -6,9 +6,17 @@
 
 - 界面启动方式
 ```
+# 如果没有安装pip
+# sudo yum install pip -y
+
 cd code/web_ui
+
+# 设置环境变量
+# 如果当前region不在us-west-2, 需要修改.env 文件
+cp ./utils/.env.example ./utils/.env
+
 pip install -r requirement.txt
-streamlit run home.py
+nohup streamlit run home.py &
 ```
 
 ### 目标：
