@@ -11,9 +11,8 @@ from streamlit_ace import st_ace
 
 from utils.utils import upload_to_s3, query_term, update_term_mapping, list_translate_mapping_tables, start_glue_job, get_glue_job_run_status
 
-parent_dir = str(Path(__file__).parent.parent.parent.parent)
+parent_dir = str(Path(__file__).parent.parent.parent)
 dotenv_path = os.path.join(parent_dir, 'deploy/.env')
-s3 = boto3.client('s3')
 print(f"dotenv_path:{dotenv_path}")
 
 load_dotenv(dotenv_path)
