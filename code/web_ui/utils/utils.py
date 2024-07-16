@@ -4,11 +4,17 @@ import random
 import datetime
 import time
 from botocore.exceptions import ClientError
+from dotenv import load_dotenv
+import os
 
+# 加载 .env 文件中的变量
+load_dotenv()
+
+region = os.getenv('aws_region')
 TABLE_PREFIX = 'translate_mapping_'
 
 def translate_content(content, source_lang, target_lang, dictionary_id, model_id):
-    lambda_client = boto3.client('lambda')
+    lambda_client = boto3.client('lambda', region_name=region)
     payload = {
         "src_content": content,
         "src_lang": source_lang,
@@ -31,7 +37,7 @@ def translate_content(content, source_lang, target_lang, dictionary_id, model_id
 
 def list_translate_mapping_tables():
     # 创建 DynamoDB 客户端
-    dynamodb = boto3.client('dynamodb')
+    dynamodb = boto3.client('dynamodb', region_name=region)
 
     # 用于存储匹配的表名
     translate_mapping_tables = []
@@ -50,7 +56,7 @@ def list_translate_mapping_tables():
 
 def query_term(table_name, term):
     # 创建 DynamoDB 资源
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name=region)
     
     # 获取表对象
     real_table_name = f"{TABLE_PREFIX}{table_name}"
@@ -67,7 +73,7 @@ def query_term(table_name, term):
         return None, None
 
 def update_term_mapping(table_name:str, term:str, entity:str, mapping_info:dict):
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name=region)
     
     # 获取表对象
     real_table_name = f"{TABLE_PREFIX}{table_name}"
@@ -86,7 +92,7 @@ def update_term_mapping(table_name:str, term:str, entity:str, mapping_info:dict)
     print(response)
 
 def delete_term(table_name:str, term:str):
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name=region)
 
     real_table_name = f"{TABLE_PREFIX}{table_name}"
     ddb_table = dynamodb.Table(real_table_name)
@@ -99,7 +105,7 @@ def delete_term(table_name:str, term:str):
 
 def get_random_item(table_name:str):
     # 创建 DynamoDB 客户端
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name=region)
     real_table_name = f"{TABLE_PREFIX}{table_name}"
     ddb_table = dynamodb.Table(real_table_name)
 
@@ -121,14 +127,14 @@ def get_random_item(table_name:str):
 
 def upload_to_s3(local_file, bucket_name, s3_key):
     try:
-        s3 = boto3.client('s3')
+        s3 = boto3.client('s3', region_name=region)
         s3.upload_fileobj(local_file, bucket_name, s3_key)
         return True, "Finish Uploading to S3"
     except Exception as e:
         return False, str(e)
 
 def start_glue_job(key_path, bucket, dictionary_name, job_name='ingest_knowledge2ddb'):
-    glue = boto3.client('glue')
+    glue = boto3.client('glue', region_name=region)
 
     publish_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
     print('start job for {} at {}'.format(key_path, str(publish_date)))   
@@ -144,7 +150,7 @@ def start_glue_job(key_path, bucket, dictionary_name, job_name='ingest_knowledge
 
 def get_glue_job_run_status(run_id, job_name='ingest_knowledge2ddb'):
     # 创建 Glue 客户端
-    glue_client = boto3.client('glue')
+    glue_client = boto3.client('glue', region_name=region)
     
     try:
         # 获取 job 运行的详细信息
