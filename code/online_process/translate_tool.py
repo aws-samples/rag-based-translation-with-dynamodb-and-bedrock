@@ -12,7 +12,8 @@ logger.setLevel(logging.INFO)
 
 dictionary_info_dict = {}
 ddb_table_dict = {}
-bedrock = boto3.client(service_name='bedrock-runtime')
+bedrock_region = os.environ.get('bedrock_region')
+bedrock = boto3.client(service_name='bedrock-runtime', region_name=bedrock_region)
 dynamodb = boto3.resource('dynamodb')
 
 class APIException(Exception):

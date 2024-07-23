@@ -11,9 +11,8 @@
 
 cd code/web_ui
 
-# 设置环境变量
-# 如果当前region不在us-west-2, 需要修改.env 文件
-cp ./utils/.env.example ./utils/.env
+# 拷贝之前部署时的环境变量
+cp ../../deploy/.env ./utils/.env
 
 pip install -r requirement.txt
 nohup streamlit run home.py &

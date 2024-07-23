@@ -43,7 +43,7 @@ input_text = st.text_area("输入要翻译的文本", height=150)
 # 创建翻译按钮
 if st.button("翻译"):
     if input_text:
-        translation, term_mapping = translate_content(content=input_text, source_lang=source_lang, target_lang=target_lang, dictionary_id=dictionary_name, model_id=choosed_model_id)
+        translation, term_mapping = translate_content(contents=[input_text], source_lang=source_lang, target_lang=target_lang, dictionary_id=dictionary_name, model_id=choosed_model_id)
         st.divider()
         st.text_area("翻译结果", translation.strip(), height=150)
         st.text_area("映射关系", term_mapping, height=150)
