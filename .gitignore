@@ -134,6 +134,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.venv*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -249,3 +250,5 @@ temp
 .terraform
 .terraform.lock*
 cdk.out
+code/online_process/sample/go/go.sum
+code/online_process/sample/go/go_sample
