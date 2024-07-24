@@ -65,7 +65,8 @@ export class DynamoDBRagStack extends Stack {
       architecture: Architecture.X86_64,
       environment: {
         user_dict_bucket:`${process.env.UPLOAD_BUCKET}`,
-        user_dict_prefix:'translate'
+        user_dict_prefix:'translate',
+        bedrock_region:`${process.env.CDK_DEFAULT_REGION}`
       },
     });
 

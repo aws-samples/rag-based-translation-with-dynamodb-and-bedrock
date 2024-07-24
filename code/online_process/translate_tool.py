@@ -5,13 +5,15 @@ import os
 import logging
 import json
 import time
+import asyncio
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dictionary_info_dict = {}
 ddb_table_dict = {}
-bedrock = boto3.client(service_name='bedrock-runtime')
+bedrock_region = os.environ.get('bedrock_region')
+bedrock = boto3.client(service_name='bedrock-runtime', region_name=bedrock_region)
 dynamodb = boto3.resource('dynamodb')
 
 class APIException(Exception):
@@ -130,7 +132,7 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
         try:
             response = bedrock.invoke_model(body=body, modelId=model_id)
             rep_obj = json.loads(response['body'].read().decode('utf8'))
-            return rep_obj['content'][0]['text']
+            return rep_obj['content'][0]['text'].strip()
         except Exception as e:
             retry_count += 1
             print(f"Attempt {retry_count} failed: {e}")
@@ -208,21 +210,76 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
         print(f'refresh_dictionary err: {e}')
         return False
 
+async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, with_term_mapping):
+    global dictionary_info_dict, ddb_table_dict
+
+    term_list = dictionary_info_dict.get(dictionary_id).get('terms')
+
+    start_time = time.time()
+    words = mfm_segment(src_content, term_list)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[task-{idx}][2] Elapsed time: {elapsed_time} seconds")
+
+    if request_type == 'segment_only':
+        return {'words': words}
+
+    if dictionary_id not in ddb_table_dict:
+        ddb_table_name = f"translate_mapping_{dictionary_id}"
+        ddb_table_dict[dictionary_id] = dynamodb.Table(ddb_table_name)
+
+    json_obj = {}
+
+    start_time = time.time()
+    multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[task-{idx}][3] Elapsed time: {elapsed_time} seconds")
+
+    if request_type == 'term_mapping':
+        json_obj["term_mapping"] = multilingual_term_mapping
+        return json_obj
+
+    if with_term_mapping:
+        json_obj["term_mapping"] = multilingual_term_mapping
+
+    start_time = time.time()
+    prompt = construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping)
+
+    result = invoke_bedrock(model_id, prompt)
+    json_obj["translated_text"] = result
+    json_obj["model"] = model_id
+    json_obj["glossary_config"] = { "glossary": dictionary_id }
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"[task-{idx}][4] Elapsed time: {elapsed_time} seconds")
+    return json_obj
 
 # 对文本进行分词
 @handle_error
 def lambda_handler(event, context):
-    src_content = event.get('src_content')
-    src_lang = event.get('src_lang')
+    src_contents = event.get('src_contents')
+    src_lang = event.get('src_lang', None)
     dest_lang = event.get('dest_lang')
     dictionary_id = event.get('dictionary_id') # dictionary_id is table 
     request_type = event.get('request_type')
     model_id = event.get('model_id')
+    response_with_term_mapping = event.get('response_with_term_mapping', False)
+    max_content_count = os.environ.get('max_content_count', 50)
+    max_content_length = os.environ.get('max_content_length', 1024)
+    
+    if not isinstance(src_contents, list):
+        return {'error': 'src_contents should be a list of string'}
+    if len(src_contents) > max_content_count:
+        return {'error': f'len of src_contents is greater than max_content_count - {max_content_count}'}
+    for src_content in src_contents:
+        if not isinstance(src_content, str):
+            return {'error': 'the element of src_contents should be a string'}
+        if len(src_content) > max_content_length:
+            return {'error': f'len of src_content is greater than max_content_length({max_content_length})'}
 
-    if not src_content:
-        return {'error': 'src_content is required'}
-    if not src_lang:
-        return {'error': 'src_lang is required'}
+    if src_lang == dest_lang:
+        return {'error': 'src_lang should be different with dest_lang'}
     if not dest_lang:
         return {'error': 'dest_lang is required'}
     if not dictionary_id:
@@ -242,47 +299,10 @@ def lambda_handler(event, context):
     if not succeded:
         return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
 
-    global dictionary_info_dict, ddb_table_dict
+    async def run_async():
+        tasks = [ process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, response_with_term_mapping) for idx, src_content in enumerate(src_contents) ]
+        return await asyncio.gather(*tasks)
 
-    term_list = dictionary_info_dict.get(dictionary_id).get('terms')
-    # print(f"term_list: {term_list}")
+    results = asyncio.run(run_async())
 
-    start_time = time.time()
-    words = mfm_segment(src_content, term_list)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"[2] Elapsed time: {elapsed_time} seconds")
-
-    if request_type == 'segment_only':
-        return {'words': words}
-
-    if dictionary_id not in ddb_table_dict:
-        ddb_table_name = f"translate_mapping_{dictionary_id}"
-        ddb_table_dict[dictionary_id] = dynamodb.Table(ddb_table_name)
-
-    json_obj = {}
-
-    start_time = time.time()
-    multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"[3] Elapsed time: {elapsed_time} seconds")
-
-    json_obj["term_mapping"] = multilingual_term_mapping
-    if request_type == 'term_mapping':
-        return json_obj
-
-    start_time = time.time()
-    prompt = construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping)
-    print("prompt:")
-    print(prompt)
-
-    result = invoke_bedrock(model_id, prompt)
-    json_obj["result"] = result
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"[4] Elapsed time: {elapsed_time} seconds")
-    
-    return json_obj
-    
-
+    return { "translations" : results }

@@ -10,18 +10,19 @@ import os
 # 加载 .env 文件中的变量
 load_dotenv()
 
-region = os.getenv('aws_region')
+region = os.getenv('CDK_DEFAULT_REGION')
 TABLE_PREFIX = 'translate_mapping_'
 
-def translate_content(content, source_lang, target_lang, dictionary_id, model_id):
+def translate_content(contents, source_lang, target_lang, dictionary_id, model_id):
     lambda_client = boto3.client('lambda', region_name=region)
     payload = {
-        "src_content": content,
+        "src_contents": contents,
         "src_lang": source_lang,
         "dest_lang": target_lang,
         "request_type": "translate",
         "dictionary_id" : dictionary_id,
-        "model_id": model_id
+        "model_id": model_id,
+        "response_with_term_mapping" : True
     }
 
     translate_response = lambda_client.invoke(
@@ -30,10 +31,10 @@ def translate_content(content, source_lang, target_lang, dictionary_id, model_id
         Payload=json.dumps(payload)
     )
     payload_json = json.loads(translate_response.get('Payload').read())
-    term_mapping = payload_json.get('term_mapping')
+    result = payload_json['translations'][0]
+    term_mapping = result.get('term_mapping')
     term_mapping_list = [ f"{tup[0]}=>{tup[1]}({tup[2]})" for tup in term_mapping ]
-    return payload_json.get('result'), '\n'.join(term_mapping_list)
-
+    return result.get('translated_text'), '\n'.join(term_mapping_list)
 
 def list_translate_mapping_tables():
     # 创建 DynamoDB 客户端
