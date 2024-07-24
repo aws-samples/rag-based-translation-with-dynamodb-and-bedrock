@@ -4,13 +4,14 @@ import random
 import datetime
 import time
 from botocore.exceptions import ClientError
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import os
 
 # 加载 .env 文件中的变量
-load_dotenv()
+# load_dotenv()
 
-region = os.getenv('CDK_DEFAULT_REGION')
+# region = os.getenv('CDK_DEFAULT_REGION')
+region='us-west-2'
 TABLE_PREFIX = 'translate_mapping_'
 
 def translate_content(contents, source_lang, target_lang, dictionary_id, model_id):

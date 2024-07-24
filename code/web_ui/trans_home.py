@@ -1,15 +1,9 @@
 import streamlit as st
-from utils.menu import menu
 from utils.utils import translate_content, list_translate_mapping_tables, query_term, update_term_mapping, get_random_item
 
-st.set_page_config(
-    page_title="LLM Translate",
-    page_icon="⚧",
-)
+# 设置页面标题
+st.set_page_config(page_title="LLM Translator")
 
-menu()
-
-# Here goes your normal streamlit app
 col1, col2 = st.columns(2)
 
 all_dictionaries = list_translate_mapping_tables()
