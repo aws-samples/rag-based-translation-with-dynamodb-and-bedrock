@@ -1,6 +1,6 @@
 import boto3
 import json
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 # AWS and model configuration
 REGION = 'us-west-2'
@@ -19,24 +19,40 @@ def create_lambda_client(region: str) -> boto3.client:
     """
     return boto3.client('lambda', region_name=region)
 
-def create_payload(content: str, src_lang: str, dest_lang: str, dictionary_id: str, model_id: str) -> Dict[str, Any]:
+def create_payload(contents: List[str], src_lang: str, dest_lang: str, dictionary_id: str, model_id: str, response_with_term_mapping: bool=False) -> Dict[str, Any]:
     """
     Create the payload for the Lambda function.
     
-    :param content: Content to be translated
+    :param contents: List of content strings to be translated
     :param src_lang: Source language code
     :param dest_lang: Target language code
     :param dictionary_id: Dictionary ID for translation
     :param model_id: Model ID for translation
+    :param response_with_term_mapping: Flag to include term mapping in the response
     :return: Dictionary containing the payload
     """
     return {
-        "src_content": content,
+        "src_contents": contents,
         "src_lang": src_lang,
         "dest_lang": dest_lang,
         "request_type": "translate",
         "dictionary_id": dictionary_id,
-        "model_id": model_id
+        "model_id": model_id,
+        "response_with_term_mapping": response_with_term_mapping
+    }
+
+def create_payload(contents: List[str], src_lang: str, dest_lang: str, dictionary_id: str, model_id: str, response_with_term_mapping: bool=False) -> Dict[str, Any]:
+    """
+    :return: Dictionary containing the payload
+    """
+    return {
+        "src_contents": contents,
+        "src_lang": src_lang,
+        "dest_lang": dest_lang,
+        "request_type": "translate",
+        "dictionary_id": dictionary_id,
+        "model_id": model_id,
+        "response_with_term_mapping": response_with_term_mapping
     }
 
 def invoke_lambda_function(client: boto3.client, function_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -53,6 +69,7 @@ def invoke_lambda_function(client: boto3.client, function_name: str, payload: Di
         InvocationType='RequestResponse',
         Payload=json.dumps(payload)
     )
+    
     return json.loads(response['Payload'].read())
 
 def main():
@@ -60,22 +77,34 @@ def main():
     lambda_client = create_lambda_client(REGION)
     
     # Content to be translated
-    content = '蚕食者之影在哪里能找到？'
-    print(f"Original content: {content}")
+    contents = ['蚕食者之影在哪里能找到？', '蚕食者之影的弱点是什么？']
+    print(f"Original contents: {contents}")
+    print("--------------------")   
     
     # Create payload for Lambda function
-    payload = create_payload(content, SOURCE_LANG, TARGET_LANG, DICTIONARY_ID, MODEL_ID)
+    payload = create_payload(contents, SOURCE_LANG, TARGET_LANG, DICTIONARY_ID, MODEL_ID, False)
     
     # Invoke Lambda function
     response = invoke_lambda_function(lambda_client, LAMBDA_FUNCTION_NAME, payload)
     
     # Extract results
-    translation_result = response.get('result')
-    term_mapping = response.get('term_mapping')
+    for translation in response['translations']:
+        if 'term_mapping' in translation:
+            term_mapping = translation['term_mapping']
+            for mapping in term_mapping:
+                print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
+
+        translated_text = translation['translated_text']
+        print(f"Translated Text: {translated_text}")
+
+        model = translation['model']
+        print(f"Model: {model}")
+
+        glossary_config = translation['glossary_config']
+        print(f"Dict: {glossary_config}")
+
+        print("--------------------")   
     
-    # Print results
-    print(f"Translated result: {translation_result}")
-    print(f"Term mapping: {term_mapping}")
 
 if __name__ == "__main__":
     main()
