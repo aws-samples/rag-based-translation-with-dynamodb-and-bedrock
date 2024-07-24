@@ -1,17 +1,16 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/lambda"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/lambda"
 )
 
-// AWS and model configuration
+// Configuration constants
 const (
 	region             = "us-west-2"
 	modelID            = "anthropic.claude-3-haiku-20240307-v1:0"
@@ -23,46 +22,54 @@ const (
 
 // Payload represents the structure of the Lambda function payload
 type Payload struct {
-	SrcContent   string `json:"src_content"`
-	SrcLang      string `json:"src_lang"`
-	DestLang     string `json:"dest_lang"`
-	RequestType  string `json:"request_type"`
-	DictionaryID string `json:"dictionary_id"`
-	ModelID      string `json:"model_id"`
+	SrcContents             []string `json:"src_contents"`
+	SrcLang                 string   `json:"src_lang"`
+	DestLang                string   `json:"dest_lang"`
+	RequestType             string   `json:"request_type"`
+	DictionaryID            string   `json:"dictionary_id"`
+	ModelID                 string   `json:"model_id"`
+	ResponseWithTermMapping bool     `json:"response_with_term_mapping"`
+}
+
+// Translation represents the structure of a single translation in the response
+type Translation struct {
+	TranslatedText string      `json:"translated_text"`
+	Model          string      `json:"model"`
+	GlossaryConfig interface{} `json:"glossary_config"` // Changed from string to interface{}
+	TermMapping    [][]string  `json:"term_mapping"`
 }
 
 // Response represents the structure of the Lambda function response
 type Response struct {
-	Result      string        `json:"result"`
-	TermMapping []interface{} `json:"term_mapping"` // Changed to []interface{}
+	Translations []Translation `json:"translations"`
 }
 
 // createLambdaClient creates and returns an AWS Lambda client
-func createLambdaClient(ctx context.Context) (*lambda.Client, error) {
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
-	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS configuration: %v", err)
-	}
-	return lambda.NewFromConfig(cfg), nil
+func createLambdaClient(region string) *lambda.Lambda {
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	}))
+	return lambda.New(sess)
 }
 
 // createPayload creates the payload for the Lambda function
-func createPayload(content, srcLang, destLang, dictionaryID, modelID string) Payload {
+func createPayload(contents []string, srcLang, destLang, dictionaryID, modelID string, responseWithTermMapping bool) Payload {
 	return Payload{
-		SrcContent:   content,
-		SrcLang:      srcLang,
-		DestLang:     destLang,
-		RequestType:  "translate",
-		DictionaryID: dictionaryID,
-		ModelID:      modelID,
+		SrcContents:             contents,
+		SrcLang:                 srcLang,
+		DestLang:                destLang,
+		RequestType:             "translate",
+		DictionaryID:            dictionaryID,
+		ModelID:                 modelID,
+		ResponseWithTermMapping: responseWithTermMapping,
 	}
 }
 
 // invokeLambdaFunction invokes the Lambda function and returns the response
-func invokeLambdaFunction(ctx context.Context, client *lambda.Client, functionName string, payload Payload) (*Response, error) {
+func invokeLambdaFunction(client *lambda.Lambda, functionName string, payload Payload) (*Response, error) {
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal payload: %v", err)
+		return nil, fmt.Errorf("error marshaling payload: %v", err)
 	}
 
 	input := &lambda.InvokeInput{
@@ -70,43 +77,57 @@ func invokeLambdaFunction(ctx context.Context, client *lambda.Client, functionNa
 		Payload:      payloadBytes,
 	}
 
-	result, err := client.Invoke(ctx, input)
+	result, err := client.Invoke(input)
 	if err != nil {
-		return nil, fmt.Errorf("failed to invoke Lambda function: %v", err)
+		return nil, fmt.Errorf("error invoking Lambda function: %v", err)
 	}
 
 	var response Response
 	err = json.Unmarshal(result.Payload, &response)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %v", err)
+		return nil, fmt.Errorf("error unmarshaling response: %v", err)
 	}
 
 	return &response, nil
 }
 
 func main() {
-	ctx := context.Background()
-
 	// Initialize Lambda client
-	lambdaClient, err := createLambdaClient(ctx)
-	if err != nil {
-		log.Fatalf("Failed to create Lambda client: %v", err)
-	}
+	lambdaClient := createLambdaClient(region)
 
 	// Content to be translated
-	content := "蚕食者之影在哪里能找到？"
-	fmt.Printf("Original content: %s\n", content)
+	contents := []string{"蚕食者之影在哪里能找到？", "蚕食者之影的弱点是什么？"}
+	fmt.Printf("Original contents: %v\n", contents)
+	fmt.Println("--------------------")
 
 	// Create payload for Lambda function
-	payload := createPayload(content, sourceLang, targetLang, dictionaryID, modelID)
+	payload := createPayload(contents, sourceLang, targetLang, dictionaryID, modelID, false)
 
 	// Invoke Lambda function
-	response, err := invokeLambdaFunction(ctx, lambdaClient, lambdaFunctionName, payload)
+	response, err := invokeLambdaFunction(lambdaClient, lambdaFunctionName, payload)
 	if err != nil {
-		log.Fatalf("Failed to invoke Lambda function: %v", err)
+		log.Fatalf("Error invoking Lambda function: %v", err)
 	}
 
-	// Print results
-	fmt.Printf("Translated result: %s\n", response.Result)
-	fmt.Printf("Term mapping: %v\n", response.TermMapping)
+	// Extract results
+	for _, translation := range response.Translations {
+		if len(translation.TermMapping) > 0 {
+			for _, mapping := range translation.TermMapping {
+				fmt.Printf("Origin Term: %s, Translated: %s, Entity: %s\n", mapping[0], mapping[1], mapping[2])
+			}
+		}
+
+		fmt.Printf("Translated Text: %s\n", translation.TranslatedText)
+		fmt.Printf("Model: %s\n", translation.Model)
+
+		// Print GlossaryConfig as JSON string
+		glossaryConfigJSON, err := json.Marshal(translation.GlossaryConfig)
+		if err != nil {
+			fmt.Printf("Error marshaling GlossaryConfig: %v\n", err)
+		} else {
+			fmt.Printf("Dict: %s\n", string(glossaryConfigJSON))
+		}
+
+		fmt.Println("--------------------")
+	}
 }

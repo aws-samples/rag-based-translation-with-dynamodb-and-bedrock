@@ -1,3 +1,5 @@
+import streamlit as st
+from utils.menu import menu_with_redirect
 import os
 import time
 import json
@@ -6,11 +8,25 @@ import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 
-import streamlit as st
 from streamlit_ace import st_ace
 
 from utils.utils import upload_to_s3, query_term, update_term_mapping, list_translate_mapping_tables, start_glue_job, get_glue_job_run_status
 
+
+st.set_page_config(
+    page_title="Term Config",
+    page_icon="🔑",
+)
+
+# Redirect to app.py if not logged in, otherwise show the navigation menu
+menu_with_redirect()
+
+# Verify the user's role
+if st.session_state.role not in ["admin", "super-admin"]:
+    st.warning("You do not have permission to view this page.")
+    st.stop()
+
+# Here goes your normal streamlit app
 parent_dir = str(Path(__file__).parent.parent.parent)
 dotenv_path = os.path.join(parent_dir, 'deploy/.env')
 print(f"dotenv_path:{dotenv_path}")
