@@ -15,6 +15,21 @@ upload_bucket = os.getenv("UPLOAD_BUCKET")
 # region='us-west-2'
 TABLE_PREFIX = 'translate_mapping_'
 
+def list_translate_models():
+    bedrock = boto3.client(service_name='bedrock', region_name=deploy_region)
+    response = bedrock.list_foundation_models()
+    response['modelSummaries']
+    def check_model(model_id) -> bool:
+        legacy_models = ['anthropic.claude-instant-v1', 'anthropic.claude-v2:1', 'anthropic.claude-v2']
+        if not model_id.startswith('anthropic.'):
+            return False 
+        elif model_id.endswith('k'):
+            return False
+        elif model_id in legacy_models:
+            return False 
+        return True
+    return [ model_info['modelId'] for model_info in response['modelSummaries'] if check_model(model_info['modelId']) ]
+
 def translate_content(contents, source_lang, target_lang, dictionary_id, model_id):
     lambda_client = boto3.client('lambda', region_name=deploy_region)
     payload = {

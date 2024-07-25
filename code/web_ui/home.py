@@ -1,6 +1,8 @@
 import streamlit as st
 from utils.menu import menu
 from utils.utils import translate_content, list_translate_mapping_tables, query_term, update_term_mapping, get_random_item
+from utils.utils import list_translate_models
+
 
 st.set_page_config(
     page_title="LLM Translate",
@@ -13,7 +15,7 @@ menu()
 col1, col2 = st.columns(2)
 
 all_dictionaries = list_translate_mapping_tables()
-model_id_list = ['anthropic.claude-3-sonnet-20240229-v1:0', 'anthropic.claude-3-5-sonnet-20240620-v1:0', 'anthropic.claude-3-haiku-20240307-v1:0', 'anthropic.claude-3-opus-20240229-v1:0']
+model_id_list = list_translate_models()
 
 if not all_dictionaries:
     all_dictionaries = ['default_dictionary']
