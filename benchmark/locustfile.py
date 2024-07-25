@@ -5,6 +5,7 @@ from locust import User, task, events, between
 from botocore.config import Config
 import random
 import os
+from benchmark_util import content_list, split_content
 
 # AWS 配置
 AWS_REGION = os.environ.get('region')
@@ -55,17 +56,11 @@ class MyUser(CustomUser):
     def my_task(self):
         start_time = time.time()
         try:
-            content_list = [
-                ("奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。", "CHS", "EN"),
-                ("《原神手游》赤魔王图鉴，赤魔王能捉吗", "CHS", "EN"),
-                ("Suspicious Fisherman’s Toast can achieve the following effect: all characters in the team gain 88 points of DEF, lasting for 300 seconds. In multi-player mode, this effect only applies to your own characters. Akai Maou Handbook, can Akai Maou be caught?", "EN", "CHS"),
-                ("Suspicious Fisherman’s Toast can achieve the following effect: all characters in the team gain 88 points of DEF, lasting for 300 seconds. In multi-player mode, this effect only applies to your own characters. Akai Maou Handbook, can Akai Maou be caught?", "EN", "VI"),
-                ("Bánh Người Cá Kỳ Lạ có thể đạt được hiệu quả sau: tất cả nhân vật trong đội nhận được 88 điểm DEF, kéo dài trong 300 giây. Trong chế độ đa người chơi, hiệu quả này chỉ áp dụng cho nhân vật của riêng bạn. Xích Ma Vương Handbook, có thể bắt được Xích Ma Vương không?", "VI", "CHS")
-            ]
-
             random_item = random.choice(content_list)
 
-            result = self.client.invoke_translate(random_item[0], random_item[1], random_item[2], MODEL_ID)
+            chunks = split_content(random_item[0])
+
+            result = self.client.invoke_translate(chunks, random_item[1], random_item[2], MODEL_ID)
             
             # 处理结果
             total_time = int((time.time() - start_time) * 1000)
