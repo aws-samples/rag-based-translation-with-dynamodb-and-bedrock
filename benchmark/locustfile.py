@@ -20,10 +20,10 @@ class CustomClient:
         # 初始化你的 SDK 客户端
         self.lambda_client = boto3.client('lambda', region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
-    def invoke_translate(self, src_content, src_lang, dest_lang, model_id):
+    def invoke_translate(self, src_contents, src_lang, dest_lang, model_id):
         # 封装 SDK 方法调用
         payload = {
-            "src_content": src_content,
+            "src_contents": src_contents,
             "src_lang": src_lang,
             "dest_lang": dest_lang,
             "request_type": "translate",
@@ -39,8 +39,7 @@ class CustomClient:
 
         payload_json = json.loads(translate_response.get('Payload').read())
 
-        return payload_json.get('result')
-
+        return payload_json.get('translations')
 
 class CustomUser(User):
     abstract = True
@@ -61,14 +60,20 @@ class MyUser(CustomUser):
             chunks = split_content(random_item[0])
 
             result = self.client.invoke_translate(chunks, random_item[1], random_item[2], MODEL_ID)
+
+            if result is None:
+                print("result is None")
+                print(f"{random_item}")
             
+            len_list = [ len(chunk_translated['translated_text']) for chunk_translated in result ]
+
             # 处理结果
             total_time = int((time.time() - start_time) * 1000)
             events.request.fire(
                 request_type="custom",
                 name="invoke_translate",
                 response_time=total_time,
-                response_length=len(result),
+                response_length=sum(len_list),
                 exception=None,
                 context={}
             )
