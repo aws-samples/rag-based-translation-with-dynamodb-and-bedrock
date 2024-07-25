@@ -52,7 +52,8 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
             item = response["Item"]
             mapping_info = item['mapping']
             entity = item['entity']
-            mapping_list.append([term, mapping_info[dest_lang], entity])
+            if dest_lang in mapping_info:
+                mapping_list.append([term, mapping_info.get(dest_lang, ''), entity])
 
     return mapping_list
 
@@ -213,28 +214,34 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
 async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, with_term_mapping):
     global dictionary_info_dict, ddb_table_dict
 
-    term_list = dictionary_info_dict.get(dictionary_id).get('terms')
+    words = []
+    multilingual_term_mapping = []
+    json_obj = {}
 
-    start_time = time.time()
-    words = mfm_segment(src_content, term_list)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"[task-{idx}][2] Elapsed time: {elapsed_time} seconds")
+    # if dictionary is not passed, words will be []
+    if dictionary_id:
+        term_list = dictionary_info_dict.get(dictionary_id).get('terms')
+
+        start_time = time.time()
+        words = mfm_segment(src_content, term_list)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"[task-{idx}][2] Elapsed time: {elapsed_time} seconds")
 
     if request_type == 'segment_only':
         return {'words': words}
 
-    if dictionary_id not in ddb_table_dict:
-        ddb_table_name = f"translate_mapping_{dictionary_id}"
-        ddb_table_dict[dictionary_id] = dynamodb.Table(ddb_table_name)
+    # if dictionary is not passed, multilingual_term_mapping will be []
+    if dictionary_id:
+        if dictionary_id not in ddb_table_dict:
+            ddb_table_name = f"translate_mapping_{dictionary_id}"
+            ddb_table_dict[dictionary_id] = dynamodb.Table(ddb_table_name)
 
-    json_obj = {}
-
-    start_time = time.time()
-    multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"[task-{idx}][3] Elapsed time: {elapsed_time} seconds")
+        start_time = time.time()
+        multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"[task-{idx}][3] Elapsed time: {elapsed_time} seconds")
 
     if request_type == 'term_mapping':
         json_obj["term_mapping"] = multilingual_term_mapping
@@ -278,12 +285,8 @@ def lambda_handler(event, context):
         if len(src_content) > max_content_length:
             return {'error': f'len of src_content is greater than max_content_length({max_content_length})'}
 
-    if src_lang == dest_lang:
-        return {'error': 'src_lang should be different with dest_lang'}
     if not dest_lang:
-        return {'error': 'dest_lang is required'}
-    if not dictionary_id:
-        return {'error': 'dictionary_id is required'}    
+        return {'error': 'dest_lang is required'}  
     if request_type not in ['segment_only', 'term_mapping', 'translate']:
         return {"error": "request_type should be ['segment_only', '，term_mapping', 'translate']"}
     
@@ -291,13 +294,16 @@ def lambda_handler(event, context):
     s3_prefix = os.environ.get('user_dict_prefix')
 
     start_time = time.time()
-    succeded = refresh_dictionary(bucket, s3_prefix, dictionary_id)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"[1] Elapsed time: {elapsed_time} seconds")
 
-    if not succeded:
-        return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
+    # if dictionary is not passed, dictionary will not be refreshed
+    if dictionary_id:
+        succeded = refresh_dictionary(bucket, s3_prefix, dictionary_id)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"[1] Elapsed time: {elapsed_time} seconds")
+
+        if not succeded:
+            return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
 
     async def run_async():
         tasks = [ process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, response_with_term_mapping) for idx, src_content in enumerate(src_contents) ]

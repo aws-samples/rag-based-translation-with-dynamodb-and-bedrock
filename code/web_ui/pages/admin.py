@@ -27,7 +27,7 @@ if st.session_state.role not in ["admin", "super-admin"]:
     st.stop()
 
 # Here goes your normal streamlit app
-parent_dir = str(Path(__file__).parent.parent.parent)
+parent_dir = str(Path(__file__).parent.parent.parent.parent)
 dotenv_path = os.path.join(parent_dir, 'deploy/.env')
 print(f"dotenv_path:{dotenv_path}")
 
