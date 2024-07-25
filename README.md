@@ -12,7 +12,7 @@
 cd code/web_ui
 
 # 拷贝之前部署时的环境变量
-cp ../../deploy/.env ./utils/.env
+修改 ./utils/.env 中的变量为您环境的值（可在cloudformation output中查找）
 
 pip install -r requirement.txt
 nohup streamlit run home.py &

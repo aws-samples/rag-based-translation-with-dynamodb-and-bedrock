@@ -6,12 +6,12 @@ import json
 import boto3
 import pandas as pd
 from pathlib import Path
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 from streamlit_ace import st_ace
 
 from utils.utils import upload_to_s3, query_term, update_term_mapping, list_translate_mapping_tables, start_glue_job, get_glue_job_run_status
-
+from utils.utils import upload_bucket
 
 st.set_page_config(
     page_title="Term Config",
@@ -27,12 +27,13 @@ if st.session_state.role not in ["admin", "super-admin"]:
     st.stop()
 
 # Here goes your normal streamlit app
-parent_dir = str(Path(__file__).parent.parent.parent.parent)
-dotenv_path = os.path.join(parent_dir, 'deploy/.env')
-print(f"dotenv_path:{dotenv_path}")
+# parent_dir = str(Path(__file__).parent.parent.parent)
+# dotenv_path = os.path.join(parent_dir, 'deploy/.env')
+# print(f"dotenv_path:{dotenv_path}")
+# load_dotenv(dotenv_path)
 
-load_dotenv(dotenv_path)
-bucket = os.getenv("UPLOAD_BUCKET")
+# bucket = os.getenv("UPLOAD_BUCKET")
+bucket = upload_bucket
 print(f"bucket of translate service: {bucket}")
 
 all_dictionaries = list_translate_mapping_tables()
