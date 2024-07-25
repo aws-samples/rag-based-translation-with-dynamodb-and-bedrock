@@ -138,6 +138,31 @@ nohup streamlit run home.py &
             "model_id":"anthropic.claude-3-sonnet-20240229-v1:0",
             "response_with_term_mapping" : true
         }
+
+        // [request3]EN => CHS (with no translation tag)
+        {
+            "src_contents": [
+                "Dear Traveler, \n\nThe Genshin Impact Version 4.6 <span class=\"notranslate\">\"Two Worlds Aflame, the Crimson Night Fades\"</span> update is coming soon. Registration for the Twitch Livestream Event has started."
+            ],
+            "src_lang":"EN",
+            "dest_lang":"CHS",
+            "request_type":"translate",
+            "dictionary_id": "dictionary_1",
+            "model_id":"anthropic.claude-3-haiku-20240307-v1:0"
+        }
+
+        // [request4]CHS => EN (with misleading translation direction)
+        {
+            "src_contents": [
+                "Dear Traveler,\n\n原神版本 4.6 <span class=\"notranslate\">\"Two Worlds Aflame, the Crimson Night Fades\"</span> update is coming soon. Registration for the Twitch Livestream Event has started.\n\nEvent Timeline      \n\nRegistration Period: April 19 at 19:00:00 – April 26 at 15:00:00 (UTC+8)        \n\nStreaming Period: April 24 after the version update to May 14, 23:59:59 (UTC+8)     \n\nNote: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.        \n\nReward Calculation: May 15 – May 30     \n\n*Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the reward calculation period has concluded.\n\n*Cash rewards will be delivered to valid participants' accounts no later than 45 business days after the reward calculation period has concluded.       \n\nEmail Notification: Participants will receive a welcome email with event details from April 26 – April 30. Reward notification emails will be sent within 30 business days after the reward calculation period ends, to the accounts of all participants. Please pay attention to these messages.               \n\nEvent Details       \n\n1. Participants who meet the following conditions will be able to obtain the corresponding rewards:     \n\na. Sign up for the Version 4.6 Twitch Livestream Event      \n\nb. Link an Email to a HoYoverse account     \n\nc. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     \n\nd. During the event, participants must stream in the Genshin Impact category on Twitch for a total duration of 6 hours or more in order to qualify for the \"Start Streaming\" and \"Aim for the Leaderboard\" rewards.     \n\n2. Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.       \n\n3. Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the event has concluded.     \n\n4. Any form of cheating or negligence within the community, event, or platform will not be tolerated and can result in indefinite suspension from future or related events.     \n\na. Example of cheating: Streamer A logs into Genshin Impact and is AFK for 24 hours.        \n\nb. Example of negligence: Streaming games/content that are not related to Genshin Impact in the Genshin Impact category in an attempt to get Primogems.\n\n5. Disclosing or discussing the content of an upcoming release will not be tolerated and can result in indefinite suspension from future or related events."
+            ],
+            "src_lang":"CHS",
+            "dest_lang":"EN",
+            "request_type":"translate",
+            "dictionary_id": "dictionary_1",
+            "model_id":"anthropic.claude-3-haiku-20240307-v1:0",
+            "max_content_length" : 102400
+        }
         ```
         参考response
         ```json
@@ -177,6 +202,32 @@ nohup streamlit run home.py &
               ],
               "translated_text": "Suspicious Fisherman's Toast can achieve the following effect: All characters in the team gain 88 DEF for 300 seconds. In multiplayer mode, this effect only applies to your own characters. Akai Maou Handbook in \"Genshin Impact\", can Akai Maou be caught?",
               "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+              "glossary_config": {
+                "glossary": "dictionary_1"
+              }
+            }
+          ]
+        }
+
+        //resp3
+        {
+          "translations": [
+            {
+              "translated_text": "亲爱的旅人,\n\n原神4.6版本<span class=\"notranslate\">\"Two Worlds Aflame, the Crimson Night Fades\"</span>更新即将到来。Twitch直播活动的注册已经开始。",
+              "model": "anthropic.claude-3-haiku-20240307-v1:0",
+              "glossary_config": {
+                "glossary": "dictionary_1"
+              }
+            }
+          ]
+        }
+
+        //resp4
+        {
+          "translations": [
+            {
+              "translated_text": "Dear Traveler,\n\nThe Genshin Impact Version 4.6 <span class=\"notranslate\">\"Two Worlds Aflame, the Crimson Night Fades\"</span> update is coming soon. Registration for the Twitch Livestream Event has started.\n\nEvent Timeline      \n\nRegistration Period: April 19 at 19:00:00 – April 26 at 15:00:00 (UTC+8)        \n\nStreaming Period: April 24 after the version update to May 14, 23:59:59 (UTC+8)     \n\nNote: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.        \n\nReward Calculation: May 15 – May 30     \n\n*Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the reward calculation period has concluded.\n\n*Cash rewards will be delivered to valid participants' accounts no later than 45 business days after the reward calculation period has concluded.       \n\nEmail Notification: Participants will receive a welcome email with event details from April 26 – April 30. Reward notification emails will be sent within 30 business days after the reward calculation period ends, to the accounts of all participants. Please pay attention to these messages.               \n\nEvent Details       \n\n1. Participants who meet the following conditions will be able to obtain the corresponding rewards:     \n\na. Sign up for the Version 4.6 Twitch Livestream Event      \n\nb. Link an Email to a HoYoverse account     \n\nc. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     \n\nd. During the event, participants must stream in the Genshin Impact category on Twitch for a total duration of 6 hours or more in order to qualify for the \"Start Streaming\" and \"Aim for the Leaderboard\" rewards.     \n\n2. Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.       \n\n3. Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the event has concluded.     \n\n4. Any form of cheating or negligence within the community, event, or platform will not be tolerated and can result in indefinite suspension from future or related events.     \n\na. Example of cheating: Streamer A logs into Genshin Impact and is AFK for 24 hours.        \n\nb. Example of negligence: Streaming games/content that are not related to Genshin Impact in the Genshin Impact category in an attempt to get Primogems.\n\n5. Disclosing or discussing the content of an upcoming release will not be tolerated and can result in indefinite suspension from future or related events.",
+              "model": "anthropic.claude-3-haiku-20240307-v1:0",
               "glossary_config": {
                 "glossary": "dictionary_1"
               }

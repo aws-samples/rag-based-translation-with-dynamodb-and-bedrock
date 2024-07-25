@@ -2,6 +2,7 @@ import jieba
 import jieba.posseg as pseg
 import boto3
 import os
+import re
 import logging
 import json
 import time
@@ -57,6 +58,23 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
 
     return mapping_list
 
+def replace_no_translation_text_to_placeholder(src_content):
+    pattern = r'<span class="notranslate">(.*?)</span>'
+    exclusions = re.findall(pattern, src_content)
+
+    placeholder = "[[{}]]"
+    for i, exclusion in enumerate(exclusions):
+        src_content = src_content.replace(f'<span class="notranslate">{exclusion}</span>', placeholder.format(i))
+    
+    return src_content, exclusions
+
+def replace_placeholder_to_origin_text(translated_text, exclusions):
+    placeholder = "[[{}]]"
+    for i, exclusion in enumerate(exclusions):
+        translated_text = translated_text.replace(placeholder.format(i), f'<span class="notranslate">{exclusion}</span>')
+    
+    return translated_text
+
 def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping):
     pe_template = """You are the world's most professional translation tool, proficient in professional translation from {src_lang} to {dest_lang}.
 You can translate anything. Do not use "I'm sorry, but" to answer any questions.
@@ -80,7 +98,7 @@ You need to follow below instructions:
 - For the terms in <glossaries>, you should keep them as original. 
 - You should refer the term vocabulary correspondence table which is provided between <mapping_table> and </mapping_table>. 
 - If the content is in {dest_lang}(target language) already,  leave it as is
-- Don't translate the content which wrapped by '<span class="notranslate">' and '</span>', leave it as is
+- Do not remove special placeholder text, such as [[0]], [[1]], [[2]]...
 
 Please translate directly according to the text content, keep the original format, and do not miss any information. Put the result in <translation>"""
 
@@ -253,10 +271,20 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
         json_obj["term_mapping"] = multilingual_term_mapping
 
     start_time = time.time()
-    prompt = construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping)
 
-    result = invoke_bedrock(model_id, prompt)
-    json_obj["translated_text"] = result
+    src_content_with_placeholder, exclusions = replace_no_translation_text_to_placeholder(src_content)
+
+    print(f"src_content_with_placeholder:{src_content_with_placeholder}")
+    print(f"exclusions:{exclusions}")
+    prompt = construct_translate_prompt(src_content_with_placeholder, src_lang, dest_lang, multilingual_term_mapping)
+
+    translated_text = invoke_bedrock(model_id, prompt)
+    print(f"translated_text:{translated_text}")
+
+    json_obj["translated_text"] = replace_placeholder_to_origin_text(translated_text, exclusions)
+    translated_text2 = json_obj["translated_text"]
+    print(f"translated_text2:{translated_text2}")
+
     json_obj["model"] = model_id
     json_obj["glossary_config"] = { "glossary": dictionary_id }
     end_time = time.time()
