@@ -79,6 +79,8 @@ You need to follow below instructions:
 - Even if you paraphrase, you should retain the original paragraph format.
 - For the terms in <glossaries>, you should keep them as original. 
 - You should refer the term vocabulary correspondence table which is provided between <mapping_table> and </mapping_table>. 
+- If the content is in {dest_lang}(target language) already,  leave it as is
+- Don't translate the content which wrapped by '<span class="notranslate">' and '</span>', leave it as is
 
 Please translate directly according to the text content, keep the original format, and do not miss any information. Put the result in <translation>"""
 
@@ -273,7 +275,7 @@ def lambda_handler(event, context):
     model_id = event.get('model_id')
     response_with_term_mapping = event.get('response_with_term_mapping', False)
     max_content_count = os.environ.get('max_content_count', 50)
-    max_content_length = os.environ.get('max_content_length', 1024)
+    max_content_length = event.get('max_content_length', os.environ.get('max_content_length', 1024))
     
     if not isinstance(src_contents, list):
         return {'error': 'src_contents should be a list of string'}

@@ -39,7 +39,8 @@ def translate_content(contents, source_lang, target_lang, dictionary_id, model_i
         "request_type": "translate",
         "dictionary_id" : dictionary_id,
         "model_id": model_id,
-        "response_with_term_mapping" : True
+        "response_with_term_mapping" : True,
+        "max_content_length" : 65535
     }
 
     translate_response = lambda_client.invoke(
@@ -48,10 +49,13 @@ def translate_content(contents, source_lang, target_lang, dictionary_id, model_i
         Payload=json.dumps(payload)
     )
     payload_json = json.loads(translate_response.get('Payload').read())
-    result = payload_json['translations'][0]
-    term_mapping = result.get('term_mapping')
-    term_mapping_list = [ f"{tup[0]}=>{tup[1]}({tup[2]})" for tup in term_mapping ]
-    return result.get('translated_text'), '\n'.join(term_mapping_list)
+    if 'translations' in payload_json:
+        result = payload_json['translations'][0]
+        term_mapping = result.get('term_mapping')
+        term_mapping_list = [ f"{tup[0]}=>{tup[1]}({tup[2]})" for tup in term_mapping ]
+        return result.get('translated_text'), '\n'.join(term_mapping_list)
+    else:
+        return payload_json.get("error"), ""
 
 def list_translate_mapping_tables():
     # 创建 DynamoDB 客户端

@@ -46,7 +46,9 @@ nohup streamlit run home.py &
         参考payload
         ```json
         {
-            "src_content":"奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗",
+            "src_contents": [
+                "奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗" 
+            ],
             "src_lang":"CHS",
             "dest_lang":"EN",
             "request_type":"segment_only",
@@ -57,9 +59,14 @@ nohup streamlit run home.py &
         参考response
         ```json
         {
-          "words": [
-            "赤魔王",
-            "奇怪的渔人吐司"
+          "translations": [
+            {
+              "words": [
+                "赤魔王",
+                "奇怪的渔人吐司",
+                "防御力"
+              ]
+            }
           ]
         }
         ```
@@ -68,7 +75,9 @@ nohup streamlit run home.py &
         参考payload
         ```json
 		{
-		    "src_content":"奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗",
+		    "src_contents": [ 
+                "奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗" 
+            ],
 		    "src_lang":"CHS",
 		    "dest_lang":"EN",
 		    "request_type":"term_mapping",
@@ -79,26 +88,37 @@ nohup streamlit run home.py &
         参考response
         ```json
         {
-          "term_mapping": [
-            [
-              "赤魔王",
-              "Akai Maou",
-              "Serenitea Pot家园"
-            ],
-            [
-              "奇怪的渔人吐司",
-              "Suspicious Fisherman's Toast",
-              "Material 材料"
-            ]
+          "translations": [
+            {
+              "term_mapping": [
+                [
+                  "赤魔王",
+                  "Akai Maou",
+                  "Serenitea Pot家园"
+                ],
+                [
+                  "奇怪的渔人吐司",
+                  "Suspicious Fisherman's Toast",
+                  "Material 材料"
+                ],
+                [
+                  "防御力",
+                  "DEF",
+                  "Artifact Stats 圣遗物属性"
+                ]
+              ]
+            }
           ]
         }
         ```
     - 翻译
         参考payload
         ```json
-        #CHS => EN
+        // [request1]CHS => EN
         {
-            "src_content":"奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗",
+            "src_contents": [
+                "奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗"
+            ],
             "src_lang":"CHS",
             "dest_lang":"EN",
             "request_type":"translate",
@@ -106,51 +126,61 @@ nohup streamlit run home.py &
             "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
         }
 
-        #EN => CHS
+        // [request2]CHS => EN
         {
-            "src_content":"Suspicious Fisherman’s Toast can achieve the following effect: all characters in the team gain 88 points of DEF, lasting for 300 seconds. In multi-player mode, this effect only applies to your own characters. Akai Maou Handbook, can Akai Maou be caught?",
-            "src_lang":"EN",
-            "dest_lang":"CHS",
+            "src_contents": [
+                "奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗"
+            ],
+            "src_lang":"CHS",
+            "dest_lang":"EN",
             "request_type":"translate",
             "dictionary_id": "dictionary_1",
-            "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
-        }
-
-        #EN => VI
-        {
-            "src_content":"Suspicious Fisherman’s Toast can achieve the following effect: all characters in the team gain 88 points of DEF, lasting for 300 seconds. In multi-player mode, this effect only applies to your own characters. Akai Maou Handbook, can Akai Maou be caught?",
-            "src_lang":"EN",
-            "dest_lang":"VI",
-            "request_type":"translate",
-            "dictionary_id": "dictionary_1",
-            "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
-        }
-
-        #VI => CHS
-        {
-            "src_content":"Bánh Người Cá Kỳ Lạ có thể đạt được hiệu quả sau: tất cả nhân vật trong đội nhận được 88 điểm DEF, kéo dài trong 300 giây. Trong chế độ đa người chơi, hiệu quả này chỉ áp dụng cho nhân vật của riêng bạn. Xích Ma Vương Handbook, có thể bắt được Xích Ma Vương không?",
-            "src_lang":"VI",
-            "dest_lang":"CHS",
-            "request_type":"translate",
-            "dictionary_id": "dictionary_1",
-            "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
+            "model_id":"anthropic.claude-3-sonnet-20240229-v1:0",
+            "response_with_term_mapping" : true
         }
         ```
         参考response
         ```json
+        //resp1
         {
-          "term_mapping": [
-            [
-              "赤魔王",
-              "Akai Maou",
-              "Serenitea Pot家园"
-            ],
-            [
-              "奇怪的渔人吐司",
-              "Suspicious Fisherman's Toast",
-              "Material 材料"
-            ]
-          ],
-          "result": "\nSuspicious Fisherman's Toast can achieve the following effect: All characters in the team gain 88 DEF for 300 seconds. In multi-player mode, this effect only applies to your own characters. Genshin Impact Akai Maou Codex, can Akai Maou be caught?\n"
+          "translations": [
+            {
+              "translated_text": "Suspicious Fisherman's Toast can achieve the following effect: All characters in the team gain 88 DEF for 300 seconds. In multiplayer mode, this effect only applies to your own characters. Akai Maou Handbook in \"Genshin Impact\", can Akai Maou be caught?",
+              "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+              "glossary_config": {
+                "glossary": "dictionary_1"
+              }
+            }
+          ]
+        }
+
+        //resp2
+        {
+          "translations": [
+            {
+              "term_mapping": [
+                [
+                  "赤魔王",
+                  "Akai Maou",
+                  "Serenitea Pot家园"
+                ],
+                [
+                  "奇怪的渔人吐司",
+                  "Suspicious Fisherman's Toast",
+                  "Material 材料"
+                ],
+                [
+                  "防御力",
+                  "DEF",
+                  "Artifact Stats 圣遗物属性"
+                ]
+              ],
+              "translated_text": "Suspicious Fisherman's Toast can achieve the following effect: All characters in the team gain 88 DEF for 300 seconds. In multiplayer mode, this effect only applies to your own characters. Akai Maou Handbook in \"Genshin Impact\", can Akai Maou be caught?",
+              "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+              "glossary_config": {
+                "glossary": "dictionary_1"
+              }
+            }
+          ]
         }
         ```
