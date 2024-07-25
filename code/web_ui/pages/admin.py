@@ -30,8 +30,8 @@ if st.session_state.role not in ["admin", "super-admin"]:
 # parent_dir = str(Path(__file__).parent.parent.parent)
 # dotenv_path = os.path.join(parent_dir, 'deploy/.env')
 # print(f"dotenv_path:{dotenv_path}")
-
 # load_dotenv(dotenv_path)
+
 # bucket = os.getenv("UPLOAD_BUCKET")
 bucket = upload_bucket
 print(f"bucket of translate service: {bucket}")
