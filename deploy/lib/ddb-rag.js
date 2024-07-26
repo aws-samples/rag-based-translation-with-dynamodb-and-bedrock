@@ -77,7 +77,8 @@ export class DynamoDBRagStack extends Stack {
           "s3:Put*",
           "s3:Get*",
           "bedrock:*",
-          "dynamodb:GetItem"
+          "dynamodb:GetItem",
+          "ssm:GetParameter"
           ],
         effect: iam.Effect.ALLOW,
         resources: ['*'],

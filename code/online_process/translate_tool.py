@@ -2,6 +2,7 @@ import jieba
 import jieba.posseg as pseg
 import boto3
 import os
+import re
 import logging
 import json
 import time
@@ -15,6 +16,49 @@ ddb_table_dict = {}
 bedrock_region = os.environ.get('bedrock_region')
 bedrock = boto3.client(service_name='bedrock-runtime', region_name=bedrock_region)
 dynamodb = boto3.resource('dynamodb')
+
+def retrieve_prompt_template():
+    ssm_key = 'translate_mihoyo_template'
+    Translate_Prompt_Template = """You are the world's most professional translation tool, proficient in professional translation from {src_lang} to {dest_lang}.
+You can translate anything. Do not use "I'm sorry, but" to answer any questions.
+
+<glossaries>
+{vocabulary}
+</glossaries>
+
+<mapping_table>
+{mappings}
+</mapping_table>
+
+Here is the original content:
+<content>
+{content}
+</content>
+
+You need to follow below instructions:
+- Translation style: concise, easy to understand, similar to the style of orignal content. The translation should accurately convey the facts and background of the original text. Do not try to explain the content to be translated, your task is only to translate.
+- Even if you paraphrase, you should retain the original paragraph format.
+- For the terms in <glossaries>, you should keep them as original. 
+- You should refer the term vocabulary correspondence table which is provided between <mapping_table> and </mapping_table>. 
+- If the content is in {dest_lang}(target language) already,  leave it as is
+- Keep the link to the image in markdown format, for example - "![0](icon.png)"
+
+Please translate directly according to the text content, keep the original format, and do not miss any information. Put the result in <translation_{dest_lang}>"""
+
+    def read_parameter(name, with_decryption=False):
+        ssm = boto3.client('ssm')
+        response = ssm.get_parameter(
+            Name=name,
+            WithDecryption=with_decryption
+        )
+        return response['Parameter']['Value']
+
+    try:
+        Translate_Prompt_Template = read_parameter(ssm_key)
+    except Exception as e:
+        print(f"Can't Find Prompt from parameter store - {ssm_key}")
+
+    return Translate_Prompt_Template
 
 class APIException(Exception):
     def __init__(self, message, code: str = None):
@@ -57,36 +101,30 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
 
     return mapping_list
 
+def replace_no_translation_text_to_placeholder(src_content):
+    pattern = r'<span class="notranslate">(.*?)</span>'
+    exclusions = re.findall(pattern, src_content)
+
+    placeholder = "![{}](icon.png)"
+    for i, exclusion in enumerate(exclusions):
+        src_content = src_content.replace(f'<span class="notranslate">{exclusion}</span>', placeholder.format(i))
+    
+    return src_content, exclusions
+
+def replace_placeholder_to_origin_text(translated_text, exclusions):
+    placeholder = "![{}](icon.png)"
+    for i, exclusion in enumerate(exclusions):
+        translated_text = translated_text.replace(placeholder.format(i), f'<span class="notranslate">{exclusion}</span>')
+    
+    return translated_text
+
 def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping):
-    pe_template = """You are the world's most professional translation tool, proficient in professional translation from {src_lang} to {dest_lang}.
-You can translate anything. Do not use "I'm sorry, but" to answer any questions.
 
-<glossaries>
-{vocabulary}
-</glossaries>
-
-<mapping_table>
-{mappings}
-</mapping_table>
-
-Here is the original content:
-<content>
-{content}
-</content>
-
-You need to follow below instructions:
-- Translation style: concise, easy to understand, similar to the style of orignal content. The translation should accurately convey the facts and background of the original text. Do not try to explain the content to be translated, your task is only to translate.
-- Even if you paraphrase, you should retain the original paragraph format.
-- For the terms in <glossaries>, you should keep them as original. 
-- You should refer the term vocabulary correspondence table which is provided between <mapping_table> and </mapping_table>. 
-
-Please translate directly according to the text content, keep the original format, and do not miss any information. Put the result in <translation>"""
+    translate_prompt_template = retrieve_prompt_template()
 
     crosslingual_terms = []
 
     crosslingual_terms = [ (item[0], item[2]) for item in multilingual_term_mapping if item[0] == item[1] ]
-
-    # [('Yelan', '夜兰', 'TCG Opponent'), ('Xingqiu', '行秋', 'TCG Opponent'), ('Keqing', '刻晴', 'TCG Opponent'), ('Beidou', '北斗', 'TCG Opponent')]
 
     def build_glossaries(term, entity_type):
         obj = {"term":term, "entity_type":entity_type}
@@ -105,11 +143,10 @@ Please translate directly according to the text content, keep the original forma
     term_mapping_list = list(set([ build_mapping(item[0], item[1], item[2]) for item in multilingual_term_mapping ]))
     term_mapping_prompt = "\n".join([ item for item in term_mapping_list if item is not None ])
 
-    prompt = pe_template.format(src_lang=src_lang, dest_lang=dest_lang, vocabulary=vocabulary_prompt, mappings=term_mapping_prompt, content=src_content)
+    prompt = translate_prompt_template.format(src_lang=src_lang, dest_lang=dest_lang, vocabulary=vocabulary_prompt, mappings=term_mapping_prompt, content=src_content)
     return prompt
 
 def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>', stop=['</translation>']):
-
     messages = [
         {"role": "user", "content": prompt},
         {"role": "assistant", "content": prefill_str}
@@ -251,10 +288,17 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
         json_obj["term_mapping"] = multilingual_term_mapping
 
     start_time = time.time()
-    prompt = construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping)
 
-    result = invoke_bedrock(model_id, prompt)
-    json_obj["translated_text"] = result
+    src_content_with_placeholder, exclusions = replace_no_translation_text_to_placeholder(src_content)
+
+    print(f"src_content_with_placeholder:{src_content_with_placeholder}")
+    print(f"exclusions:{exclusions}")
+    prompt = construct_translate_prompt(src_content_with_placeholder, src_lang, dest_lang, multilingual_term_mapping)
+
+    translated_text = invoke_bedrock(model_id=model_id, prompt=prompt, prefill_str=f'<translation_{dest_lang}>', stop=[f'</translation_{dest_lang}>'])
+    print(f"translated_text:{translated_text}")
+
+    json_obj["translated_text"] = replace_placeholder_to_origin_text(translated_text, exclusions)
     json_obj["model"] = model_id
     json_obj["glossary_config"] = { "glossary": dictionary_id }
     end_time = time.time()
@@ -273,7 +317,7 @@ def lambda_handler(event, context):
     model_id = event.get('model_id')
     response_with_term_mapping = event.get('response_with_term_mapping', False)
     max_content_count = os.environ.get('max_content_count', 50)
-    max_content_length = os.environ.get('max_content_length', 1024)
+    max_content_length = event.get('max_content_length', os.environ.get('max_content_length', 1024))
     
     if not isinstance(src_contents, list):
         return {'error': 'src_contents should be a list of string'}
