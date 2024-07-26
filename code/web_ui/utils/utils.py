@@ -15,6 +15,21 @@ upload_bucket = os.getenv("UPLOAD_BUCKET")
 # region='us-west-2'
 TABLE_PREFIX = 'translate_mapping_'
 
+def list_translate_models():
+    bedrock = boto3.client(service_name='bedrock', region_name=deploy_region)
+    response = bedrock.list_foundation_models()
+    response['modelSummaries']
+    def check_model(model_id) -> bool:
+        legacy_models = ['anthropic.claude-instant-v1', 'anthropic.claude-v2:1', 'anthropic.claude-v2']
+        if not model_id.startswith('anthropic.'):
+            return False 
+        elif model_id.endswith('k'):
+            return False
+        elif model_id in legacy_models:
+            return False 
+        return True
+    return [ model_info['modelId'] for model_info in response['modelSummaries'] if check_model(model_info['modelId']) ]
+
 def translate_content(contents, source_lang, target_lang, dictionary_id, model_id):
     lambda_client = boto3.client('lambda', region_name=deploy_region)
     payload = {
@@ -24,7 +39,8 @@ def translate_content(contents, source_lang, target_lang, dictionary_id, model_i
         "request_type": "translate",
         "dictionary_id" : dictionary_id,
         "model_id": model_id,
-        "response_with_term_mapping" : True
+        "response_with_term_mapping" : True,
+        "max_content_length" : 65535
     }
 
     translate_response = lambda_client.invoke(
@@ -33,10 +49,13 @@ def translate_content(contents, source_lang, target_lang, dictionary_id, model_i
         Payload=json.dumps(payload)
     )
     payload_json = json.loads(translate_response.get('Payload').read())
-    result = payload_json['translations'][0]
-    term_mapping = result.get('term_mapping')
-    term_mapping_list = [ f"{tup[0]}=>{tup[1]}({tup[2]})" for tup in term_mapping ]
-    return result.get('translated_text'), '\n'.join(term_mapping_list)
+    if 'translations' in payload_json:
+        result = payload_json['translations'][0]
+        term_mapping = result.get('term_mapping')
+        term_mapping_list = [ f"{tup[0]}=>{tup[1]}({tup[2]})" for tup in term_mapping ]
+        return result.get('translated_text'), '\n'.join(term_mapping_list)
+    else:
+        return payload_json.get("error"), ""
 
 def list_translate_mapping_tables():
     # 创建 DynamoDB 客户端
