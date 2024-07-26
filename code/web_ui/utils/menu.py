@@ -29,7 +29,7 @@ def _check_password():
 def _authenticated_menu():
     # Show a navigation menu for authenticated users
     st.sidebar.page_link("home.py", label="Amazon Bedrock Translate", icon="⚧")
-    # st.sidebar.page_link("pages/user.py", label="Regular User Page", icon="🚎")
+    st.sidebar.page_link("pages/user.py", label="Regular User Page", icon="🚎")
     if st.session_state.role in ["admin", "super-admin"]:
         st.sidebar.page_link("pages/admin.py", label="Dictionary Term Config", icon="🔑")
         st.sidebar.page_link(
