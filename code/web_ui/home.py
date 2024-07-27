@@ -1,59 +1,79 @@
 import streamlit as st
+import time
 from utils.menu import menu
-from utils.utils import translate_content, list_translate_mapping_tables, query_term, update_term_mapping, get_random_item
-from utils.utils import list_translate_models
-
-
-st.set_page_config(
-    page_title="LLM Translate",
-    page_icon="⚧",
+from utils.utils import (
+    list_dictionary_ids,
+    list_supported_language_codes,
+    list_translate_models,
+    translate_content,
 )
 
+# 配置 Streamlit 页面
+st.set_page_config(page_title="LLM Translate", page_icon="⚧", layout="wide")
+
+# 显示应用程序的菜单
 menu()
 
-# Here goes your normal streamlit app
+# 添加应用标题
+st.title("LLM 翻译工具")
+
+# 获取可用的字典、模型和支持的语言代码列表
+model_list = list_translate_models()
+dictionaries = list_dictionary_ids() or ['default_dictionary']
+supported_lang_codes = list_supported_language_codes()
+
+# 创建两列布局
 col1, col2 = st.columns(2)
 
-all_dictionaries = list_translate_mapping_tables()
-model_id_list = list_translate_models()
-
-if not all_dictionaries:
-    all_dictionaries = ['default_dictionary']
-
-dictionary_name = None
+# 在第一列中选择字典和源语言
 with col1:
-    dictionary_name = st.selectbox("选择专词映射表", all_dictionaries)
+    dictionary_name = st.selectbox(
+        "专词映射表", 
+        dictionaries, 
+        index=dictionaries.index('anthropic.claude-3-haiku-20240307-v1:0') if 'anthropic.claude-3-haiku-20240307-v1:0' in dictionaries else 0
+    )
+    source_lang = st.selectbox(
+        "源语言", 
+        supported_lang_codes, 
+        index=supported_lang_codes.index('EN') if 'EN' in supported_lang_codes else 0
+    )
 
-random_item = get_random_item(dictionary_name)
-
-if random_item:
-    languages = list(random_item["mapping"].keys())
-    en_index = languages.index('EN')
-    chs_index = languages.index('CHS')
-else:
-    languages = ['-']
-    en_index = 0
-    chs_index = 0
-
-
-# 在第一列中放置第一个 selectbox
-with col1:
-    source_lang = st.selectbox(label="选择源语言", options=languages, index=chs_index)
-
-# 在第二列中放置第二个 selectbox
+# 在第二列中选择模型和目标语言
 with col2:
-    choosed_model_id = st.selectbox("选择模型", model_id_list)
-    target_lang = st.selectbox(label="选择目标语言", options=languages, index=en_index)
+    model_id = st.selectbox("翻译模型", model_list)
+    target_lang = st.selectbox(
+        "目标语言", 
+        supported_lang_codes, 
+        index=supported_lang_codes.index('CHS') if 'CHS' in supported_lang_codes else 0
+    )
 
-# 创建输入文本框
-input_text = st.text_area("输入要翻译的文本", height=150)
+# 创建输入文本框以输入要翻译的文本
+input_text = st.text_area("请在此输入要翻译的文本", height=150)
 
-# 创建翻译按钮
-if st.button("翻译"):
+# 创建翻译按钮并显示结果
+if st.button("开始翻译"):
     if input_text:
-        translation, term_mapping = translate_content(contents=[input_text], source_lang=source_lang, target_lang=target_lang, dictionary_id=dictionary_name, model_id=choosed_model_id)
-        st.divider()
-        st.text_area("翻译结果", translation.strip(), height=150)
-        st.text_area("映射关系", term_mapping, height=150)
+        with st.spinner('正在翻译中，请稍候...'):
+            # 开始计时
+            start_time = time.time()
+
+            # 执行翻译
+            translation, term_mapping = translate_content(
+                contents=[input_text],
+                source_lang=source_lang,
+                target_lang=target_lang,
+                dictionary_id=dictionary_name,
+                model_id=model_id,
+            )
+
+            # 计算翻译耗时
+            elapsed_time = time.time() - start_time
+
+        # 显示翻译结果和映射关系
+        st.text_area("翻译后的文本", translation.strip(), height=150)
+        st.text_area("专词映射关系", term_mapping, height=150)
+
+        # 显示翻译耗时
+        st.info(f"翻译耗时: {elapsed_time:.2f} 秒")
     else:
-        st.write("请输入要翻译的文本")
+        st.warning("请输入要翻译的文本")

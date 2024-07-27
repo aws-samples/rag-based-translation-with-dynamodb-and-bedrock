@@ -5,6 +5,12 @@ from io import BytesIO
 from utils.menu import menu_with_redirect
 from utils.langdetect import detect_language_of
 import time
+from utils.utils import (
+    list_dictionary_ids,
+    list_supported_language_codes,
+    list_translate_models,
+    translate_content,
+)
 
 st.set_page_config(
     page_title="File Translate",
@@ -13,6 +19,11 @@ st.set_page_config(
 
 # 全局常量
 TARGET_LANG = 'CHS'
+
+# 获取可用的字典、模型和支持的语言代码列表
+model_list = list_translate_models()
+dictionaries = list_dictionary_ids() or ['default_dictionary']
+supported_lang_codes = list_supported_language_codes()
 
 def init_streamlit():
     """初始化 Streamlit 界面"""
@@ -87,6 +98,18 @@ def main():
     
     if uploaded_file is not None:
         st.write("文件名:", uploaded_file.name)
+        
+        dictionary_name = st.selectbox(
+            "专词映射表", 
+            dictionaries, 
+            index=dictionaries.index('anthropic.claude-3-haiku-20240307-v1:0') if 'anthropic.claude-3-haiku-20240307-v1:0' in dictionaries else 0
+        )
+        model_id = st.selectbox("翻译模型", model_list)
+        target_lang = st.selectbox(
+            "目标语言", 
+            supported_lang_codes, 
+            index=supported_lang_codes.index('CHS') if 'CHS' in supported_lang_codes else 0
+        )
         
         if st.button("处理文件"):
             with st.spinner('处理中...'):
