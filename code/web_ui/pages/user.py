@@ -6,6 +6,11 @@ from utils.menu import menu_with_redirect
 from utils.langdetect import detect_language_of
 import time
 
+st.set_page_config(
+    page_title="File Translate",
+    page_icon="🚎",
+)
+
 # 全局常量
 TARGET_LANG = 'CHS'
 
