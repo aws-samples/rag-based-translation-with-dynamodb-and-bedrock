@@ -4,7 +4,7 @@ import os
 
 comprehend = boto3.client('comprehend')
 
-yaml_path = os.path.join(os.path.dirname(__file__), 'lang.yaml')
+yaml_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
 with open(yaml_path, 'r') as f:
     lang_data = yaml.safe_load(f)
 
