@@ -1,151 +1,106 @@
-from utils.menu import menu_with_redirect
-
 import streamlit as st
-import pandas as pd
-import numpy as np
 import openpyxl
-from openpyxl import load_workbook
-from openpyxl.styles import Border, Side
-from openpyxl.utils import get_column_letter
-from tempfile import NamedTemporaryFile
-from openpyxl.worksheet.views import SheetView
+from openpyxl.styles import PatternFill
+from io import BytesIO
+from utils.menu import menu_with_redirect
+from utils.langdetect import detect_language_of
+import time
 
-# Redirect to app.py if not logged in, otherwise show the navigation menu
-menu_with_redirect()
+# 全局常量
+TARGET_LANG = 'CHS'
 
-st.title("This page is available to all users")
-st.markdown(f"You are currently logged with the role of {st.session_state.role}.")
+def init_streamlit():
+    """初始化 Streamlit 界面"""
+    menu_with_redirect()
+    st.title("Excel 文件语言处理器")
+    st.markdown(f"您当前以 {st.session_state.role} 角色登录。")
 
+def is_not_number(text):
+    """检查文本是否不是数字"""
+    try:
+        float(text)
+        return False
+    except ValueError:
+        return True
 
-def copy_border(source_cell, target_cell):
-    if source_cell.border.left.style:
-        target_cell.border = Border(left=source_cell.border.left,
-                                    right=source_cell.border.right,
-                                    top=source_cell.border.top,
-                                    bottom=source_cell.border.bottom)
-    else:
-        target_cell.border = Border(left=Side(style=None),
-                                    right=Side(style=None),
-                                    top=Side(style=None),
-                                    bottom=Side(style=None))
+def process_excel(file, target_lang):
+    """处理Excel文件，标记非目标语言的单元格，并收集统计信息"""
+    start_time = time.time()
+    workbook = openpyxl.load_workbook(file)
+    progress_bar = st.progress(0)
+    total_sheets = len(workbook.sheetnames)
+    
+    st.write(f"Excel文件共有 {total_sheets} 个工作表")
+    
+    total_rows = 0
+    total_cells = 0
+    non_target_cells = 0
 
-def copy_sheet_format(source_sheet, target_sheet):
-    # Copy column widths
-    for i, column in enumerate(source_sheet.columns):
-        column_letter = get_column_letter(i + 1)
-        if column_letter in source_sheet.column_dimensions:
-            target_sheet.column_dimensions[column_letter].width = source_sheet.column_dimensions[column_letter].width
-
-    # Copy cell formats and merged cells
-    for row in source_sheet.rows:
-        for cell in row:
-            if isinstance(cell, openpyxl.cell.cell.MergedCell):
-                continue  # Skip merged cells
-            target_cell = target_sheet.cell(cell.row, cell.column)
-            target_cell.font = cell.font.copy()
-            copy_border(cell, target_cell)
-            target_cell.fill = cell.fill.copy()
-            target_cell.number_format = cell.number_format
-            target_cell.protection = cell.protection.copy()
-            target_cell.alignment = cell.alignment.copy()
-
-    # Copy merged cell ranges
-    for merged_range in source_sheet.merged_cells.ranges:
-        target_sheet.merge_cells(str(merged_range))
+    for sheet_index, sheet_name in enumerate(workbook.sheetnames):
+        sheet = workbook[sheet_name]
+        sheet_rows = sheet.max_row
+        sheet_cells = sheet.max_column * sheet_rows
+        total_rows += sheet_rows
+        total_cells += sheet_cells
         
-    # Copy Gridlines setting
-    if source_sheet.sheet_view:
-        if not target_sheet.sheet_view:
-            target_sheet.sheet_view = SheetView()
-        target_sheet.sheet_view.showGridLines = source_sheet.sheet_view.showGridLines
+        st.write(f"处理工作表: {sheet_name} (行数: {sheet_rows}, 单元格数: {sheet_cells})")
+        
+        for row_index, row in enumerate(sheet.iter_rows(), 1):
+            for cell in row:
+                if cell.data_type == 's' and is_not_number(cell.value):
+                    lang = detect_language_of(cell.value)
+                    if lang != target_lang:
+                        cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                        non_target_cells += 1
+            
+            # 更新进度条
+            progress = (sheet_index * sheet_rows + row_index) / (total_sheets * sheet_rows)
+            progress_bar.progress(progress)
+
+    end_time = time.time()
+    processing_time = end_time - start_time
+
+    buffer = BytesIO()
+    workbook.save(buffer)
+    
+    return buffer.getvalue(), {
+        "total_sheets": total_sheets,
+        "total_rows": total_rows,
+        "total_cells": total_cells,
+        "non_target_cells": non_target_cells,
+        "processing_time": processing_time
+    }
+
+def upload_file():
+    """处理文件上传"""
+    return st.file_uploader("选择一个Excel文件", type=["xlsx", "xls"])
 
 def main():
-    st.title("Excel 文件解析器（支持多工作表、编辑和保存，保留格式）")
-
-    # 文件上传
-    uploaded_file = st.file_uploader("选择一个Excel文件", type=["xlsx", "xls"])
-
+    init_streamlit()
+    
+    uploaded_file = upload_file()
+    
     if uploaded_file is not None:
-        # 显示上传的文件名
         st.write("文件名:", uploaded_file.name)
+        
+        if st.button("处理文件"):
+            with st.spinner('处理中...'):
+                processed_data, stats = process_excel(uploaded_file, TARGET_LANG)
+            
+            st.success('处理完成!')
+            st.write(f"统计信息:")
+            st.write(f"- 总工作表数: {stats['total_sheets']}")
+            st.write(f"- 总行数: {stats['total_rows']}")
+            st.write(f"- 总单元格数: {stats['total_cells']}")
+            st.write(f"- 非目标语言单元格数: {stats['non_target_cells']}")
+            st.write(f"- 处理时间: {stats['processing_time']:.2f} 秒")
+            
+            st.download_button(
+                label="下载处理后的Excel文件",
+                data=processed_data,
+                file_name=f"processed_{uploaded_file.name}",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
-        # 读取Excel文件中的所有工作表
-        xlsx = pd.ExcelFile(uploaded_file)
-        sheet_names = xlsx.sheet_names
-
-        # 为每个工作表创建一个选项卡
-        tabs = st.tabs(sheet_names)
-
-        # 创建一个字典来存储所有工作表的DataFrame
-        all_dfs = {}
-
-        # 遍历每个工作表
-        for i, sheet_name in enumerate(sheet_names):
-            with tabs[i]:
-                # 读取当前工作表，不使用第一行作为列名
-                df = pd.read_excel(uploaded_file, sheet_name=sheet_name, header=None)
-                all_dfs[sheet_name] = df
-
-                # 显示工作表名称
-                st.subheader(f"工作表: {sheet_name}")
-
-                # 使用编辑功能显示数据框
-                edited_df = st.data_editor(df)
-                all_dfs[sheet_name] = edited_df
-
-                # 显示基本统计信息
-                st.write("基本统计信息:")
-                st.write(edited_df.describe())
-
-        # 添加保存功能
-        new_filename = st.text_input("输入新的文件名（不包括扩展名）:", value=uploaded_file.name.split('.')[0])
-        if st.button("保存修改后的Excel"):
-            if new_filename:
-                # 创建一个临时文件
-                with NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp:
-                    # 复制原始文件以保留格式
-                    uploaded_file.seek(0)
-                    workbook = load_workbook(uploaded_file)
-                    
-                    # 更新每个工作表的数据，同时保留格式
-                    for sheet_name, df in all_dfs.items():
-                        if sheet_name in workbook.sheetnames:
-                            sheet = workbook[sheet_name]
-                            workbook.remove(sheet)
-                        new_sheet = workbook.create_sheet(title=sheet_name)
-                        
-                        # 处理 <NA> 值
-                        df = df.replace({pd.NA: np.nan})
-                        
-                        # 写入所有数据，包括第一行
-                        for r_idx, row in enumerate(df.itertuples(index=False), 1):
-                            for c_idx, value in enumerate(row, 1):
-                                if pd.isna(value):  # 处理 NaN 值
-                                    value = None
-                                new_sheet.cell(row=r_idx, column=c_idx, value=value)
-                        
-                        # 复制原始格式
-                        if sheet_name in xlsx.sheet_names:
-                            original_sheet = load_workbook(uploaded_file)[sheet_name]
-                            copy_sheet_format(original_sheet, new_sheet)
-                    
-                    # 保存修改后的工作簿
-                    workbook.save(tmp.name)
-                    
-                    # 读取临时文件的内容
-                    with open(tmp.name, "rb") as file:
-                        excel_data = file.read()
-                
-                # 提供下载按钮
-                st.download_button(
-                    label=f"下载修改后的Excel文件",
-                    data=excel_data,
-                    file_name=f"{new_filename}.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
-                st.success(f"文件已保存为 {new_filename}.xlsx")
-            else:
-                st.error("请输入有效的文件名")
-
-
-main()
+if __name__ == "__main__":
+    main()
