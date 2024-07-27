@@ -1,8 +1,11 @@
 import yaml
 import boto3
+import os
 
 comprehend = boto3.client('comprehend')
-with open('lang.yaml', 'r') as f:
+
+yaml_path = os.path.join(os.path.dirname(__file__), 'lang.yaml')
+with open(yaml_path, 'r') as f:
     lang_data = yaml.safe_load(f)
 
 def _detect_language_by_aws_comprehend(text):
