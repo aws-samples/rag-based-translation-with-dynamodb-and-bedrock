@@ -19,7 +19,7 @@ st.set_page_config(
 )
 
 # Global constant for target language
-TARGET_LANG = 'CHS'
+DEFAULT_TARGET_LANG = 'CHS'
 
 # Get available dictionaries, models, and supported language codes
 model_list = list_translate_models()
@@ -32,7 +32,6 @@ def init_streamlit():
     """
     menu_with_redirect()
     st.title("Excel File Language Processor")
-    st.markdown(f"You are logged in as {st.session_state.role}.")
 
 def is_not_number(text):
     """
@@ -50,19 +49,22 @@ def is_not_number(text):
     except ValueError:
         return True
 
-def process_excel(file, target_lang):
+def process_excel(file, target_lang, model_id, dict_id):
     """
     Process the Excel file, mark cells not in the target language, 
     and collect statistics.
 
     Args:
         file (UploadedFile): The uploaded Excel file.
-        target_lang (str): The target language code.
+        target_lang (str): The translate target language code.
+        model_id (str): Which model id you'd like to use
+        dict_id(str): The dictionary id
 
     Returns:
         bytes: The processed Excel file data.
         dict: A dictionary containing statistics about the file.
     """
+    st.write("Processing...")
     start_time = time.time()
     workbook = openpyxl.load_workbook(file)
     progress_bar = st.progress(0)
@@ -89,6 +91,18 @@ def process_excel(file, target_lang):
                     lang = detect_language_of(cell.value)
                     if lang != target_lang:
                         cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                        try:
+                            translation, term_mapping = translate_content(
+                                contents=[cell.value],
+                                source_lang=lang,
+                                target_lang=target_lang,
+                                dictionary_id=dict_id,
+                                model_id=model_id,
+                            )
+                            cell.value = translation.strip()
+                        except Exception as e:
+                            st.write(f"Error translating cell {cell.coordinate}: {e}")
+                            continue
                         non_target_cells += 1
             
             # Update progress bar
@@ -134,20 +148,19 @@ def main():
         # Selection for dictionary and model
         dictionary_name = st.selectbox(
             "Dictionary",
-            dictionaries,
-            index=dictionaries.index('anthropic.claude-3-haiku-20240307-v1:0') if 'anthropic.claude-3-haiku-20240307-v1:0' in dictionaries else 0
+            dictionaries
         )
         model_id = st.selectbox("Translation Model", model_list)
         target_lang = st.selectbox(
             "Target Language",
             supported_lang_codes,
-            index=supported_lang_codes.index(TARGET_LANG) if TARGET_LANG in supported_lang_codes else 0
+            index=supported_lang_codes.index(DEFAULT_TARGET_LANG) if DEFAULT_TARGET_LANG in supported_lang_codes else 0
         )
         
         # Process the file
-        if st.button("Process File"):
+        if st.button("Translate File", type="primary", use_container_width=True):
             with st.spinner('Processing...'):
-                processed_data, stats = process_excel(uploaded_file, TARGET_LANG)
+                processed_data, stats = process_excel(uploaded_file, target_lang, model_id, dictionary_name)
             
             # Display statistics
             st.success('Processing Complete!')

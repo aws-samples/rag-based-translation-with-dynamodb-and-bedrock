@@ -9,13 +9,13 @@ from utils.utils import (
 )
 
 # 配置 Streamlit 页面
-st.set_page_config(page_title="LLM Translate", page_icon="⚧", layout="wide")
+st.set_page_config(page_title="LLM Translate", page_icon="⚧")
 
 # 显示应用程序的菜单
 menu()
 
 # 添加应用标题
-st.title("LLM 翻译工具")
+st.title("LLM Translate Tool")
 
 # 获取可用的字典、模型和支持的语言代码列表
 model_list = list_translate_models()
