@@ -16,7 +16,6 @@ st.markdown(f"You are currently logged with the role of {st.session_state.role}.
 
 st.divider()
 
-# Initialize AWS client
 ssm = boto3.client('ssm')
 
 def get_parameters_by_path(path):
@@ -39,6 +38,7 @@ def update_parameter(name, value):
             Type='String',
             Overwrite=True
         )
+        st.success(f"Parameter {name} updated successfully!")
         return True
     except Exception as e:
         st.error(f"Error updating parameter: {str(e)}")
@@ -46,12 +46,7 @@ def update_parameter(name, value):
 
 def fetch_parameters():
     if st.session_state.path:
-        with st.spinner("Fetching parameters..."):
-            st.session_state.parameters = get_parameters_by_path(st.session_state.path)
-        if st.session_state.parameters:
-            st.success(f"Found {len(st.session_state.parameters)} parameters")
-        else:
-            st.warning("No parameters found for the given path.")
+        st.session_state.parameters = get_parameters_by_path(st.session_state.path)
         for param in st.session_state.parameters:
             param_key = f"param_{param['Name']}"
             if param_key not in st.session_state:
@@ -62,33 +57,22 @@ def fetch_parameters():
     else:
         st.warning("Please enter a valid path.")
 
-def toggle_edit(param):
-    param_key = f"param_{param['Name']}"
+def toggle_edit(param_name):
+    param_key = f"param_{param_name}"
     st.session_state[param_key]['editing'] = not st.session_state[param_key]['editing']
 
-def update_param_value(param):
-    param_key = f"param_{param['Name']}"
-    new_value = st.session_state[f"input_{param['Name']}"]
-    with st.spinner("Updating parameter..."):
-        if update_parameter(param['Name'], new_value):
-            st.session_state[param_key]['value'] = new_value
-            st.session_state[param_key]['editing'] = False
-            st.success(f"Parameter {param['Name']} updated successfully!")
-        else:
-            st.error(f"Failed to update parameter {param['Name']}")
+def update_param_value(param_name):
+    param_key = f"param_{param_name}"
+    new_value = st.session_state[f"input_{param_name}"]
+    if update_parameter(param_name, new_value):
+        st.session_state[param_key]['value'] = new_value
+        st.session_state[param_key]['editing'] = False
 
-def cancel_edit(param):
-    param_key = f"param_{param['Name']}"
+def cancel_edit(param_name):
+    param_key = f"param_{param_name}"
     st.session_state[param_key]['editing'] = False
 
-def calculate_text_area_height(text):
-    # Calculate height based on content length, with a minimum of 100 and maximum of 400
-    return min(max(100, len(text) // 2), 400)
-
-# st.set_page_config(page_title="AWS Parameter Store Manager", layout="wide")
-
 st.title("AWS Parameter Store Manager")
-st.write("Manage your AWS Parameter Store parameters with ease")
 
 # Initialize session state
 if 'parameters' not in st.session_state:
@@ -97,60 +81,30 @@ if 'path' not in st.session_state:
     st.session_state.path = ""
 
 # Input for parameter path
-st.session_state.path = st.text_input("Enter Parameter Store Path:", value=st.session_state.path, placeholder="/your/parameter/path")
-fetch_button = st.button("Fetch Parameters", on_click=fetch_parameters, use_container_width=True)
+st.session_state.path = st.text_input("Enter Parameter Store Path:", value=st.session_state.path)
+st.button("Fetch Parameters", on_click=fetch_parameters)
 
-# Main content area
-if st.session_state.parameters:
-    st.header("Parameters")
-    for param in st.session_state.parameters:
-        with st.expander(f"{param['Name']}", expanded=True):
-            param_key = f"param_{param['Name']}"
-            
-            if st.session_state[param_key]['editing']:
-                new_value = st.text_area(
-                    "Value",
-                    value=st.session_state[param_key]['value'],
-                    key=f"input_{param['Name']}",
-                    height=calculate_text_area_height(st.session_state[param_key]['value'])
-                )
-                col1, col2, col3 = st.columns([1, 1, 2])
-                with col1:
-                    if st.button("Update", key=f"update_{param['Name']}", use_container_width=True):
-                        update_param_value(param)
-                with col2:
-                    if st.button("Cancel", key=f"cancel_{param['Name']}", use_container_width=True):
-                        cancel_edit(param)
-            else:
-                st.text_area(
-                    "Value",
-                    value=st.session_state[param_key]['value'],
-                    key=f"display_{param['Name']}",
-                    disabled=True,
-                    height=calculate_text_area_height(st.session_state[param_key]['value'])
-                )
-                if st.button("Edit", key=f"edit_{param['Name']}", use_container_width=True):
-                    toggle_edit(param)
-else:
-    st.info("No parameters fetched yet. Enter a path and click 'Fetch Parameters' to begin.")
-
-# Footer
-st.markdown("---")
-st.markdown("Made with Streamlit")
-
-# Display session_state in real-time
-st.header("Session State")
-
-session_state_dict = {
-    'path': st.session_state.path,
-    'parameters': [
-        {
-            'Name': param['Name'], 
-            'Value': st.session_state[f"param_{param['Name']}"]['value'],
-            'Editing': st.session_state[f"param_{param['Name']}"]['editing']
-        } 
-        for param in st.session_state.parameters
-    ]
-}
-
-st.json(json.dumps(session_state_dict, indent=2))
+# Display parameters
+for param in st.session_state.parameters:
+    st.write(f"**{param['Name']}**")
+    param_key = f"param_{param['Name']}"
+    
+    if st.session_state[param_key]['editing']:
+        new_value = st.text_area(
+            "Value",
+            value=st.session_state[param_key]['value'],
+            key=f"input_{param['Name']}"
+        )
+        col1, col2 = st.columns([1, 1])
+        col1.button("Update", key=f"update_{param['Name']}", on_click=update_param_value, args=(param['Name'],))
+        col2.button("Cancel", key=f"cancel_{param['Name']}", on_click=cancel_edit, args=(param['Name'],))
+    else:
+        st.text_area(
+            "Value",
+            value=st.session_state[param_key]['value'],
+            key=f"display_{param['Name']}",
+            disabled=True
+        )
+        st.button("Edit", key=f"edit_{param['Name']}", on_click=toggle_edit, args=(param['Name'],))
+    
+    st.write("---")  # Separator between parameters
