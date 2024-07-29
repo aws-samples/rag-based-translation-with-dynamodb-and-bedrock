@@ -32,7 +32,7 @@ def init_streamlit():
     Initialize the Streamlit interface.
     """
     menu_with_redirect()
-    st.title("Excel File Language Processor")
+    st.title("Excel File Translate")
 
 def is_not_number(text):
     """
