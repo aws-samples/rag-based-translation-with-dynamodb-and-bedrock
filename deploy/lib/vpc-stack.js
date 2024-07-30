@@ -23,14 +23,14 @@ export class VpcStack extends NestedStack {
     //create a new vpc
     if (!existing_vpc_id || existing_vpc_id === 'optional')
     {
-        this.vpc = new ec2.Vpc(this, 'QAChat-workshop-Vpc', {
+        this.vpc = new ec2.Vpc(this, 'Rag-Based-Translate-VPC', {
           ipAddresses: ec2.IpAddresses.cidr('10.22.0.0/16'),
             maxAzs: 2,
           });
     }
     else{
       this.vpc = ec2.Vpc.fromLookup(
-        this, 'QAChat-workshop-Vpc',
+        this, 'Rag-Based-Translate-VPC',
         {
           vpcId:existing_vpc_id,
         }
