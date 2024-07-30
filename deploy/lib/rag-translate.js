@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import { join } from "path";
-export class DynamoDBRagStack extends Stack {
+export class RagTranslateStack extends Stack {
     /**
      *
      * @param {Construct} scope
