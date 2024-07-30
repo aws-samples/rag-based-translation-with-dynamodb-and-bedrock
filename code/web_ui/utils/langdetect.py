@@ -1,8 +1,12 @@
 import yaml
 import boto3
 import os
+from dotenv import load_dotenv
 
-comprehend = boto3.client('comprehend')
+load_dotenv()
+deploy_region = os.getenv('CDK_DEFAULT_REGION')
+
+comprehend = boto3.client('comprehend',region_name=deploy_region)
 
 yaml_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
 with open(yaml_path, 'r') as f:
