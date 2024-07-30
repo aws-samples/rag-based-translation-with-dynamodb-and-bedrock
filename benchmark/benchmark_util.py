@@ -774,6 +774,1122 @@ Other Details
 3. The criteria for submissions and other criteria may be supplemented in the case of disruptive actions to the community or unfair submissions. In this case, these additions to the criteria will be applicable to all entries submitted prior to the supplementation.
 
 4. The event organizer will bear the delivery costs of merchandise prizes. Prizes being shipped may be subject to customs duties in accordance with local policies. In such cases, the prize winners will be required to complete customs clearance procedures as well as cover corresponding taxes incurred.
+""", 'EN', 'CHS'),
+("""Dear Traveler,      
+
+The Genshin Impact Version 4.6 <span class="notranslate">"Two Worlds Aflame, the Crimson Night Fades"</span> update is coming soon. Registration for the Twitch Livestream Event has started.        
+
+        
+
+Event Timeline      
+Registration Period: April 19 at 19:00:00 – April 26 at 15:00:00 (UTC+8)        
+
+Streaming Period: April 24 after the version update to May 14, 23:59:59 (UTC+8)     
+
+Note: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.        
+
+Reward Calculation: May 15 – May 30     
+
+*Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the reward calculation period has concluded.
+
+*Cash rewards will be delivered to valid participants' accounts no later than 45 business days after the reward calculation period has concluded.       
+
+Email Notification: Participants will receive a welcome email with event details from April 26 – April 30. Reward notification emails will be sent within 30 business days after the reward calculation period ends, to the accounts of all participants. Please pay attention to these messages.       
+
+        
+
+Event Details       
+1. Participants who meet the following conditions will be able to obtain the corresponding rewards:     
+
+a. Sign up for the Version 4.6 Twitch Livestream Event      
+
+b. Link an Email to a HoYoverse account     
+
+c. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     
+
+d. During the event, participants must stream in the Genshin Impact category on Twitch for a total duration of 6 hours or more in order to qualify for the "Start Streaming" and "Aim for the Leaderboard" rewards.     
+
+2. Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.       
+
+3. Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the event has concluded.     
+
+4. Any form of cheating or negligence within the community, event, or platform will not be tolerated and can result in indefinite suspension from future or related events.     
+
+a. Example of cheating: Streamer A logs into Genshin Impact and is AFK for 24 hours.        
+
+b. Example of negligence: Streaming games/content that are not related to Genshin Impact in the Genshin Impact category in an attempt to get Primogems.     
+
+5. Disclosing or discussing the content of an upcoming release will not be tolerated and can result in indefinite suspension from future or related events.     
+
+        
+
+Register Now
+        
+
+Event Notice        
+1. Registration in this version of the event is required in order to participate in the event.      
+
+a. Each registration is independent and applies only to the event of a specific version. Registrations made for a previous version cannot be used for the event of the next version.        
+
+b. HoYoverse accounts must be linked to an email for contact purposes.      
+
+c. Participants are responsible for ensuring the accuracy and validity of their information. The Genshin Impact team will not be responsible for any mistakes and related disputes arising from participants.       
+
+2. The Genshin Impact team reserves the right to determine the eligibility of participants before, during, and after the event.     
+
+a. Rewards will not be awarded if the event registration is not completed.      
+
+b. Those who do not meet the minimum requirements will not be eligible for rewards.     
+
+c. Participants suspected of unfair advantage or engaging in forms of abuse will be immediately disqualified.       
+
+d. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     
+
+3. The Genshin Impact team is responsible for determining participants' eligibility in receiving prizes.        
+
+*Submission of multimedia files/videos will not be required after the event concludes.      
+
+4. By participating in this event and submitting information, participants agree to official access and disclosure of participant information for the purpose of administration and prize distribution.     
+
+5. By participating in this event, you agree to:        
+
+a. The terms and conditions (https://hoyo.link/cmTiFBAL)        
+
+b. Genshin Impact's Privacy Policy (https://genshin.hoyoverse.com/en/company/privacy)       
+
+c. Twitch's Privacy Policy (https://www.twitch.tv/p/en/legal/privacy-notice)        
+
+
+
+Watching Rewards        
+
+Watch a certain number of hours of streams during the event in the Genshin Impact category on Twitch to win the following rewards!      
+
+Rewards can only be collected after linking a HoYoverse account with a Twitch account, enabling Twitch Drops, and watching a certain number of hours of eligible Genshin Impact streams. Each type of reward is limited to 300,000 in quantity.     
+
+*Note: Twitch Drops is separate from the Twitch Livestream Event and thus Drops rewards can be claimed immediately after achieving the listed criteria from the [Registration] website.     
+
+*More information about Twitch Drops:https://help.twitch.tv/s/article/mission-based-drops       
+
+*Each tier of Twitch Drops rewards is limited to 300,000. First come, first served!     
+
+        
+
+Streaming Rewards       
+*Twitch Streamer Recruitment Events Rewards will be delivered no later than 30 business days after the event has concluded.     
+
+
+Streaming Duration Event Details        
+When participants reach a certain number of stream hours during the event, they will get a chance to receive the corresponding rewards.     
+
+Note: "6 hours" is defined as streaming at least 6 hours in Twitch's Genshin Impact category throughout the event.      
+
+For further clarification: Reaching 6 hours equates to Primogems ×200. Reaching 9 hours equates to Primogems ×450. Reaching 12 hours equates to Primogems ×800.
+
+Reaching 30 hours equates to Primogems ×1,600.      
+
+*The reward is limited to 19,000 sets for 6 hours of live streams.
+
+*The reward is limited to 13,000 sets for 9 hours of live streams.
+
+*The reward is limited to 11,000 sets for 12 hours of live streams.
+
+*The reward is limited to 3,000 sets for 30 hours of live streams.
+
+*If the number of rewards reaches its limit, winners will be selected based on the average number of concurrent viewers.        
+
+        
+
+Consecutive Check-Ins Event Details     
+During the Live Streaming Phase, participants will gain a milestone if their stream time within an "Event Week" reaches 3 hours.        
+
+Every "Event Week" starts on Wednesday at 00:00:00 (UTC+8) and ends on the following Tuesday at 23:59:59 (UTC+8). See below for details (*Times provided are UTC+8).        
+
+*Week 1: April 24 after the version update – April 30 at 23:59:59       
+
+*Week 2: May 1 at 00:00:00 – May 7 at 23:59:59      
+
+*Week 3: May 8 at 00:00:00 – May 14 at 23:59:59     
+
+Participants will obtain the milestone(s) once they meet the event requirements.        
+
+Participants can obtain only one milestone during each "Event Week" and a total of three milestones during the entire event duration.       
+
+*The reward is limited to 15,000 sets for 1 week of reaching the milestone in the Consecutive Check-In milestone event.
+
+*The reward is limited to 12,000 sets for 2 weeks of reaching the milestone in the Consecutive Check-In milestone event.
+
+*The reward is limited to 10,000 sets for 3 weeks of reaching the milestone in the Consecutive Check-In milestone event.
+
+*If the number of rewards reaches its limit, winners will be selected based on the average number of concurrent viewers (CCV).      
+
+*"Streaming Duration Challenge" and "Consecutive Check-Ins" rewards can be obtained together with "Aim for the Leaderboard" rewards.        
+
+
+
+
+*"Most Hours Watched Leaderboard (HW)" and "Average Concurrent Viewers Leaderboard (CCV)" rewards can be obtained at the same time. The results of the two rankings are counted separately.     
+
+Note: Channel's Rank performance will be measured within the event's duration.      
+
+*Hours Watched Leaderboard (HW) defines the total number of hours watched of Genshin Impact category live streams broadcast by participants throughout the event.       
+
+*Average Concurrent Viewers Leaderboard (Avg. CCV) defines the average number of concurrent viewers of Genshin Impact category live streams broadcast by participants throughout the event.     
+
+*Cash rewards will be issued via PayPal transfer. After the event ends, please be sure to check the official winner notification email that participants can use to submit relevant information to obtain prizes.       
+
+        
+
+Event FAQ       
+Q1: Is registration required to participate?        
+
+A1: Yes. Registration is required for this event. (Latest Updates on Apr. 30)   
+
+        
+
+Q2: How do I link an email address with my HoYoverse account?       
+
+A2: Go tohttps://account.hoyoverse.com and log into your HoYoverse account. Confirm and verify your email address in the "Account Security Settings" submenu.       
+
+        
+
+Q3: Will multimedia files/video submissions be required after the event ends?       
+
+A3: No. Multimedia files/video submissions are not required.        
+
+        
+
+Q4: Can I stream immediately after registration?        
+
+A4: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.      
+
+*If participants start streaming before the specified time, the stream data will not be counted.        
+
+        
+
+Q5: How can I redeem for cash rewards?      
+
+A5: Participants will receive a notification email with their event rankings after the event ends. Participants can redeem for cash rewards by providing information required in the email.     
+
+        
+
+Q6: How will I be contacted?        
+
+A6: You will be contacted via the email address indicated during your registration. We recommend that you check that your inbox allows you to receive emails from @hoyoverse.com to prevent messages from appearing in your junk mail.      
+
+        
+
+Q7: Why haven't I received any emails related to the event?     
+
+A7: (a) Please make sure your email address is linked to your HoYoverse account.        
+
+(b) Make sure you have not unsubscribed from official Genshin Impact emails. If you have unsubscribed, please contact Customer Service.     
+
+(c) Check that the e-mails have not arrived in your spam or junk mail.      
+
+(d) Ensure that the email address you use is the one linked to your HoYoverse account.      
+
+        
+
+Q8: If my region is not on the list of eligible regions for this event, is it possible that I will not receive any rewards?     
+
+A8: If your region is not in the list of eligible regions for this event, you will not be able to obtain the corresponding rewards. For details on eligible regions, please refer to the relevant clauses via this link: https://hoyo.link/cmTiFBAL     
+
+        
+
+Q9: Can I get the cash prizes if I don't have a PayPal account?     
+
+A9: Unfortunately, this is not possible. This event only uses PayPal as a means of money transfer. We recommend that you open a PayPal account in advance.      
+
+        
+
+Q10: If my channel is closed, will this affect my eligibility for the event?        
+
+A10: Yes. If your channel is not set to public (closed or private) during the event, your event eligibility will be affected.       
+
+        
+
+Q11: Can two or more different UIDs share a Twitch channel?     
+
+A11: No. If multiple different UIDs share a Twitch channel, only the last UID registered for the event will be eligible for rewards.        
+
+        
+
+Q12: Is there a quick guide to streaming on Twitch?     
+
+A12: Yes. Please refer to this website: https://www.twitch.tv/creatorcamp/en/setting-up-your-stream/quick-start-guide-to-streaming-on-twitch/       
+
+        
+
+Q13: How do I choose the Genshin Impact category on Twitch for my stream?       
+
+A13: PC - Once logged into your account, go to the "Creator Dashboard" by clicking on your profile picture. Then select "Stream Manager." On the right, you will find the "Quick Actions" tab where you can select "Edit Stream Info." A window will open where you can make the necessary changes to your stream. Select "Genshin Impact" in the "Category" section and click "Done" to save!      
+
+Link: https://dashboard.twitch.tv/stream-manager        
+
+More information: https://help.twitch.tv/s/article/creator-dashboard        
+
+
+
+
+Mobile: Through the Twitch App, select the "Stream Games" button, then search and select the Game title "Genshin Impact." Next, complete the settings for your live stream. 
+
+    
+
+Click here for more information on the event:https://hoyo.link/7fTiFBAL 
+""", 'EN', 'CHS'),
+    (""""Two Worlds Aflame, the Crimson Night Fades" Version 4.6 Strategy Guides Contest
+
+Hello, Traveler!
+
+Version 4.6 "Two Worlds Aflame, the Crimson Night Fades" is now online. Come unlock new adventures today! Also, the Strategy Guides Contest for the new Version has begun today~
+
+Guide Themes
+Theme 1: Character Guides
+
+Content related to characters such as Character Skill explanations, how to build and ascend them, how to get the hang of their play style, party composition recommendations, etc.
+
+Corresponding Topics: #Character Guides#, #Arlecchino#, #Lyney#, #Wanderer#, #Baizhu#, etc.
+
+Theme 2: Quests & Exploration
+
+Detailed walkthroughs of World Quests, Story Quests, and other quests, as well as guides about unlocking achievements, open-world exploration, puzzle-solving explanations, etc.
+
+Corresponding Topics: #Quest Guides#, #Exploration Puzzles#, #Achievements#, #Easter Eggs#, etc.
+
+Theme 3: Event Details
+
+Guides related to the Version 4.6 events.
+
+Corresponding Topics: #Iridescent Arataki Rockin' for Life Tour de Force of Awesomeness#, #Windtrace: Seekers and Strategy#, #Specially-Shaped Saurian Search#, #Vibro-Crystal Applications#, etc.
+
+Theme 4: Other Guides
+
+Spiral Abyss Challenge sharing, tricks for defeating monsters/bosses, Weapon and Artifact building advice, ingredient and book gathering tips, Genius Invokation TCG all-series card reviews and Heated Battle Mode guides, etc.
+
+Corresponding Topics: <span class="notranslate">#Spiral Abyss#</span>, <span class="notranslate">#Bounty Handbook#</span>, <span class="notranslate">#Genius Invokation TCG#</span>, #Other Guides#, etc.
+
+Note: The details for the four guide themes given above are provided for Travelers to refer to when creating their guides. All types of guide content will stand a chance of winning rewards. In this Strategy Guides Contest, guides that are related to the new Version content (including the new character and events) will be more popular~
+
+Event Duration
+Submission Period: April 24, 2024 – June 2, 2024 23:59 (UTC+8)
+
+Judging Period: June 3, 2024 – June 18, 2024
+
+Results Announcement: June 19, 2024
+
+Primogem rewards will be issued within 15 business days of the results being announced.
+
+The estimated time for merchandise rewards delivery will be within 60 business days of the results being announced.
+
+Event Rewards
+Gold (5 Winners)
+
+Primogems ×6,000·+ Mona Figure (Mirror Reflection of Doom) + Kamisato Ayaka Impression Apparel Series Umbrella
+
+Silver (10 Winners)
+
+Primogems ×2,000·+ FES 2023 Series Finger Puppet Keychain (Full Set) + Lyney Grin-Malkin Cat Moving Toy
+
+Bronze (20 Winners)
+
+Primogems ×1,000·+ Nilou Laptop Bag + "Jade Moon Upon a Sea of Clouds" CD Set + "Fleeting Colors in Flight" CD
+
+Participation Prize
+
+HoYoLAB - Genshin Impact Strategy Guides Contest-Exclusive Avatar Frame (30 days)
+
+Judging Rules
+1. The evaluation will be carried out by the guides judging team.
+
+2. The official organizer will assess the strategy guides that meet the criteria on the basis of various factors, such as their timely effectiveness, completeness, content accuracy, clarity of explanation, applicability, composition, and aesthetics of the layout. Therefore, it is possible that not all awards will be given out.
+
+3. If a prize-winning entry is disqualified due to violation of contest rules, the official team will not select a substitute winner.
+
+Works Criteria
+I. Submission Criteria
+
+Entries must be posted through the Event Details page during the submission period. Entries posted after the deadline or posted anywhere other than on the Event Details page will not be considered.
+
+II. Content Criteria
+
+1. The guide should be rich in content and contain various images. They must include at least 5 images.
+
+2. The main content of the submission must match its title. The content should be laid out in a clear and logical manner, neatly structured, and should not contain any major factual errors. Any form of copying or plagiarism is prohibited.
+
+3. The main text must contain specific guide-related content. Guide Collections that simply redirect to other guides (for example, collections that only contain links, etc.) will not be considered eligible.
+
+4. Entries may contain GIFs or videos to make the guide more interesting. Submissions with quality GIFs and videos may earn bonus points!
+
+5. If a video that is longer than 3 minutes and contains voice or text commentary is inserted in the post, the requirement of at least 5 images for a post is no longer applicable.
+
+6. The content of the video must be original and its description on YouTube must indicate "This video was made for the HoYoLAB Strategy Guides Contest, here is the link of the post: ...". Please include the link to your post in the video description, otherwise the video will be deemed as misappropriated work.
+
+III. Other Criteria
+
+1. Your guide must not contain fan art created by a third party. Such publications will be deleted. You may only use official images, screenshots from the game, or original illustrations in your guide.
+
+2. Any misappropriation of another person's work is strictly prohibited. Posts that have been reported and proven to contain plagiarized or copied content will be removed immediately. Users who have violated the rules will be permanently banned from participating in future community events.
+
+3. Entries containing content that violates the rules of the community will be handled in accordance with the Community Rules.
+
+Event Guidelines
+1. Traveler, please pay attention to HoYoLAB's System Messages, as information of merchandise prize-winners will be sent out via such messages. We ask prize-winners to provide their shipping address according to the prompts stated in the system message. Prize-winners who have not provided their address within the specified time frame will be deemed to have voluntarily forfeited their merchandise prizes.
+
+2. Please go to My Information > Information Management > Genshin Impact in HoYoLAB to fill in your Genshin Impact UID ahead of time. If Primogem-winning Travelers have not filled in their UID or filled in the incorrect UID after the list of winners is announced, they will be deemed to have forfeited their Primogems reward.
+
+Other Details
+1. By participating in this event, users grant the organizer the right to distribute the content of their strategy guide online or offline. The Genshin Impact team may publish some outstanding works on HoYoLAB from time to time, adding them to the featured posts and recommendations on the home page. Featured or recommended works are not related to event prizes. The issuance of rewards is based on the final evaluation results. The content creators retain the right to include their names in their guides.
+
+2. Each participant can submit multiple strategy guides, but only one prize will be awarded per UID. In the event that the same strategy guide wins more than one prize, only the highest prize will be awarded.
+
+3. The criteria for submissions and other criteria may be supplemented in the case of disruptive actions to the community or unfair submissions. In this case, these additions to the criteria will be applicable to all entries submitted prior to the supplementation.
+
+4. The event organizer will bear the delivery costs of merchandise prizes. Prizes being shipped may be subject to customs duties in accordance with local policies. In such cases, the prize winners will be required to complete customs clearance procedures as well as cover corresponding taxes incurred.
+""", 'EN', 'CHS'),
+("""Dear Traveler,      
+
+The Genshin Impact Version 4.6 <span class="notranslate">"Two Worlds Aflame, the Crimson Night Fades"</span> update is coming soon. Registration for the Twitch Livestream Event has started.        
+
+        
+
+Event Timeline      
+Registration Period: April 19 at 19:00:00 – April 26 at 15:00:00 (UTC+8)        
+
+Streaming Period: April 24 after the version update to May 14, 23:59:59 (UTC+8)     
+
+Note: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.        
+
+Reward Calculation: May 15 – May 30     
+
+*Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the reward calculation period has concluded.
+
+*Cash rewards will be delivered to valid participants' accounts no later than 45 business days after the reward calculation period has concluded.       
+
+Email Notification: Participants will receive a welcome email with event details from April 26 – April 30. Reward notification emails will be sent within 30 business days after the reward calculation period ends, to the accounts of all participants. Please pay attention to these messages.       
+
+        
+
+Event Details       
+1. Participants who meet the following conditions will be able to obtain the corresponding rewards:     
+
+a. Sign up for the Version 4.6 Twitch Livestream Event      
+
+b. Link an Email to a HoYoverse account     
+
+c. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     
+
+d. During the event, participants must stream in the Genshin Impact category on Twitch for a total duration of 6 hours or more in order to qualify for the "Start Streaming" and "Aim for the Leaderboard" rewards.     
+
+2. Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.       
+
+3. Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the event has concluded.     
+
+4. Any form of cheating or negligence within the community, event, or platform will not be tolerated and can result in indefinite suspension from future or related events.     
+
+a. Example of cheating: Streamer A logs into Genshin Impact and is AFK for 24 hours.        
+
+b. Example of negligence: Streaming games/content that are not related to Genshin Impact in the Genshin Impact category in an attempt to get Primogems.     
+
+5. Disclosing or discussing the content of an upcoming release will not be tolerated and can result in indefinite suspension from future or related events.     
+
+        
+
+Register Now
+        
+
+Event Notice        
+1. Registration in this version of the event is required in order to participate in the event.      
+
+a. Each registration is independent and applies only to the event of a specific version. Registrations made for a previous version cannot be used for the event of the next version.        
+
+b. HoYoverse accounts must be linked to an email for contact purposes.      
+
+c. Participants are responsible for ensuring the accuracy and validity of their information. The Genshin Impact team will not be responsible for any mistakes and related disputes arising from participants.       
+
+2. The Genshin Impact team reserves the right to determine the eligibility of participants before, during, and after the event.     
+
+a. Rewards will not be awarded if the event registration is not completed.      
+
+b. Those who do not meet the minimum requirements will not be eligible for rewards.     
+
+c. Participants suspected of unfair advantage or engaging in forms of abuse will be immediately disqualified.       
+
+d. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     
+
+3. The Genshin Impact team is responsible for determining participants' eligibility in receiving prizes.        
+
+*Submission of multimedia files/videos will not be required after the event concludes.      
+
+4. By participating in this event and submitting information, participants agree to official access and disclosure of participant information for the purpose of administration and prize distribution.     
+
+5. By participating in this event, you agree to:        
+
+a. The terms and conditions (https://hoyo.link/cmTiFBAL)        
+
+b. Genshin Impact's Privacy Policy (https://genshin.hoyoverse.com/en/company/privacy)       
+
+c. Twitch's Privacy Policy (https://www.twitch.tv/p/en/legal/privacy-notice)        
+
+
+
+Watching Rewards        
+
+Watch a certain number of hours of streams during the event in the Genshin Impact category on Twitch to win the following rewards!      
+
+Rewards can only be collected after linking a HoYoverse account with a Twitch account, enabling Twitch Drops, and watching a certain number of hours of eligible Genshin Impact streams. Each type of reward is limited to 300,000 in quantity.     
+
+*Note: Twitch Drops is separate from the Twitch Livestream Event and thus Drops rewards can be claimed immediately after achieving the listed criteria from the [Registration] website.     
+
+*More information about Twitch Drops:https://help.twitch.tv/s/article/mission-based-drops       
+
+*Each tier of Twitch Drops rewards is limited to 300,000. First come, first served!     
+
+        
+
+Streaming Rewards       
+*Twitch Streamer Recruitment Events Rewards will be delivered no later than 30 business days after the event has concluded.     
+
+
+Streaming Duration Event Details        
+When participants reach a certain number of stream hours during the event, they will get a chance to receive the corresponding rewards.     
+
+Note: "6 hours" is defined as streaming at least 6 hours in Twitch's Genshin Impact category throughout the event.      
+
+For further clarification: Reaching 6 hours equates to Primogems ×200. Reaching 9 hours equates to Primogems ×450. Reaching 12 hours equates to Primogems ×800.
+
+Reaching 30 hours equates to Primogems ×1,600.      
+
+*The reward is limited to 19,000 sets for 6 hours of live streams.
+
+*The reward is limited to 13,000 sets for 9 hours of live streams.
+
+*The reward is limited to 11,000 sets for 12 hours of live streams.
+
+*The reward is limited to 3,000 sets for 30 hours of live streams.
+
+*If the number of rewards reaches its limit, winners will be selected based on the average number of concurrent viewers.        
+
+        
+
+Consecutive Check-Ins Event Details     
+During the Live Streaming Phase, participants will gain a milestone if their stream time within an "Event Week" reaches 3 hours.        
+
+Every "Event Week" starts on Wednesday at 00:00:00 (UTC+8) and ends on the following Tuesday at 23:59:59 (UTC+8). See below for details (*Times provided are UTC+8).        
+
+*Week 1: April 24 after the version update – April 30 at 23:59:59       
+
+*Week 2: May 1 at 00:00:00 – May 7 at 23:59:59      
+
+*Week 3: May 8 at 00:00:00 – May 14 at 23:59:59     
+
+Participants will obtain the milestone(s) once they meet the event requirements.        
+
+Participants can obtain only one milestone during each "Event Week" and a total of three milestones during the entire event duration.       
+
+*The reward is limited to 15,000 sets for 1 week of reaching the milestone in the Consecutive Check-In milestone event.
+
+*The reward is limited to 12,000 sets for 2 weeks of reaching the milestone in the Consecutive Check-In milestone event.
+
+*The reward is limited to 10,000 sets for 3 weeks of reaching the milestone in the Consecutive Check-In milestone event.
+
+*If the number of rewards reaches its limit, winners will be selected based on the average number of concurrent viewers (CCV).      
+
+*"Streaming Duration Challenge" and "Consecutive Check-Ins" rewards can be obtained together with "Aim for the Leaderboard" rewards.        
+
+
+
+
+*"Most Hours Watched Leaderboard (HW)" and "Average Concurrent Viewers Leaderboard (CCV)" rewards can be obtained at the same time. The results of the two rankings are counted separately.     
+
+Note: Channel's Rank performance will be measured within the event's duration.      
+
+*Hours Watched Leaderboard (HW) defines the total number of hours watched of Genshin Impact category live streams broadcast by participants throughout the event.       
+
+*Average Concurrent Viewers Leaderboard (Avg. CCV) defines the average number of concurrent viewers of Genshin Impact category live streams broadcast by participants throughout the event.     
+
+*Cash rewards will be issued via PayPal transfer. After the event ends, please be sure to check the official winner notification email that participants can use to submit relevant information to obtain prizes.       
+
+        
+
+Event FAQ       
+Q1: Is registration required to participate?        
+
+A1: Yes. Registration is required for this event. (Latest Updates on Apr. 30)   
+
+        
+
+Q2: How do I link an email address with my HoYoverse account?       
+
+A2: Go tohttps://account.hoyoverse.com and log into your HoYoverse account. Confirm and verify your email address in the "Account Security Settings" submenu.       
+
+        
+
+Q3: Will multimedia files/video submissions be required after the event ends?       
+
+A3: No. Multimedia files/video submissions are not required.        
+
+        
+
+Q4: Can I stream immediately after registration?        
+
+A4: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.      
+
+*If participants start streaming before the specified time, the stream data will not be counted.        
+
+        
+
+Q5: How can I redeem for cash rewards?      
+
+A5: Participants will receive a notification email with their event rankings after the event ends. Participants can redeem for cash rewards by providing information required in the email.     
+
+        
+
+Q6: How will I be contacted?        
+
+A6: You will be contacted via the email address indicated during your registration. We recommend that you check that your inbox allows you to receive emails from @hoyoverse.com to prevent messages from appearing in your junk mail.      
+
+        
+
+Q7: Why haven't I received any emails related to the event?     
+
+A7: (a) Please make sure your email address is linked to your HoYoverse account.        
+
+(b) Make sure you have not unsubscribed from official Genshin Impact emails. If you have unsubscribed, please contact Customer Service.     
+
+(c) Check that the e-mails have not arrived in your spam or junk mail.      
+
+(d) Ensure that the email address you use is the one linked to your HoYoverse account.      
+
+        
+
+Q8: If my region is not on the list of eligible regions for this event, is it possible that I will not receive any rewards?     
+
+A8: If your region is not in the list of eligible regions for this event, you will not be able to obtain the corresponding rewards. For details on eligible regions, please refer to the relevant clauses via this link: https://hoyo.link/cmTiFBAL     
+
+        
+
+Q9: Can I get the cash prizes if I don't have a PayPal account?     
+
+A9: Unfortunately, this is not possible. This event only uses PayPal as a means of money transfer. We recommend that you open a PayPal account in advance.      
+
+        
+
+Q10: If my channel is closed, will this affect my eligibility for the event?        
+
+A10: Yes. If your channel is not set to public (closed or private) during the event, your event eligibility will be affected.       
+
+        
+
+Q11: Can two or more different UIDs share a Twitch channel?     
+
+A11: No. If multiple different UIDs share a Twitch channel, only the last UID registered for the event will be eligible for rewards.        
+
+        
+
+Q12: Is there a quick guide to streaming on Twitch?     
+
+A12: Yes. Please refer to this website: https://www.twitch.tv/creatorcamp/en/setting-up-your-stream/quick-start-guide-to-streaming-on-twitch/       
+
+        
+
+Q13: How do I choose the Genshin Impact category on Twitch for my stream?       
+
+A13: PC - Once logged into your account, go to the "Creator Dashboard" by clicking on your profile picture. Then select "Stream Manager." On the right, you will find the "Quick Actions" tab where you can select "Edit Stream Info." A window will open where you can make the necessary changes to your stream. Select "Genshin Impact" in the "Category" section and click "Done" to save!      
+
+Link: https://dashboard.twitch.tv/stream-manager        
+
+More information: https://help.twitch.tv/s/article/creator-dashboard        
+
+
+
+
+Mobile: Through the Twitch App, select the "Stream Games" button, then search and select the Game title "Genshin Impact." Next, complete the settings for your live stream. 
+
+    
+
+Click here for more information on the event:https://hoyo.link/7fTiFBAL 
+""", 'EN', 'CHS'),
+    (""""Two Worlds Aflame, the Crimson Night Fades" Version 4.6 Strategy Guides Contest
+
+Hello, Traveler!
+
+Version 4.6 "Two Worlds Aflame, the Crimson Night Fades" is now online. Come unlock new adventures today! Also, the Strategy Guides Contest for the new Version has begun today~
+
+Guide Themes
+Theme 1: Character Guides
+
+Content related to characters such as Character Skill explanations, how to build and ascend them, how to get the hang of their play style, party composition recommendations, etc.
+
+Corresponding Topics: #Character Guides#, #Arlecchino#, #Lyney#, #Wanderer#, #Baizhu#, etc.
+
+Theme 2: Quests & Exploration
+
+Detailed walkthroughs of World Quests, Story Quests, and other quests, as well as guides about unlocking achievements, open-world exploration, puzzle-solving explanations, etc.
+
+Corresponding Topics: #Quest Guides#, #Exploration Puzzles#, #Achievements#, #Easter Eggs#, etc.
+
+Theme 3: Event Details
+
+Guides related to the Version 4.6 events.
+
+Corresponding Topics: #Iridescent Arataki Rockin' for Life Tour de Force of Awesomeness#, #Windtrace: Seekers and Strategy#, #Specially-Shaped Saurian Search#, #Vibro-Crystal Applications#, etc.
+
+Theme 4: Other Guides
+
+Spiral Abyss Challenge sharing, tricks for defeating monsters/bosses, Weapon and Artifact building advice, ingredient and book gathering tips, Genius Invokation TCG all-series card reviews and Heated Battle Mode guides, etc.
+
+Corresponding Topics: <span class="notranslate">#Spiral Abyss#</span>, <span class="notranslate">#Bounty Handbook#</span>, <span class="notranslate">#Genius Invokation TCG#</span>, #Other Guides#, etc.
+
+Note: The details for the four guide themes given above are provided for Travelers to refer to when creating their guides. All types of guide content will stand a chance of winning rewards. In this Strategy Guides Contest, guides that are related to the new Version content (including the new character and events) will be more popular~
+
+Event Duration
+Submission Period: April 24, 2024 – June 2, 2024 23:59 (UTC+8)
+
+Judging Period: June 3, 2024 – June 18, 2024
+
+Results Announcement: June 19, 2024
+
+Primogem rewards will be issued within 15 business days of the results being announced.
+
+The estimated time for merchandise rewards delivery will be within 60 business days of the results being announced.
+
+Event Rewards
+Gold (5 Winners)
+
+Primogems ×6,000·+ Mona Figure (Mirror Reflection of Doom) + Kamisato Ayaka Impression Apparel Series Umbrella
+
+Silver (10 Winners)
+
+Primogems ×2,000·+ FES 2023 Series Finger Puppet Keychain (Full Set) + Lyney Grin-Malkin Cat Moving Toy
+
+Bronze (20 Winners)
+
+Primogems ×1,000·+ Nilou Laptop Bag + "Jade Moon Upon a Sea of Clouds" CD Set + "Fleeting Colors in Flight" CD
+
+Participation Prize
+
+HoYoLAB - Genshin Impact Strategy Guides Contest-Exclusive Avatar Frame (30 days)
+
+Judging Rules
+1. The evaluation will be carried out by the guides judging team.
+
+2. The official organizer will assess the strategy guides that meet the criteria on the basis of various factors, such as their timely effectiveness, completeness, content accuracy, clarity of explanation, applicability, composition, and aesthetics of the layout. Therefore, it is possible that not all awards will be given out.
+
+3. If a prize-winning entry is disqualified due to violation of contest rules, the official team will not select a substitute winner.
+
+Works Criteria
+I. Submission Criteria
+
+Entries must be posted through the Event Details page during the submission period. Entries posted after the deadline or posted anywhere other than on the Event Details page will not be considered.
+
+II. Content Criteria
+
+1. The guide should be rich in content and contain various images. They must include at least 5 images.
+
+2. The main content of the submission must match its title. The content should be laid out in a clear and logical manner, neatly structured, and should not contain any major factual errors. Any form of copying or plagiarism is prohibited.
+
+3. The main text must contain specific guide-related content. Guide Collections that simply redirect to other guides (for example, collections that only contain links, etc.) will not be considered eligible.
+
+4. Entries may contain GIFs or videos to make the guide more interesting. Submissions with quality GIFs and videos may earn bonus points!
+
+5. If a video that is longer than 3 minutes and contains voice or text commentary is inserted in the post, the requirement of at least 5 images for a post is no longer applicable.
+
+6. The content of the video must be original and its description on YouTube must indicate "This video was made for the HoYoLAB Strategy Guides Contest, here is the link of the post: ...". Please include the link to your post in the video description, otherwise the video will be deemed as misappropriated work.
+
+III. Other Criteria
+
+1. Your guide must not contain fan art created by a third party. Such publications will be deleted. You may only use official images, screenshots from the game, or original illustrations in your guide.
+
+2. Any misappropriation of another person's work is strictly prohibited. Posts that have been reported and proven to contain plagiarized or copied content will be removed immediately. Users who have violated the rules will be permanently banned from participating in future community events.
+
+3. Entries containing content that violates the rules of the community will be handled in accordance with the Community Rules.
+
+Event Guidelines
+1. Traveler, please pay attention to HoYoLAB's System Messages, as information of merchandise prize-winners will be sent out via such messages. We ask prize-winners to provide their shipping address according to the prompts stated in the system message. Prize-winners who have not provided their address within the specified time frame will be deemed to have voluntarily forfeited their merchandise prizes.
+
+2. Please go to My Information > Information Management > Genshin Impact in HoYoLAB to fill in your Genshin Impact UID ahead of time. If Primogem-winning Travelers have not filled in their UID or filled in the incorrect UID after the list of winners is announced, they will be deemed to have forfeited their Primogems reward.
+
+Other Details
+1. By participating in this event, users grant the organizer the right to distribute the content of their strategy guide online or offline. The Genshin Impact team may publish some outstanding works on HoYoLAB from time to time, adding them to the featured posts and recommendations on the home page. Featured or recommended works are not related to event prizes. The issuance of rewards is based on the final evaluation results. The content creators retain the right to include their names in their guides.
+
+2. Each participant can submit multiple strategy guides, but only one prize will be awarded per UID. In the event that the same strategy guide wins more than one prize, only the highest prize will be awarded.
+
+3. The criteria for submissions and other criteria may be supplemented in the case of disruptive actions to the community or unfair submissions. In this case, these additions to the criteria will be applicable to all entries submitted prior to the supplementation.
+
+4. The event organizer will bear the delivery costs of merchandise prizes. Prizes being shipped may be subject to customs duties in accordance with local policies. In such cases, the prize winners will be required to complete customs clearance procedures as well as cover corresponding taxes incurred.
+""", 'EN', 'CHS'),
+("""Dear Traveler,      
+
+The Genshin Impact Version 4.6 <span class="notranslate">"Two Worlds Aflame, the Crimson Night Fades"</span> update is coming soon. Registration for the Twitch Livestream Event has started.        
+
+        
+
+Event Timeline      
+Registration Period: April 19 at 19:00:00 – April 26 at 15:00:00 (UTC+8)        
+
+Streaming Period: April 24 after the version update to May 14, 23:59:59 (UTC+8)     
+
+Note: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.        
+
+Reward Calculation: May 15 – May 30     
+
+*Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the reward calculation period has concluded.
+
+*Cash rewards will be delivered to valid participants' accounts no later than 45 business days after the reward calculation period has concluded.       
+
+Email Notification: Participants will receive a welcome email with event details from April 26 – April 30. Reward notification emails will be sent within 30 business days after the reward calculation period ends, to the accounts of all participants. Please pay attention to these messages.       
+
+        
+
+Event Details       
+1. Participants who meet the following conditions will be able to obtain the corresponding rewards:     
+
+a. Sign up for the Version 4.6 Twitch Livestream Event      
+
+b. Link an Email to a HoYoverse account     
+
+c. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     
+
+d. During the event, participants must stream in the Genshin Impact category on Twitch for a total duration of 6 hours or more in order to qualify for the "Start Streaming" and "Aim for the Leaderboard" rewards.     
+
+2. Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.       
+
+3. Primogem rewards will be delivered to valid participants' accounts no later than 30 business days after the event has concluded.     
+
+4. Any form of cheating or negligence within the community, event, or platform will not be tolerated and can result in indefinite suspension from future or related events.     
+
+a. Example of cheating: Streamer A logs into Genshin Impact and is AFK for 24 hours.        
+
+b. Example of negligence: Streaming games/content that are not related to Genshin Impact in the Genshin Impact category in an attempt to get Primogems.     
+
+5. Disclosing or discussing the content of an upcoming release will not be tolerated and can result in indefinite suspension from future or related events.     
+
+        
+
+Register Now
+        
+
+Event Notice        
+1. Registration in this version of the event is required in order to participate in the event.      
+
+a. Each registration is independent and applies only to the event of a specific version. Registrations made for a previous version cannot be used for the event of the next version.        
+
+b. HoYoverse accounts must be linked to an email for contact purposes.      
+
+c. Participants are responsible for ensuring the accuracy and validity of their information. The Genshin Impact team will not be responsible for any mistakes and related disputes arising from participants.       
+
+2. The Genshin Impact team reserves the right to determine the eligibility of participants before, during, and after the event.     
+
+a. Rewards will not be awarded if the event registration is not completed.      
+
+b. Those who do not meet the minimum requirements will not be eligible for rewards.     
+
+c. Participants suspected of unfair advantage or engaging in forms of abuse will be immediately disqualified.       
+
+d. This event is open to Genshin Impact accounts registered on the following four servers: America, Europe, Asia, and (TW, HK, MO).     
+
+3. The Genshin Impact team is responsible for determining participants' eligibility in receiving prizes.        
+
+*Submission of multimedia files/videos will not be required after the event concludes.      
+
+4. By participating in this event and submitting information, participants agree to official access and disclosure of participant information for the purpose of administration and prize distribution.     
+
+5. By participating in this event, you agree to:        
+
+a. The terms and conditions (https://hoyo.link/cmTiFBAL)        
+
+b. Genshin Impact's Privacy Policy (https://genshin.hoyoverse.com/en/company/privacy)       
+
+c. Twitch's Privacy Policy (https://www.twitch.tv/p/en/legal/privacy-notice)        
+
+
+
+Watching Rewards        
+
+Watch a certain number of hours of streams during the event in the Genshin Impact category on Twitch to win the following rewards!      
+
+Rewards can only be collected after linking a HoYoverse account with a Twitch account, enabling Twitch Drops, and watching a certain number of hours of eligible Genshin Impact streams. Each type of reward is limited to 300,000 in quantity.     
+
+*Note: Twitch Drops is separate from the Twitch Livestream Event and thus Drops rewards can be claimed immediately after achieving the listed criteria from the [Registration] website.     
+
+*More information about Twitch Drops:https://help.twitch.tv/s/article/mission-based-drops       
+
+*Each tier of Twitch Drops rewards is limited to 300,000. First come, first served!     
+
+        
+
+Streaming Rewards       
+*Twitch Streamer Recruitment Events Rewards will be delivered no later than 30 business days after the event has concluded.     
+
+
+Streaming Duration Event Details        
+When participants reach a certain number of stream hours during the event, they will get a chance to receive the corresponding rewards.     
+
+Note: "6 hours" is defined as streaming at least 6 hours in Twitch's Genshin Impact category throughout the event.      
+
+For further clarification: Reaching 6 hours equates to Primogems ×200. Reaching 9 hours equates to Primogems ×450. Reaching 12 hours equates to Primogems ×800.
+
+Reaching 30 hours equates to Primogems ×1,600.      
+
+*The reward is limited to 19,000 sets for 6 hours of live streams.
+
+*The reward is limited to 13,000 sets for 9 hours of live streams.
+
+*The reward is limited to 11,000 sets for 12 hours of live streams.
+
+*The reward is limited to 3,000 sets for 30 hours of live streams.
+
+*If the number of rewards reaches its limit, winners will be selected based on the average number of concurrent viewers.        
+
+        
+
+Consecutive Check-Ins Event Details     
+During the Live Streaming Phase, participants will gain a milestone if their stream time within an "Event Week" reaches 3 hours.        
+
+Every "Event Week" starts on Wednesday at 00:00:00 (UTC+8) and ends on the following Tuesday at 23:59:59 (UTC+8). See below for details (*Times provided are UTC+8).        
+
+*Week 1: April 24 after the version update – April 30 at 23:59:59       
+
+*Week 2: May 1 at 00:00:00 – May 7 at 23:59:59      
+
+*Week 3: May 8 at 00:00:00 – May 14 at 23:59:59     
+
+Participants will obtain the milestone(s) once they meet the event requirements.        
+
+Participants can obtain only one milestone during each "Event Week" and a total of three milestones during the entire event duration.       
+
+*The reward is limited to 15,000 sets for 1 week of reaching the milestone in the Consecutive Check-In milestone event.
+
+*The reward is limited to 12,000 sets for 2 weeks of reaching the milestone in the Consecutive Check-In milestone event.
+
+*The reward is limited to 10,000 sets for 3 weeks of reaching the milestone in the Consecutive Check-In milestone event.
+
+*If the number of rewards reaches its limit, winners will be selected based on the average number of concurrent viewers (CCV).      
+
+*"Streaming Duration Challenge" and "Consecutive Check-Ins" rewards can be obtained together with "Aim for the Leaderboard" rewards.        
+
+
+
+
+*"Most Hours Watched Leaderboard (HW)" and "Average Concurrent Viewers Leaderboard (CCV)" rewards can be obtained at the same time. The results of the two rankings are counted separately.     
+
+Note: Channel's Rank performance will be measured within the event's duration.      
+
+*Hours Watched Leaderboard (HW) defines the total number of hours watched of Genshin Impact category live streams broadcast by participants throughout the event.       
+
+*Average Concurrent Viewers Leaderboard (Avg. CCV) defines the average number of concurrent viewers of Genshin Impact category live streams broadcast by participants throughout the event.     
+
+*Cash rewards will be issued via PayPal transfer. After the event ends, please be sure to check the official winner notification email that participants can use to submit relevant information to obtain prizes.       
+
+        
+
+Event FAQ       
+Q1: Is registration required to participate?        
+
+A1: Yes. Registration is required for this event. (Latest Updates on Apr. 30)   
+
+        
+
+Q2: How do I link an email address with my HoYoverse account?       
+
+A2: Go tohttps://account.hoyoverse.com and log into your HoYoverse account. Confirm and verify your email address in the "Account Security Settings" submenu.       
+
+        
+
+Q3: Will multimedia files/video submissions be required after the event ends?       
+
+A3: No. Multimedia files/video submissions are not required.        
+
+        
+
+Q4: Can I stream immediately after registration?        
+
+A4: Participants who successfully register before April 24 at 00:00:00 (UTC+8) will be able to start streaming after the Version 4.6 update. Participants who register after April 24 at 00:00:00 (UTC+8) will need to wait until April 27 at 00:00:00 (UTC+8) to start streaming.      
+
+*If participants start streaming before the specified time, the stream data will not be counted.        
+
+        
+
+Q5: How can I redeem for cash rewards?      
+
+A5: Participants will receive a notification email with their event rankings after the event ends. Participants can redeem for cash rewards by providing information required in the email.     
+
+        
+
+Q6: How will I be contacted?        
+
+A6: You will be contacted via the email address indicated during your registration. We recommend that you check that your inbox allows you to receive emails from @hoyoverse.com to prevent messages from appearing in your junk mail.      
+
+        
+
+Q7: Why haven't I received any emails related to the event?     
+
+A7: (a) Please make sure your email address is linked to your HoYoverse account.        
+
+(b) Make sure you have not unsubscribed from official Genshin Impact emails. If you have unsubscribed, please contact Customer Service.     
+
+(c) Check that the e-mails have not arrived in your spam or junk mail.      
+
+(d) Ensure that the email address you use is the one linked to your HoYoverse account.      
+
+        
+
+Q8: If my region is not on the list of eligible regions for this event, is it possible that I will not receive any rewards?     
+
+A8: If your region is not in the list of eligible regions for this event, you will not be able to obtain the corresponding rewards. For details on eligible regions, please refer to the relevant clauses via this link: https://hoyo.link/cmTiFBAL     
+
+        
+
+Q9: Can I get the cash prizes if I don't have a PayPal account?     
+
+A9: Unfortunately, this is not possible. This event only uses PayPal as a means of money transfer. We recommend that you open a PayPal account in advance.      
+
+        
+
+Q10: If my channel is closed, will this affect my eligibility for the event?        
+
+A10: Yes. If your channel is not set to public (closed or private) during the event, your event eligibility will be affected.       
+
+        
+
+Q11: Can two or more different UIDs share a Twitch channel?     
+
+A11: No. If multiple different UIDs share a Twitch channel, only the last UID registered for the event will be eligible for rewards.        
+
+        
+
+Q12: Is there a quick guide to streaming on Twitch?     
+
+A12: Yes. Please refer to this website: https://www.twitch.tv/creatorcamp/en/setting-up-your-stream/quick-start-guide-to-streaming-on-twitch/       
+
+        
+
+Q13: How do I choose the Genshin Impact category on Twitch for my stream?       
+
+A13: PC - Once logged into your account, go to the "Creator Dashboard" by clicking on your profile picture. Then select "Stream Manager." On the right, you will find the "Quick Actions" tab where you can select "Edit Stream Info." A window will open where you can make the necessary changes to your stream. Select "Genshin Impact" in the "Category" section and click "Done" to save!      
+
+Link: https://dashboard.twitch.tv/stream-manager        
+
+More information: https://help.twitch.tv/s/article/creator-dashboard        
+
+
+
+
+Mobile: Through the Twitch App, select the "Stream Games" button, then search and select the Game title "Genshin Impact." Next, complete the settings for your live stream. 
+
+    
+
+Click here for more information on the event:https://hoyo.link/7fTiFBAL 
+""", 'EN', 'CHS'),
+    (""""Two Worlds Aflame, the Crimson Night Fades" Version 4.6 Strategy Guides Contest
+
+Hello, Traveler!
+
+Version 4.6 "Two Worlds Aflame, the Crimson Night Fades" is now online. Come unlock new adventures today! Also, the Strategy Guides Contest for the new Version has begun today~
+
+Guide Themes
+Theme 1: Character Guides
+
+Content related to characters such as Character Skill explanations, how to build and ascend them, how to get the hang of their play style, party composition recommendations, etc.
+
+Corresponding Topics: #Character Guides#, #Arlecchino#, #Lyney#, #Wanderer#, #Baizhu#, etc.
+
+Theme 2: Quests & Exploration
+
+Detailed walkthroughs of World Quests, Story Quests, and other quests, as well as guides about unlocking achievements, open-world exploration, puzzle-solving explanations, etc.
+
+Corresponding Topics: #Quest Guides#, #Exploration Puzzles#, #Achievements#, #Easter Eggs#, etc.
+
+Theme 3: Event Details
+
+Guides related to the Version 4.6 events.
+
+Corresponding Topics: #Iridescent Arataki Rockin' for Life Tour de Force of Awesomeness#, #Windtrace: Seekers and Strategy#, #Specially-Shaped Saurian Search#, #Vibro-Crystal Applications#, etc.
+
+Theme 4: Other Guides
+
+Spiral Abyss Challenge sharing, tricks for defeating monsters/bosses, Weapon and Artifact building advice, ingredient and book gathering tips, Genius Invokation TCG all-series card reviews and Heated Battle Mode guides, etc.
+
+Corresponding Topics: <span class="notranslate">#Spiral Abyss#</span>, <span class="notranslate">#Bounty Handbook#</span>, <span class="notranslate">#Genius Invokation TCG#</span>, #Other Guides#, etc.
+
+Note: The details for the four guide themes given above are provided for Travelers to refer to when creating their guides. All types of guide content will stand a chance of winning rewards. In this Strategy Guides Contest, guides that are related to the new Version content (including the new character and events) will be more popular~
+
+Event Duration
+Submission Period: April 24, 2024 – June 2, 2024 23:59 (UTC+8)
+
+Judging Period: June 3, 2024 – June 18, 2024
+
+Results Announcement: June 19, 2024
+
+Primogem rewards will be issued within 15 business days of the results being announced.
+
+The estimated time for merchandise rewards delivery will be within 60 business days of the results being announced.
+
+Event Rewards
+Gold (5 Winners)
+
+Primogems ×6,000·+ Mona Figure (Mirror Reflection of Doom) + Kamisato Ayaka Impression Apparel Series Umbrella
+
+Silver (10 Winners)
+
+Primogems ×2,000·+ FES 2023 Series Finger Puppet Keychain (Full Set) + Lyney Grin-Malkin Cat Moving Toy
+
+Bronze (20 Winners)
+
+Primogems ×1,000·+ Nilou Laptop Bag + "Jade Moon Upon a Sea of Clouds" CD Set + "Fleeting Colors in Flight" CD
+
+Participation Prize
+
+HoYoLAB - Genshin Impact Strategy Guides Contest-Exclusive Avatar Frame (30 days)
+
+Judging Rules
+1. The evaluation will be carried out by the guides judging team.
+
+2. The official organizer will assess the strategy guides that meet the criteria on the basis of various factors, such as their timely effectiveness, completeness, content accuracy, clarity of explanation, applicability, composition, and aesthetics of the layout. Therefore, it is possible that not all awards will be given out.
+
+3. If a prize-winning entry is disqualified due to violation of contest rules, the official team will not select a substitute winner.
+
+Works Criteria
+I. Submission Criteria
+
+Entries must be posted through the Event Details page during the submission period. Entries posted after the deadline or posted anywhere other than on the Event Details page will not be considered.
+
+II. Content Criteria
+
+1. The guide should be rich in content and contain various images. They must include at least 5 images.
+
+2. The main content of the submission must match its title. The content should be laid out in a clear and logical manner, neatly structured, and should not contain any major factual errors. Any form of copying or plagiarism is prohibited.
+
+3. The main text must contain specific guide-related content. Guide Collections that simply redirect to other guides (for example, collections that only contain links, etc.) will not be considered eligible.
+
+4. Entries may contain GIFs or videos to make the guide more interesting. Submissions with quality GIFs and videos may earn bonus points!
+
+5. If a video that is longer than 3 minutes and contains voice or text commentary is inserted in the post, the requirement of at least 5 images for a post is no longer applicable.
+
+6. The content of the video must be original and its description on YouTube must indicate "This video was made for the HoYoLAB Strategy Guides Contest, here is the link of the post: ...". Please include the link to your post in the video description, otherwise the video will be deemed as misappropriated work.
+
+III. Other Criteria
+
+1. Your guide must not contain fan art created by a third party. Such publications will be deleted. You may only use official images, screenshots from the game, or original illustrations in your guide.
+
+2. Any misappropriation of another person's work is strictly prohibited. Posts that have been reported and proven to contain plagiarized or copied content will be removed immediately. Users who have violated the rules will be permanently banned from participating in future community events.
+
+3. Entries containing content that violates the rules of the community will be handled in accordance with the Community Rules.
+
+Event Guidelines
+1. Traveler, please pay attention to HoYoLAB's System Messages, as information of merchandise prize-winners will be sent out via such messages. We ask prize-winners to provide their shipping address according to the prompts stated in the system message. Prize-winners who have not provided their address within the specified time frame will be deemed to have voluntarily forfeited their merchandise prizes.
+
+2. Please go to My Information > Information Management > Genshin Impact in HoYoLAB to fill in your Genshin Impact UID ahead of time. If Primogem-winning Travelers have not filled in their UID or filled in the incorrect UID after the list of winners is announced, they will be deemed to have forfeited their Primogems reward.
+
+Other Details
+1. By participating in this event, users grant the organizer the right to distribute the content of their strategy guide online or offline. The Genshin Impact team may publish some outstanding works on HoYoLAB from time to time, adding them to the featured posts and recommendations on the home page. Featured or recommended works are not related to event prizes. The issuance of rewards is based on the final evaluation results. The content creators retain the right to include their names in their guides.
+
+2. Each participant can submit multiple strategy guides, but only one prize will be awarded per UID. In the event that the same strategy guide wins more than one prize, only the highest prize will be awarded.
+
+3. The criteria for submissions and other criteria may be supplemented in the case of disruptive actions to the community or unfair submissions. In this case, these additions to the criteria will be applicable to all entries submitted prior to the supplementation.
+
+4. The event organizer will bear the delivery costs of merchandise prizes. Prizes being shipped may be subject to customs duties in accordance with local policies. In such cases, the prize winners will be required to complete customs clearance procedures as well as cover corresponding taxes incurred.
 """, 'EN', 'CHS')
 ]
 

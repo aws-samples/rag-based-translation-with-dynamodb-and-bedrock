@@ -28,8 +28,8 @@ random_item = get_random_item(dictionary_name)
 
 if random_item:
     languages = list(random_item["mapping"].keys())
-    en_index = languages.index('EN')
-    chs_index = languages.index('CHS')
+    en_index = languages.index('en-us')
+    chs_index = languages.index('zh-cn')
 else:
     languages = ['-']
     en_index = 0
