@@ -21,5 +21,8 @@ supportedmodel: #bedrock anthropic model you want to use
   - anthropic.claude-3-5-sonnet-20240620-v1:0
   - anthropic.claude-3-opus-20240229-v1:0
 
-support:
+support: # support contact info
   - XXXXX
+
+upload_bucket:
+  name: 750521193989-24-07-24-00-59-42-dynamodb-rag-bucket

@@ -32,7 +32,6 @@ if st.session_state.role not in ["admin", "super-admin"]:
 # print(f"dotenv_path:{dotenv_path}")
 # load_dotenv(dotenv_path)
 
-# bucket = os.getenv("UPLOAD_BUCKET")
 bucket = upload_bucket
 print(f"bucket of translate service: {bucket}")
 

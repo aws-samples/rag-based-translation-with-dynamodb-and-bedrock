@@ -16,7 +16,7 @@ with open(config_yaml_path, 'r') as f:
     
 
 deploy_region = boto3.session.Session().region_name
-upload_bucket = os.getenv("UPLOAD_BUCKET")
+upload_bucket = config_data['upload_bucket']['name']
 TABLE_PREFIX = 'translate_mapping_'
 
 def list_translate_models():
@@ -152,7 +152,7 @@ def delete_term(table_name:str, term:str):
 
 def upload_to_s3(local_file, bucket_name, s3_key):
     try:
-        s3 = boto3.client('s3', region_name=deploy_region)
+        s3 = boto3.client('s3')
         s3.upload_fileobj(local_file, bucket_name, s3_key)
         return True, "Finish Uploading to S3"
     except Exception as e:
