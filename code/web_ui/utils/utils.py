@@ -15,9 +15,8 @@ with open(config_yaml_path, 'r') as f:
     config_data = yaml.safe_load(f)
     
 
-deploy_region = os.getenv('CDK_DEFAULT_REGION')
+deploy_region = boto3.session.Session().region_name
 upload_bucket = os.getenv("UPLOAD_BUCKET")
-# region='us-west-2'
 TABLE_PREFIX = 'translate_mapping_'
 
 def list_translate_models():
