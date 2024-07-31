@@ -13,8 +13,7 @@ else
     account_id="$2"
 fi
 
-ts=`date +%y-%m-%d-%H-%M-%S`
-unique_tag="$account_id-$ts"
+unique_tag="$account_id"
 
 cn_region=("cn-north-1","cn-northwest-1")
 if [[ "${cn_region[@]}" =~ "$region" ]]; then
@@ -23,7 +22,7 @@ else
     arn="arn:aws:"
 fi
 
-bucket="${unique_tag}-dynamodb-rag-bucket"
+bucket="${unique_tag}-rag-translate-bucket"
 
 echo "CDK_DEFAULT_ACCOUNT=${account_id}" > .env
 echo "CDK_DEFAULT_REGION=${region}" >> .env

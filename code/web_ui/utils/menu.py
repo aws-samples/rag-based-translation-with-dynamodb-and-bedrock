@@ -1,5 +1,11 @@
 import streamlit as st
 import hmac
+import yaml
+import os
+
+yaml_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+with open(yaml_path, 'r') as f:
+    config_data = yaml.safe_load(f)
 
 def _check_password():
     """Authenticate user and manage login state."""
@@ -7,9 +13,13 @@ def _check_password():
         return True
 
     with st.form("Credentials"):
+        st.title("Amazon LLM Translate Tool")
+        st.caption("尝鲜版 用户名：:blue[demo_user] 密码: :blue[demo_password123]")
+        
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         submitted = st.form_submit_button("Log in")
+        st.info(f"需要支持请联系 {config_data['support']}")
 
     if submitted:
         if username in st.secrets["passwords"] and hmac.compare_digest(
@@ -28,21 +38,24 @@ def _check_password():
 
 def _authenticated_menu():
     # Show a navigation menu for authenticated users
-    st.sidebar.page_link("home.py", label="Amazon Bedrock Translate", icon="⚧")
-    # st.sidebar.page_link("pages/user.py", label="Regular User Page", icon="🚎")
+    st.sidebar.page_link("home.py", label="LLM Translate Tool", icon="⚧")
+    st.sidebar.page_link("pages/user.py", label="Excel File Translate", icon="🚎")
     if st.session_state.role in ["admin", "super-admin"]:
         st.sidebar.page_link("pages/admin.py", label="Dictionary Term Config", icon="🔑")
-        st.sidebar.page_link(
-            "pages/super-admin.py",
-            label="Translation PE Config",
-            icon="🎛",
-            disabled=st.session_state.role != "super-admin",
-        )
+        # st.sidebar.page_link(
+        #     "pages/super-admin.py",
+        #     label="Translation PE Config",
+        #     icon="🎛",
+        #     disabled=st.session_state.role != "super-admin",
+        # )
     st.sidebar.divider()
     st.sidebar.write(f"Welcome, {st.session_state.username}!")
     st.sidebar.write(f"Your role is: {st.session_state.role}")
     if st.sidebar.button("Logout"):
         _logout()
+        
+    st.sidebar.divider()
+    st.sidebar.info(f"需要支持请联系 {config_data['support']}")
 
 
 def _unauthenticated_menu():

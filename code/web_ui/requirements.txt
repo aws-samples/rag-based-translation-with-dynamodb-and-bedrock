@@ -3,3 +3,9 @@ streamlit
 pandas
 python-dotenv
 streamlit-ace
+lingua-language-detector
+pyyaml
+pandas
+openpyxl
+numpy
+# tempfile

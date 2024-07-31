@@ -10,7 +10,7 @@ from pathlib import Path
 
 from streamlit_ace import st_ace
 
-from utils.utils import upload_to_s3, query_term, update_term_mapping, list_translate_mapping_tables, start_glue_job, get_glue_job_run_status
+from utils.utils import upload_to_s3, query_term, update_term_mapping, list_dictionary_ids, start_glue_job, get_glue_job_run_status
 from utils.utils import upload_bucket
 
 st.set_page_config(
@@ -32,11 +32,10 @@ if st.session_state.role not in ["admin", "super-admin"]:
 # print(f"dotenv_path:{dotenv_path}")
 # load_dotenv(dotenv_path)
 
-# bucket = os.getenv("UPLOAD_BUCKET")
 bucket = upload_bucket
 print(f"bucket of translate service: {bucket}")
 
-all_dictionaries = list_translate_mapping_tables()
+all_dictionaries = list_dictionary_ids()
 
 if not all_dictionaries:
     all_dictionaries = ['default_dictionary']
