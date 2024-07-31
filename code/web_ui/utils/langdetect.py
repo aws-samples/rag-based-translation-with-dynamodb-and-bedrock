@@ -4,7 +4,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-deploy_region = os.getenv('CDK_DEFAULT_REGION')
+# deploy_region = os.getenv('CDK_DEFAULT_REGION')
+deploy_region = boto3.session.Session().region_name
 
 comprehend = boto3.client('comprehend',region_name=deploy_region)
 
