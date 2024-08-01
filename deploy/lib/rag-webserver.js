@@ -17,7 +17,7 @@ const { AttributeType, BillingMode, Table } = dynamodb;
 // import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as iam from 'aws-cdk-lib/aws-iam';
+import * as targets from 'aws-cdk-lib/aws-elasticloadbalancingv2-targets';
 
 dotenv.config();
 
@@ -78,10 +78,10 @@ export class RagWebserverStack extends Stack {
       });
   
       // 创建 ALB 监听器
-      const listener = alb.addListener('TranslationListener', {
-        port: 80,
-        open: true,
-      });
+    //   const listener = alb.addListener('TranslationListener', {
+    //     port: 80,
+    //     open: true,
+    //   });
   
       // 创建 EC2 实例
       const ec2Instance = new ec2.Instance(this, 'TranslateWebServer', {
@@ -93,13 +93,31 @@ export class RagWebserverStack extends Stack {
       });
   
       // 添加 EC2 实例到 ALB 目标组
-      const targetGroup = listener.addTargets('EC2Target', {
+    //   const targetGroup = listener.addTargets('EC2Target', {
+    //     port: 8501,
+    //     protocol: elbv2.ApplicationProtocol.HTTP, 
+    //     targets: [ec2Instance],
+    //     healthCheck: {
+    //       path: '/',
+    //       port: '8501',
+    //     },
+    //   });
+      const targetGroup = new elbv2.ApplicationTargetGroup(this, 'EC2TargetGroup', {
+        vpc,
         port: 8501,
-        targets: [ec2Instance],
+        protocol: elbv2.ApplicationProtocol.HTTP,
+        targets: [new targets.InstanceTarget(ec2Instance)],
         healthCheck: {
           path: '/',
           port: '8501',
         },
+      });
+
+      // 创建 ALB 监听器并添加目标组
+        const listener = alb.addListener('MyListener', {
+        port: 80,
+        open: true,
+        defaultTargetGroups: [targetGroup],
       });
   
       // 输出 ALB DNS 名称
