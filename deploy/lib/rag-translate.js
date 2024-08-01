@@ -6,7 +6,7 @@ import { DockerImageCode,Architecture } from 'aws-cdk-lib/aws-lambda';
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ecr from 'aws-cdk-lib/aws-ecr';
-import { VpcStack } from './translate-vpc.js';
+// import { VpcStack } from './translate-vpc.js';
 import * as glue from  '@aws-cdk/aws-glue-alpha';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
@@ -107,10 +107,10 @@ export class RagTranslateStack extends Stack {
               })
       )
 
-      // Create VPC and Subnets
-      const vpcStack = new VpcStack(this,'vpc-stack',{env:process.env});
-      const vpc = vpcStack.vpc;
-      const subnets = vpcStack.subnets;
+      // // Create VPC and Subnets
+      // const vpcStack = new VpcStack(this,'vpc-stack',{env:process.env});
+      // const vpc = vpcStack.vpc;
+      // const subnets = vpcStack.subnets;
 
       new CfnOutput(this,'region',{value:process.env.CDK_DEFAULT_REGION});
       new CfnOutput(this,'UPLOAD_BUCKET',{value:process.env.UPLOAD_BUCKET});
