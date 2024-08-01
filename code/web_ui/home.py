@@ -29,13 +29,11 @@ col1, col2 = st.columns(2)
 with col1:
     dictionary_name = st.selectbox(
         "专词映射表", 
-        dictionaries, 
-        index=dictionaries.index('anthropic.claude-3-haiku-20240307-v1:0') if 'anthropic.claude-3-haiku-20240307-v1:0' in dictionaries else 0
+        dictionaries
     )
     source_lang = st.selectbox(
         "源语言", 
-        supported_lang_codes, 
-        index=supported_lang_codes.index('EN') if 'EN' in supported_lang_codes else 0
+        supported_lang_codes
     )
 
 # 在第二列中选择模型和目标语言
@@ -43,8 +41,7 @@ with col2:
     model_id = st.selectbox("翻译模型", model_list)
     target_lang = st.selectbox(
         "目标语言", 
-        supported_lang_codes, 
-        index=supported_lang_codes.index('CHS') if 'CHS' in supported_lang_codes else 0
+        supported_lang_codes
     )
 
 # 创建输入文本框以输入要翻译的文本
