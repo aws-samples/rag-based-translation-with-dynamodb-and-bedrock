@@ -15,7 +15,7 @@ with open(config_yaml_path, 'r') as f:
     config_data = yaml.safe_load(f)
     
 
-deploy_region = boto3.session.Session().region_name
+deploy_region = config_data['deploy_region'][0]
 upload_bucket = config_data['upload_bucket']['name']
 TABLE_PREFIX = 'translate_mapping_'
 

@@ -22,7 +22,10 @@ supportedmodel: #bedrock anthropic model you want to use
   - anthropic.claude-3-opus-20240229-v1:0
 
 support: # support contact info
-  - XXXXX
+  - xyz
 
 upload_bucket:
   name: 750521193989-24-07-24-00-59-42-dynamodb-rag-bucket
+
+deploy_region: # region you want to deploy
+  - ap-southeast-1

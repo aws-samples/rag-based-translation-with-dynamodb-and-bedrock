@@ -4,15 +4,14 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-# deploy_region = os.getenv('CDK_DEFAULT_REGION')
-deploy_region = boto3.session.Session().region_name
-
-comprehend = boto3.client('comprehend',region_name=deploy_region)
 
 yaml_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
 with open(yaml_path, 'r') as f:
     lang_data = yaml.safe_load(f)
+    
+deploy_region = lang_data['deploy_region'][0]
 
+comprehend = boto3.client('comprehend',region_name=deploy_region)
 def _detect_language_by_aws_comprehend(text):
     """
     Detect the dominant language of the input text using AWS Comprehend.
