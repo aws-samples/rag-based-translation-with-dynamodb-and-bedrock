@@ -50,7 +50,7 @@ def create_payload(contents: List[str], src_lang: str, dest_lang: str, dictionar
         "src_lang": src_lang,
         "dest_lang": dest_lang,
         "request_type": "translate",
-        "dictionary_id": dictionary_id,
+        # "dictionary_id": dictionary_id,
         "model_id": model_id,
         "response_with_term_mapping": response_with_term_mapping
     }
