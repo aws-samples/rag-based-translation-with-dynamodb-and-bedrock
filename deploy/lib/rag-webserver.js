@@ -131,6 +131,14 @@ export class RagWebserverStack extends Stack {
         machineImage: ec2.MachineImage.latestAmazonLinux2023(),
         securityGroup: ec2Sg,
         role: ec2Role, 
+        blockDevices: [
+          {
+            deviceName: '/dev/xvda',
+            volume: ec2.BlockDeviceVolume.ebs(40, {
+              volumeType: ec2.EbsDeviceVolumeType.GP3,
+            }),
+          },
+        ],
       });
   
       const targetGroup = new elbv2.ApplicationTargetGroup(this, 'EC2TargetGroup', {
