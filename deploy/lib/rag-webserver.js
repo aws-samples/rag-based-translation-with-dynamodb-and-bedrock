@@ -1,20 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 import { Stack, Duration, CfnOutput, RemovalPolicy } from "aws-cdk-lib";
-import { DockerImageFunction }  from 'aws-cdk-lib/aws-lambda';
-import { DockerImageCode,Architecture } from 'aws-cdk-lib/aws-lambda';
-import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
-import * as ecr from 'aws-cdk-lib/aws-ecr';
-// import { VpcStack } from './translate-vpc.js';
-import * as glue from  '@aws-cdk/aws-glue-alpha';
-import * as s3 from 'aws-cdk-lib/aws-s3';
-import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 import * as dotenv from "dotenv";
-
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-const { AttributeType, BillingMode, Table } = dynamodb;
-// import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as targets from 'aws-cdk-lib/aws-elasticloadbalancingv2-targets';
@@ -77,11 +65,63 @@ export class RagWebserverStack extends Stack {
         securityGroup: albSg,
       });
   
-      // 创建 ALB 监听器
-    //   const listener = alb.addListener('TranslationListener', {
-    //     port: 80,
-    //     open: true,
-    //   });
+      // 创建 IAM 角色
+      const ec2Role = new iam.Role(this, 'EC2Role', {
+        assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
+      });
+
+      // 添加所需的 IAM 权限
+      ec2Role.addToPolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'ssm:GetParametersByPath',
+          'ssm:PutParameter',
+        ],
+        resources: ['arn:aws:ssm:*:*:parameter/*'],
+      }));
+
+      ec2Role.addToPolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'comprehend:DetectDominantLanguage',
+        ],
+        resources: ['*'],
+      }));
+
+      ec2Role.addToPolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'dynamodb:ListTables',
+          'dynamodb:GetItem',
+          'dynamodb:PutItem',
+          'dynamodb:DeleteItem',
+        ],
+        resources: ['arn:aws:dynamodb:*:*:table/*'],
+      }));
+
+      ec2Role.addToPolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'lambda:InvokeFunction',
+        ],
+        resources: ['arn:aws:lambda:*:*:function:*'],
+      }));
+
+      ec2Role.addToPolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          's3:PutObject',
+        ],
+        resources: ['arn:aws:s3:::*/*'],
+      }));
+
+      ec2Role.addToPolicy(new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'glue:GetJobRun',
+        ],
+        resources: ['arn:aws:glue:*:*:job/*'],
+      }));
   
       // 创建 EC2 实例
       const ec2Instance = new ec2.Instance(this, 'TranslateWebServer', {
@@ -90,18 +130,9 @@ export class RagWebserverStack extends Stack {
         instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
         machineImage: ec2.MachineImage.latestAmazonLinux2(),
         securityGroup: ec2Sg,
+        role: ec2Role, 
       });
   
-      // 添加 EC2 实例到 ALB 目标组
-    //   const targetGroup = listener.addTargets('EC2Target', {
-    //     port: 8501,
-    //     protocol: elbv2.ApplicationProtocol.HTTP, 
-    //     targets: [ec2Instance],
-    //     healthCheck: {
-    //       path: '/',
-    //       port: '8501',
-    //     },
-    //   });
       const targetGroup = new elbv2.ApplicationTargetGroup(this, 'EC2TargetGroup', {
         vpc,
         port: 8501,
@@ -121,7 +152,7 @@ export class RagWebserverStack extends Stack {
       });
   
       // 输出 ALB DNS 名称
-      new cdk.CfnOutput(this, 'AlbDnsName', {
+      new CfnOutput(this, 'AlbDnsName', {
         value: alb.loadBalancerDnsName,
         description: 'ALB DNS Name',
       });

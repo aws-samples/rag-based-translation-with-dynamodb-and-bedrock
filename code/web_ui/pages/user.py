@@ -171,8 +171,7 @@ async def main():
         model_id = st.selectbox("Translation Model", model_list)
         target_lang = st.selectbox(
             "Target Language",
-            supported_lang_codes,
-            index=supported_lang_codes.index(DEFAULT_TARGET_LANG) if DEFAULT_TARGET_LANG in supported_lang_codes else 0
+            supported_lang_codes
         )
         
         # Add a slider for concurrency control
