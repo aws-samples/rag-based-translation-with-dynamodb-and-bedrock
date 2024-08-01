@@ -3,11 +3,11 @@ import json
 from typing import Dict, Any, List
 
 # AWS and model configuration
-REGION = 'us-west-2'
+REGION = 'ap-southeast-1'
 MODEL_ID = 'anthropic.claude-3-haiku-20240307-v1:0'
-DICTIONARY_ID = 'test_dict1'
-SOURCE_LANG = 'CHS'
-TARGET_LANG = 'EN'
+DICTIONARY_ID = 'dict_1'
+SOURCE_LANG = 'EN'
+TARGET_LANG = 'CHS'
 LAMBDA_FUNCTION_NAME = 'translate_tool'
 
 def create_lambda_client(region: str) -> boto3.client:
@@ -77,15 +77,33 @@ def main():
     lambda_client = create_lambda_client(REGION)
     
     # Content to be translated
-    contents = ['蚕食者之影在哪里能找到？', '蚕食者之影的弱点是什么？']
+    s="""Star Crusher Swarm King: Skaracabaz (Synthetic)" encounter is not particularly difficult and it reminds of the Swarm encounter in the simulated universe.
+
+Phase 1:
+
+- Entanglement I: E Radiating Venom - The boss will apply Entanglement to a randomly chosen teammate, stunning them and leaving them unable to act while taking additional damage per action of Skaracabaz. This can easily be countered by cleansing the affected teammate and continuing the fight.
+
+- The carapace of Begotton Spawn - "Multiply" - When Skaracabaz is attacked, he summons a Gnaw sting. If the weakness is broken during this period, deal toughness damage to all enemies. There are a few ways to get past this, either through brute forcing the toughness down with break effect units, tanking all of the mobs with a big defensive unit such as Gepard or Fu Xuan, or simply eliminating Skarazbaz outright. Another method is eliminating the summons that spawn, causing them to explode and splash defence down on all targets, causing Skaracbaz to be vulnerable to heavy damage.
+
+Phase 2:
+
+- Skaracabaz will summon lesser stings during this phase, and after a short time, they will explode on the party, inflicting heavy damage and debilitating status ailments.
+
+- Ovum of Collapsed Star - This deals incredibly heavy AOE damage, which must either be mitigated by a preservation shielder such as Gepard, Main Character Fire Preservation Shields, or redirected by Fu-Xuan to keep other party members alive.
+
+Overall, this encounter is not incredibly challenging and is not too different from the Swarm encounter."""
+    contents = [s]
     print(f"Original contents: {contents}")
     print("--------------------")   
     
     # Create payload for Lambda function
     payload = create_payload(contents, SOURCE_LANG, TARGET_LANG, DICTIONARY_ID, MODEL_ID, False)
     
+    print(f"input: {payload}")
+    
     # Invoke Lambda function
     response = invoke_lambda_function(lambda_client, LAMBDA_FUNCTION_NAME, payload)
+    print(f"response: {response}")
     
     # Extract results
     for translation in response['translations']:
