@@ -127,8 +127,8 @@ export class RagWebserverStack extends Stack {
       const ec2Instance = new ec2.Instance(this, 'TranslateWebServer', {
         vpc,
         vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-        instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
-        machineImage: ec2.MachineImage.latestAmazonLinux2(),
+        instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.LARGE),
+        machineImage: ec2.MachineImage.latestAmazonLinux2023(),
         securityGroup: ec2Sg,
         role: ec2Role, 
       });
