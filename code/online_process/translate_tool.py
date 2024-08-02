@@ -117,7 +117,9 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
             mapping_info = item['mapping']
             entity = item['entity']
             if dest_lang in mapping_info:
-                mapping_list.append([term, mapping_info.get(dest_lang, ''), entity])
+                mapping_term = mapping_info.get(dest_lang)
+                if mapping_term and isinstance(mapping_term, list):
+                    mapping_list.append([term, mapping_term[0], entity])
 
     return mapping_list
 

@@ -117,10 +117,11 @@ def ingest_all_items(file_content, object_key):
 
         kv_data = {}
         for item in arr:
-            for key, value in item['mapping'].items():
+            for key, term_list in item['mapping'].items():
                 if key not in kv_data:
                     kv_data[key] = {}
-                kv_data[key][value] = item
+                for term in term_list:
+                    kv_data[key][term] = item
 
         for lang_code in kv_data.keys():
             update_dictionary_keys(bucket=BUCKET, object_key=object_key, lang_code=lang_code, key_list=kv_data[lang_code].keys())
