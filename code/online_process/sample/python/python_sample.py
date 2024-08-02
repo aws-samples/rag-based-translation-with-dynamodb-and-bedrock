@@ -6,8 +6,8 @@ from typing import Dict, Any, List
 REGION = 'ap-southeast-1'
 MODEL_ID = 'anthropic.claude-3-haiku-20240307-v1:0'
 DICTIONARY_ID = 'dict_1'
-SOURCE_LANG = 'EN'
-TARGET_LANG = 'CHS'
+SOURCE_LANG = 'en-us'
+TARGET_LANG = 'zh-cn'
 LAMBDA_FUNCTION_NAME = 'translate_tool'
 
 def create_lambda_client(region: str) -> boto3.client:

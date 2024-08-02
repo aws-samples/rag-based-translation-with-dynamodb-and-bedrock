@@ -30,20 +30,6 @@ def _detect_language_by_aws_comprehend(text):
     except Exception as e:
         print(f"Error occurred while calling Comprehend: {e}")
         return None
-    
-def _get_customized_language_code(language_code):
-    """
-    Get the customized language code defined by customer
-    Args:
-    language_code (str): The aws comprehend language code
-    Returns:
-    str: The customized language code, or None if the language code is not supported.
-    """
-    # Check if the language code is supported
-    if language_code in lang_data['supportedlang']:
-        return lang_data['supportedlang'][language_code]
-    else:
-        return None
 
 def detect_language_of(text):
     """
@@ -54,33 +40,49 @@ def detect_language_of(text):
     str: The detected dominant language code, or None if an error occurred.
     """
     # Detect the dominant language using AWS Comprehend
-    language_code = _detect_language_by_aws_comprehend(text)
+    detect_language_code = _detect_language_by_aws_comprehend(text)
+    lang_dict = {
+        'zh' : 'zh-cn',
+        'zh-TW' : 'zh-tw',
+        'de': 'de-de',
+        'en': 'en-us',
+        'es': 'es-es',
+        'fr': 'fr-fr',
+        'id': 'id-id',
+        'it': 'it-it',
+        'ja': 'ja-jp',
+        'ko' : 'ko-kr',
+        'pt' : 'pt-pt',
+        'ru' : 'ru-ru',
+        'th' : 'th-th',
+        'tr' : 'tr-tr',
+        'vi' : 'vi-vn'
+    }
 
-    if language_code:
-        # Get the customized language code
-        customized_language_code = _get_customized_language_code(language_code)
-        return customized_language_code
+    if detect_language_code:
+        # Get the standard language code
+        standard_lang_code = lang_dict.get(detect_language_code)
+        return standard_lang_code
     else:
         return None
-    
 
 if __name__ == "__main__":
     new_mapping_info = {
-        "CHS" : "奇怪的渔人吐司",
-        "CHT" : "奇怪的漁人吐司",
-        "DE" : "Misslungene Fischerschnitte",
-        "EN" : "Suspicious Fisherman’s Toast",
-        "ES" : "Tostada del pescador extraña",
-        "FR" : "Toast du pêcheur (suspect)",
-        "ID" : "Suspicious Fisherman’s Toast",
-        "IT" : "Toast del pescatore sospetto",
-        "JP" : "微妙な漁師トースト",
-        "KR" : "이상한 어부 토스트",
-        "PT" : "Torrada do Pescador Estranha",
-        "RU" : "Странный рыбацкий бутерброд",
-        "TH" : "Fisherman’s Toast รสประหลาด",
-        "TR" : "Balıkçı Tostu (Tuhaf)",
-        "VI" : "Bánh Người Cá Kỳ Lạ"
+        "zh-cn" : "奇怪的渔人吐司",
+        "zh-tw" : "奇怪的漁人吐司",
+        "de-de" : "Misslungene Fischerschnitte",
+        "en-us" : "Suspicious Fisherman’s Toast",
+        "es-es" : "Tostada del pescador extraña",
+        "fr-fr" : "Toast du pêcheur (suspect)",
+        "id-id" : "Suspicious Fisherman’s Toast",
+        "it-it" : "Toast del pescatore sospetto",
+        "ja-jp" : "微妙な漁師トースト",
+        "ko-kr" : "이상한 어부 토스트",
+        "pt-pt" : "Torrada do Pescador Estranha",
+        "ru-ru" : "Странный рыбацкий бутерброд",
+        "th-th" : "Fisherman’s Toast รสประหลาด",
+        "tr-tr" : "Balıkçı Tostu (Tuhaf)",
+        "vi-vn" : "Bánh Người Cá Kỳ Lạ"
     }
 
     for key, value in new_mapping_info.items():

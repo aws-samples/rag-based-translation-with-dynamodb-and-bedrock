@@ -18,12 +18,12 @@ st.set_page_config(
 )
 
 # 全局常量
-TARGET_LANG = 'CHS'
+TARGET_LANG = 'zh-cn'
 
 # 获取可用的字典、模型和支持的语言代码列表
 model_list = list_translate_models()
 dictionaries = list_dictionary_ids() or ['default_dictionary']
-supported_lang_codes = list_supported_language_codes()
+supported_lang_codes_dict = list_supported_language_codes()
 
 def init_streamlit():
     """初始化 Streamlit 界面"""
@@ -105,15 +105,20 @@ def main():
             index=dictionaries.index('anthropic.claude-3-haiku-20240307-v1:0') if 'anthropic.claude-3-haiku-20240307-v1:0' in dictionaries else 0
         )
         model_id = st.selectbox("翻译模型", model_list)
-        target_lang = st.selectbox(
+
+        supported_lang_codes = supported_lang_codes_dict.keys() 
+
+        target_lang_label = st.selectbox(
             "目标语言", 
             supported_lang_codes, 
-            index=supported_lang_codes.index('CHS') if 'CHS' in supported_lang_codes else 0
+            index=supported_lang_codes.index('zh-cn') if 'zh-cn' in supported_lang_codes else 0
         )
+
+        target_lang = supported_lang_codes_dict.get(target_lang_label)
         
         if st.button("处理文件"):
             with st.spinner('处理中...'):
-                processed_data, stats = process_excel(uploaded_file, TARGET_LANG)
+                processed_data, stats = process_excel(uploaded_file, target_lang)
             
             st.success('处理完成!')
             st.write(f"统计信息:")
