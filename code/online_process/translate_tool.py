@@ -61,7 +61,9 @@ You need to follow below instructions:
 - If the content is in {dest_lang}(target language) already,  leave it as is
 - Keep the link to the image in markdown format, for example - "![0](icon.png)"
 
-Please translate directly according to the text content, keep the original format, and do not miss any information. Put the result in <translation_{dest_lang}>"""
+Please translate directly according to the text content, keep the original format, and do not miss any information. 
+
+Notice that your target language is {dest_lang}, Don't output any characters in other languages. Put the result in <translation_{dest_lang}>"""
 
     def read_parameter(name, with_decryption=False):
         ssm = boto3.client('ssm')
@@ -169,6 +171,9 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
         {"role": "user", "content": prompt},
         {"role": "assistant", "content": prefill_str}
     ]
+
+    print("messages:")
+    print(messages)
 
     body = json.dumps(
             {
