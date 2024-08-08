@@ -346,8 +346,8 @@ def lambda_handler(event, context):
         elapsed_time = end_time - start_time
         print(f"[1] Elapsed time: {elapsed_time} seconds")
 
-    if not succeded:
-        raise RuntimeError(f"Error: There is no user_dict for {dictionary_id} on S3 ")
+        if not succeded:
+            raise RuntimeError(f"Error: There is no user_dict for {dictionary_id} on S3 ")
 
     async def run_async():
         tasks = [ process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, response_with_term_mapping) for idx, src_content in enumerate(src_contents) ]

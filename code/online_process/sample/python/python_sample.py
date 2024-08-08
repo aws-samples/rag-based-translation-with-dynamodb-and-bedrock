@@ -92,22 +92,23 @@ def main():
     print(f"response: {response}")
     
     # Extract results
-    for translation in response['translations']:
-        if 'term_mapping' in translation:
-            term_mapping = translation['term_mapping']
-            for mapping in term_mapping:
-                print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
+    if 'translations' in response:
+        for translation in response['translations']:
+            if 'term_mapping' in translation:
+                term_mapping = translation['term_mapping']
+                for mapping in term_mapping:
+                    print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
 
-        translated_text = translation['translated_text']
-        print(f"Translated Text: {translated_text}")
+            translated_text = translation['translated_text']
+            print(f"Translated Text: {translated_text}")
 
-        model = translation['model']
-        print(f"Model: {model}")
+            model = translation['model']
+            print(f"Model: {model}")
 
-        glossary_config = translation['glossary_config']
-        print(f"Dict: {glossary_config}")
+            glossary_config = translation['glossary_config']
+            print(f"Dict: {glossary_config}")
 
-        print("--------------------")   
+            print("--------------------")   
     
 
 if __name__ == "__main__":
