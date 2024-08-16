@@ -346,7 +346,7 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
     return json_obj
 
 # 对文本进行分词
-@handle_error
+# @handle_error
 def lambda_handler(event, context):
     src_contents = event.get('src_contents')
     src_lang = event.get('src_lang', None)
@@ -355,8 +355,8 @@ def lambda_handler(event, context):
     request_type = event.get('request_type')
     model_id = event.get('model_id')
     response_with_term_mapping = event.get('response_with_term_mapping', False)
-    max_content_count = os.environ.get('max_content_count', 50)
-    max_content_length = event.get('max_content_length', os.environ.get('max_content_length', 1024))
+    max_content_count = int(os.environ.get('max_content_count', 50))
+    max_content_length = int(event.get('max_content_length', os.environ.get('max_content_length', 1024)))
     
     if not isinstance(src_contents, list):
         return {'error': 'src_contents should be a list of string'}
@@ -386,7 +386,7 @@ def lambda_handler(event, context):
         print(f"[1] Elapsed time: {elapsed_time} seconds")
 
         if not succeded:
-            return { "error" : f"There is no user_dict for {dictionary_id} on S3 " }
+            raise RuntimeError(f"Error: There is no user_dict for {dictionary_id} on S3 ")
 
     async def run_async():
         tasks = [ process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, response_with_term_mapping) for idx, src_content in enumerate(src_contents) ]

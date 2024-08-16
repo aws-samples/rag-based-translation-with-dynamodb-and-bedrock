@@ -71,6 +71,8 @@ export class RagWebserverStack extends Stack {
       });
 
       // 添加所需的 IAM 权限
+      ec2Role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
+      
       ec2Role.addToPolicy(new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
         actions: [
@@ -119,6 +121,7 @@ export class RagWebserverStack extends Stack {
         effect: iam.Effect.ALLOW,
         actions: [
           'glue:GetJobRun',
+          'glue:StartJobRun',
         ],
         resources: ['arn:aws:glue:*:*:job/*'],
       }));
