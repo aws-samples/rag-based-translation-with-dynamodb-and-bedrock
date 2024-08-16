@@ -9,15 +9,20 @@ DICTIONARY_ID = 'dict_1'
 SOURCE_LANG = 'EN'
 TARGET_LANG = 'CHS'
 LAMBDA_FUNCTION_NAME = 'translate_tool'
-
-def create_lambda_client(region: str) -> boto3.client:
+AK = 'XXXXXX'
+SK = 'YYYYYY'
+def create_lambda_client(region: str, ak:str, sk:str) -> boto3.client:
     """
     Create and return a boto3 Lambda client.
     
     :param region: AWS region name
+    :param ak: aws_access_key_id
+    :param sk: aws_secret_access_key
     :return: boto3 Lambda client
     """
-    return boto3.client('lambda', region_name=region)
+    # return boto3.client('lambda', region_name=region)
+    return boto3.client('lambda', region_name=region, aws_access_key_id=ak,
+                        aws_secret_access_key=sk)
 
 def create_payload(contents: List[str], src_lang: str, dest_lang: str, dictionary_id: str, model_id: str, response_with_term_mapping: bool=False) -> Dict[str, Any]:
     """
@@ -74,7 +79,7 @@ def invoke_lambda_function(client: boto3.client, function_name: str, payload: Di
 
 def main():
     # Initialize Lambda client
-    lambda_client = create_lambda_client(REGION)
+    lambda_client = create_lambda_client(REGION,AK, SK)
     
     # Content to be translated
     
@@ -92,23 +97,22 @@ def main():
     print(f"response: {response}")
     
     # Extract results
-    if 'translations' in response:
-        for translation in response['translations']:
-            if 'term_mapping' in translation:
-                term_mapping = translation['term_mapping']
-                for mapping in term_mapping:
-                    print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
+    for translation in response['translations']:
+        if 'term_mapping' in translation:
+            term_mapping = translation['term_mapping']
+            for mapping in term_mapping:
+                print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
 
-            translated_text = translation['translated_text']
-            print(f"Translated Text: {translated_text}")
+        translated_text = translation['translated_text']
+        print(f"Translated Text: {translated_text}")
 
-            model = translation['model']
-            print(f"Model: {model}")
+        model = translation['model']
+        print(f"Model: {model}")
 
-            glossary_config = translation['glossary_config']
-            print(f"Dict: {glossary_config}")
+        glossary_config = translation['glossary_config']
+        print(f"Dict: {glossary_config}")
 
-            print("--------------------")   
+        print("--------------------")   
     
 
 if __name__ == "__main__":
