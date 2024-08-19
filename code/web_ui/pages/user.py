@@ -162,10 +162,12 @@ async def main():
             dictionaries
         )
         model_id = st.selectbox("Translation Model", model_list)
-        target_lang = st.selectbox(
+        target_lang_label = st.selectbox(
             "Target Language",
-            supported_lang_codes
+            supported_lang_codes_dict.keys()
         )
+
+        target_lang = supported_lang_codes_dict.get(target_lang_label)
         
         # Add a slider for concurrency control
         concurrency = st.slider("Concurrent Number", min_value=1, max_value=10, value=3, step=1)
