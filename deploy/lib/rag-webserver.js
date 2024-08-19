@@ -113,8 +113,10 @@ export class RagWebserverStack extends Stack {
         effect: iam.Effect.ALLOW,
         actions: [
           's3:PutObject',
+          's3:GetObject',
+          's3:ListBucket'
         ],
-        resources: ['arn:aws:s3:::*/*'],
+        resources: [`arn:aws:s3:::${process.env.UPLOAD_BUCKET}/*`, `arn:aws:s3:::${process.env.UPLOAD_BUCKET}`],
       }));
 
       ec2Role.addToPolicy(new iam.PolicyStatement({
@@ -142,7 +144,18 @@ export class RagWebserverStack extends Stack {
             }),
           },
         ],
+        userData: ec2.UserData.forLinux(),
       });
+
+      // 添加用户数据脚本
+      ec2Instance.userData.addCommands(
+        '#!/bin/bash',
+        'set -x',
+        'sudo mkdir -p /rag-based-translate/code',
+        `sudo aws s3 cp --recursive s3://${process.env.UPLOAD_BUCKET}/web_ui /rag-based-translate/code/web_ui`,
+        `sudo sed -i 's/bucket_placeholder/${process.env.UPLOAD_BUCKET}/' /rag-based-translate/code/web_ui/utils/config.yaml`,
+        `sudo sed -i 's/region_placeholder/${process.env.CDK_DEFAULT_REGION}/' /rag-based-translate/code/web_ui/utils/config.yaml`,
+      );
   
       const targetGroup = new elbv2.ApplicationTargetGroup(this, 'EC2TargetGroup', {
         vpc,

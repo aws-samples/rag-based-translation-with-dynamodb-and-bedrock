@@ -25,7 +25,7 @@ support: # support contact info
   - xyz
 
 upload_bucket:
-  name: 750521193989-24-07-24-00-59-42-dynamodb-rag-bucket
+  name: bucket_placeholder
 
 deploy_region: # region you want to deploy
-  - ap-southeast-1
+  - region_placeholder
