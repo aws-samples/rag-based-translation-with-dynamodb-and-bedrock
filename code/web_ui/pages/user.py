@@ -6,6 +6,7 @@ from utils.menu import menu_with_redirect
 from utils.langdetect import detect_language_of
 import time
 import asyncio
+
 from utils.utils import (
     list_dictionary_ids,
     list_supported_language_codes,
@@ -19,31 +20,22 @@ st.set_page_config(
     page_icon="🚎",
 )
 
-# Global constant for target language
-DEFAULT_TARGET_LANG = 'CHS'
+# 全局常量
+TARGET_LANG = 'zh-cn'
 
-# Get available dictionaries, models, and supported language codes
+# 获取可用的字典、模型和支持的语言代码列表
 model_list = list_translate_models()
 dictionaries = list_dictionary_ids() or ['default_dictionary']
-supported_lang_codes = list_supported_language_codes()
+supported_lang_codes_dict = list_supported_language_codes()
 
 def init_streamlit():
-    """
-    Initialize the Streamlit interface.
-    """
+    """初始化 Streamlit 界面"""
     menu_with_redirect()
-    st.title("Excel File Translate")
+    st.title("Excel 文件语言处理器")
+    st.markdown(f"您当前以 {st.session_state.role} 角色登录。")
 
 def is_not_number(text):
-    """
-    Check if the given text is not a number.
-
-    Args:
-        text (str): The text to check.
-
-    Returns:
-        bool: True if the text is not a number, False otherwise.
-    """
+    """检查文本是否不是数字"""
     try:
         float(text)
         return False
@@ -77,6 +69,7 @@ async def process_excel(file, target_lang, model_id, dict_id, concurrency):
     total_rows = 0
     total_cells = 0
     non_target_cells = 0
+
     processed_cells = 0
 
     semaphore = asyncio.Semaphore(concurrency)  # Use the concurrency value from the slider
@@ -169,10 +162,12 @@ async def main():
             dictionaries
         )
         model_id = st.selectbox("Translation Model", model_list)
-        target_lang = st.selectbox(
+        target_lang_label = st.selectbox(
             "Target Language",
-            supported_lang_codes
+            supported_lang_codes_dict.keys()
         )
+
+        target_lang = supported_lang_codes_dict.get(target_lang_label)
         
         # Add a slider for concurrency control
         concurrency = st.slider("Concurrent Number", min_value=1, max_value=10, value=3, step=1)

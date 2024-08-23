@@ -1,0 +1,46 @@
+{
+    "type":"multilingual_terminology",
+    "author":"",
+    "data":[
+        {
+            "mapping":{
+                "zh-cn": ["心海"],
+                "zh-tw": ["心海"],
+                "de-de": ["Kokomi"],
+                "en-us": ["Kokomi"],
+                "es-es": ["Kokomi"],
+                "fr-fr": ["Kokomi"],
+                "id-id": ["Kokomi"],
+                "it-it": ["Kokomi"],
+                "ja-jp": ["心海"],
+                "ko-kr": ["코코미"],
+                "pt-pt": ["Kokomi"],
+                "ru-ru": ["Кокоми"],
+                "th-th": ["Kokomi"],
+                "tr-tr": ["Kokomi"],
+                "vi-vn": ["Kokomi"]
+            },
+            "entity_type":"Character"
+        },
+        {
+            "mapping":{
+                "zh-cn": ["阿蕾奇诺", "仆人"],
+                "zh-tw": ["阿蕾奇諾", "僕人"],
+                "de-de": ["Arlecchino"],
+                "en-us": ["Arlecchino", "The Knave"],
+                "es-es": ["Arlecchino"],
+                "fr-fr": ["Arlecchino"],
+                "id-id": ["Arlecchino"],
+                "it-it": ["Arlecchino", "Fantesca"],
+                "ja-jp": ["アルレッキーノ", "召使"],
+                "ko-kr": ["아를레키노"],
+                "pt-pt": ["Arlecchino", "Serva"],
+                "ru-ru": ["Арлекино"],
+                "th-th": ["Arlecchino", "The Knave"],
+                "tr-tr": ["Arlecchino", "Yaver"],
+                "vi-vn": ["Arlecchino"]
+            },
+            "entity_type":"Character"
+        }
+    ]
+}

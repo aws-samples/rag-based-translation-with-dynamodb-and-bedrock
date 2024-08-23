@@ -20,7 +20,7 @@ st.title("LLM Translate Tool")
 # 获取可用的字典、模型和支持的语言代码列表
 model_list = list_translate_models()
 dictionaries = list_dictionary_ids() or ['default_dictionary']
-supported_lang_codes = list_supported_language_codes()
+supported_lang_codes_dict = list_supported_language_codes()
 
 # 创建两列布局
 col1, col2 = st.columns(2)
@@ -28,21 +28,23 @@ col1, col2 = st.columns(2)
 # 在第一列中选择字典和源语言
 with col1:
     dictionary_name = st.selectbox(
-        "专词映射表", 
+        "专词映射表",
         dictionaries
     )
-    source_lang = st.selectbox(
-        "源语言", 
-        supported_lang_codes
+    source_lang_label = st.selectbox(
+        "源语言",
+        supported_lang_codes_dict.keys()
     )
+    source_lang = supported_lang_codes_dict.get(source_lang_label)
 
 # 在第二列中选择模型和目标语言
 with col2:
     model_id = st.selectbox("翻译模型", model_list)
-    target_lang = st.selectbox(
-        "目标语言", 
-        supported_lang_codes
+    target_lang_label = st.selectbox(
+        "目标语言",
+        supported_lang_codes_dict.keys()
     )
+    target_lang = supported_lang_codes_dict.get(target_lang_label)
 
 # 创建输入文本框以输入要翻译的文本
 input_text = st.text_area("请在此输入要翻译的文本", height=150)

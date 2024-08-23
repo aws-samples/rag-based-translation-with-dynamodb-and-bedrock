@@ -58,9 +58,9 @@ class TerminologyRetriever():
 
         mapping_list = []
         ddb_table = None
-        if src_lang == 'EN':
+        if src_lang == 'en-us':
             ddb_table = self.ddb_en_table
-        elif src_lang == 'CHS':
+        elif src_lang == 'zh-cn':
             ddb_table = self.ddb_chs_table
         else:
             raise RuntimeError(f"unsupported {src_lang}")

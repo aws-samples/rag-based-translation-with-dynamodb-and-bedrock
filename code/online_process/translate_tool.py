@@ -7,6 +7,7 @@ import logging
 import json
 import time
 import asyncio
+from enum import Enum
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -16,6 +17,23 @@ ddb_table_dict = {}
 bedrock_region = os.environ.get('bedrock_region')
 bedrock = boto3.client(service_name='bedrock-runtime', region_name=bedrock_region)
 dynamodb = boto3.resource('dynamodb')
+
+class LangCode(Enum):
+    DeDe = "de-de"
+    EnUs = "en-us"
+    EsEs = "es-es"
+    FrFr = "fr-fr"
+    IdId = "id-id"
+    ItIt = "it-it"
+    JaJp = "ja-jp"
+    KoKr = "ko-kr"
+    PtPt = "pt-pt"
+    RuRu = "ru-ru"
+    ThTh = "th-th"
+    TrTr = "tr-tr"
+    ViVn = "vi-vn"
+    ZhCn = "zh-cn"
+    ZhTw = "zh-tw"
 
 def retrieve_prompt_template():
     ssm_key = 'translate_mihoyo_template'
@@ -43,7 +61,9 @@ You need to follow below instructions:
 - If the content is in {dest_lang}(target language) already,  leave it as is
 - Keep the link to the image in markdown format, for example - "![0](icon.png)"
 
-Please translate directly according to the text content, keep the original format, and do not miss any information. Put the result in <translation_{dest_lang}>"""
+Please translate directly according to the text content, keep the original format, and do not miss any information. 
+
+Notice that your target language is {dest_lang}, Don't output any characters in other languages. Put the result in <translation_{dest_lang}>"""
 
     def read_parameter(name, with_decryption=False):
         ssm = boto3.client('ssm')
@@ -97,7 +117,9 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
             mapping_info = item['mapping']
             entity = item['entity']
             if dest_lang in mapping_info:
-                mapping_list.append([term, mapping_info.get(dest_lang, ''), entity])
+                mapping_term = mapping_info.get(dest_lang)
+                if mapping_term and isinstance(mapping_term, list):
+                    mapping_list.append([term, mapping_term[0], entity])
 
     return mapping_list
 
@@ -152,6 +174,9 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
         {"role": "assistant", "content": prefill_str}
     ]
 
+    print("messages:")
+    print(messages)
+
     body = json.dumps(
             {
                 "anthropic_version": "bedrock-2023-05-31",
@@ -194,10 +219,22 @@ def mfm_segment(text, dictionary):
             text = text[1:]
     return list(set(words))
 
+def list_language_paths(bucket_name, prefix_path):
+    print(f"[list_language_paths]: bucket_name: {bucket_name}, prefix_path: {prefix_path}")
+    s3 = boto3.client('s3')
+
+    paginator = s3.get_paginator('list_objects_v2')
+    result = paginator.paginate(Bucket=bucket_name, Prefix=prefix_path, Delimiter='/')
+
+    for page in result:
+        if "CommonPrefixes" in page:
+            for obj in page["CommonPrefixes"]:
+                yield obj["Prefix"], obj["Prefix"].rstrip('/').split('/')[-1]
+
 def get_dictionary_status(bucket, s3_prefix, dictionary_id):
     s3 = boto3.client('s3')
 
-    s3_key = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
+    s3_key = f"{s3_prefix}/{dictionary_id}/.update_flag"
 
     response = s3.head_object(Bucket=bucket, Key=s3_key)
     last_modified = response['LastModified']
@@ -215,27 +252,27 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
     try:
         assert dictionary_id is not None
 
-        user_dict_s3_key = f"{s3_prefix}/{dictionary_id}/user_dict.txt"
-        print(f'bucket: {bucket}')
-        print(f'user_dict_s3_key: {user_dict_s3_key}')
-
         is_updated, last_modified = get_dictionary_status(bucket, s3_prefix, dictionary_id)
+        print(f"is_updated:{is_updated}, last_modified:{last_modified}")
 
         if is_updated:
             s3 = boto3.client('s3')
-            # /tmp 只有这个路径是可以写的
-            local_file = f'/tmp/{dictionary_id}_user_dict.txt'
-
-            # 下载文件
             try:
-                s3.download_file(bucket, user_dict_s3_key, local_file)
-                with open(local_file, 'r') as file:
-                    lines = file.readlines()
-                    terms = set([ item.strip() for item in lines ])
-                    # print(f"terms: {terms}")
-                    dictionary_info_dict[dictionary_id] = {"last_modified" : last_modified, "terms" : terms}
+                dictionary_info_dict[dictionary_id] = { "last_modified" : last_modified, "terms" : {} }
+                for lang_user_dict_path, lang_code in list_language_paths(bucket_name=bucket, prefix_path=f"{s3_prefix}/{dictionary_id}/"):
+                    print(f'lang_user_dict_path: {lang_user_dict_path}, lang_code:{lang_code}')
+                    local_file = f'/tmp/{dictionary_id}_{lang_code}_user_dict.txt'
+                    user_dict_s3_key = f"{lang_user_dict_path}user_dict.txt"
 
-                print(f'File downloaded successfully: {local_file}')
+                    print(f'bucket: {bucket}')
+                    print(f'user_dict_s3_key: {user_dict_s3_key}')
+                    s3.download_file(bucket, user_dict_s3_key, local_file)
+                    with open(local_file, 'r') as file:
+                        lines = file.readlines()
+                        terms = set([ item.strip() for item in lines ])
+                        dictionary_info_dict[dictionary_id]['terms'][lang_code] = terms
+
+                    print(f'File downloaded successfully: {local_file}')
             except Exception as e:
                 print(f'Error downloading file: {e}')
 
@@ -257,7 +294,9 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
 
     # if dictionary is not passed, words will be []
     if dictionary_id:
-        term_list = dictionary_info_dict.get(dictionary_id).get('terms')
+        term_list = dictionary_info_dict.get(dictionary_id).get('terms').get(src_lang)
+        EN_term_list = dictionary_info_dict.get(dictionary_id).get('terms').get(LangCode.EnUs.value)
+        term_list.update(EN_term_list)
 
         start_time = time.time()
         words = mfm_segment(src_content, term_list)

@@ -35,7 +35,7 @@ def list_supported_language_codes():
     Returns:
         list: A list of supported languages
     """
-    return list(config_data['supportedlang'].values())
+    return config_data['supportedlang']
 
 def list_dictionary_ids():
     """

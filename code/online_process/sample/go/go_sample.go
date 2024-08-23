@@ -15,8 +15,8 @@ const (
 	region             = "us-west-2"
 	modelID            = "anthropic.claude-3-haiku-20240307-v1:0"
 	dictionaryID       = "test_dict1"
-	sourceLang         = "CHS"
-	targetLang         = "EN"
+	sourceLang         = "zh-cn"
+	targetLang         = "en-us"
 	lambdaFunctionName = "translate_tool"
 )
 

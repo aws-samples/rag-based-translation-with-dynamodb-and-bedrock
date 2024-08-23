@@ -74,13 +74,13 @@ def create_dynamodb_table_if_not_exist(table_name):
     else:
         print(f"Table {table_name} already exists. Skipping creation.")
 
-def update_dictionary_keys(bucket, object_key, key_list):
+def update_dictionary_keys(bucket, object_key, lang_code, key_list):
     try:
         s3 = boto3.client('s3')
 
         path = os.path.dirname(object_key)
 
-        dict_file_path = f"{path}/user_dict.txt"
+        dict_file_path = f"{path}/{lang_code}/user_dict.txt"
 
         def file_exists(bucket, key):
             response = s3.list_objects_v2(Bucket=bucket, Prefix=key, MaxKeys=1)
@@ -97,6 +97,11 @@ def update_dictionary_keys(bucket, object_key, key_list):
 
         # 写入文件
         s3.put_object(Bucket=bucket, Key=dict_file_path, Body=content)
+
+        # 写入改动标识
+        modify_flag_path = f"{path}/.update_flag"
+        modify_content = str(int(time.time()))
+        s3.put_object(Bucket=bucket, Key=modify_flag_path, Body=modify_content)
     except Exception as e:
         print(f"update_dictionary_keys Err: {str(e)}")
 
@@ -112,17 +117,25 @@ def ingest_all_items(file_content, object_key):
 
         kv_data = {}
         for item in arr:
-            for key, value in item['mapping'].items():
-                kv_data[value] = item
+            for key, term_list in item['mapping'].items():
+                if key not in kv_data:
+                    kv_data[key] = {}
+                for term in term_list:
+                    kv_data[key][term] = item
 
-        update_dictionary_keys(bucket=BUCKET, object_key=object_key, key_list=kv_data.keys())
+        for lang_code in kv_data.keys():
+            update_dictionary_keys(bucket=BUCKET, object_key=object_key, lang_code=lang_code, key_list=kv_data[lang_code].keys())
+
         kv_data_size = len(kv_data.keys())
         print(f"kv_data_size: {kv_data_size}")
         print(f"TABLE_NAME: {TABLE_NAME}")
 
         ddb_table = dynamodb.Table(TABLE_NAME)
+        all_kv = {}
+        for lang_code, kv in kv_data.items():
+            all_kv.update(kv)
         with ddb_table.batch_writer() as batch:
-            for key, value in kv_data.items():
+            for key, value in all_kv.items():
                 ddb_item = {
                     'term': key,
                     'entity': value['entity_type'],
