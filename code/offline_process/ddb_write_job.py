@@ -122,6 +122,7 @@ def ingest_all_items(file_content, object_key):
                     kv_data[key] = {}
                 for term in term_list:
                     kv_data[key][term] = item
+                    kv_data[key][term.lower()] = item
 
         for lang_code in kv_data.keys():
             update_dictionary_keys(bucket=BUCKET, object_key=object_key, lang_code=lang_code, key_list=kv_data[lang_code].keys())
