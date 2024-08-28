@@ -1,3 +1,8 @@
+<p align="center">
+    &nbsp<strong>English</strong>&nbsp ｜ <a href="README.md"><strong>简体中文</strong></a>&nbsp 
+</p>
+<br>
+
 # Rag-based-translation-with-dynamodb-and-bedrock
 
 ### Demo
@@ -22,9 +27,9 @@
 
 ### Contributors
 
-<a href="https://github.com/aws-samples/rag-based-translation-with-dynamodb-and-bedrock/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=aws-samples/rag-based-translation-with-dynamodb-and-bedrock" />
-</a>
+- [yihuh](https://github.com/readybuilderone)
+- [ybalbert](https://github.com/ybalbert001)
+
 
 ### 调用例子
 
