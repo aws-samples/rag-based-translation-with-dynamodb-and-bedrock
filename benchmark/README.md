@@ -10,8 +10,10 @@ export sk='SpU4F2SkbDu***********LW8lw9hM'
 export region='us-west-2'
 export model_id='anthropic.claude-3-haiku-20240307-v1:0'
 #export model_id='anthropic.claude-3-sonnet-20240229-v1:0'
+export dict_id = 'test'
 
 locust --host=http://localhost:8080 --locustfile locustfile.py
+# locust -f locustfile.py --headless -u 1 -r 1 #不使用web界面
 ```
 
 

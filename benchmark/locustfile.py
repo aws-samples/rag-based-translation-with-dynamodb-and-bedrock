@@ -18,8 +18,8 @@ LAMBDA_FUNCTION_NAME = 'translate_tool'
 class CustomClient:
     def __init__(self):
         # 初始化你的 SDK 客户端
-        self.lambda_client = boto3.client('lambda', region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-
+        # self.lambda_client = boto3.client('lambda', region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+        self.lambda_client = boto3.client('lambda', region_name='ap-southeast-1')
     def invoke_translate(self, src_contents, src_lang, dest_lang, model_id):
         # 封装 SDK 方法调用
         payload = {
@@ -27,7 +27,7 @@ class CustomClient:
             "src_lang": src_lang,
             "dest_lang": dest_lang,
             "request_type": "translate",
-            "dictionary_id" : 'RPG',
+            "dictionary_id" : 'rpg',
             "model_id": model_id
         }
 
