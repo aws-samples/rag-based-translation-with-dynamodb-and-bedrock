@@ -1,0 +1,46 @@
+{
+    "type":"multilingual_terminology",
+    "author":"",
+    "data":[
+        {
+            "mapping":{
+                "zh-cn": ["霹雳收藏家"],
+                "zh-tw": ["霹靂收藏家"],
+                "de-de": ["Elektro-Teilchen-Sammler"],
+                "en-us": ["Lightning Bottler"],
+                "es-es": ["Coleccionista de relámpagos"],
+                "fr-fr": ["Embouteilleur de foudre"],
+                "id-id": ["Kolektor Halilintar"],
+                "ja-jp": ["霹靂収集家"],
+                "ko-kr": ["번개 수집가"],
+                "pt-pt": ["Apanhador de Relâmpagos"],
+                "ru-ru": ["Ловец молний"],
+                "th-th": ["ผู้รวบรวมสายฟ้า"],
+                "vi-vn": ["Nhà Sưu Tập Sấm Sét"],
+                "tr-tr": ["Yıldırım Toplayıcı"],
+                "it-it": ["Cattura il fulmine"]
+            },
+            "entity_type":"Task"
+        },
+        {
+            "mapping":{
+                "zh-cn":["攀高危险"],
+                "zh-tw":["攀高危險"],
+                "de-de":["Gefährliche Kletteraktion"],
+                "en-us":["Increasing Danger"],
+                "es-es":["Peligro inminente"],
+                "fr-fr":["Escalade dangereuse"],
+                "id-id":["Bahaya Meningkat"],
+                "ja-jp":["高いところ危険"],
+                "ko-kr":["위험한 등반"],
+                "pt-pt":["Perigo ao Escalar"],
+                "ru-ru":["Растущая угроза"],
+                "th-th":["ภัยที่ขยายตัวขึ้น"],
+                "vi-vn":["Nguy Hiểm Leo Thang"],
+                "tr-tr":["Artan Tehlike"],
+                "it-it":["Pericolo in aumento"]
+            },
+            "entity_type":"Task"
+        }
+    ]
+}

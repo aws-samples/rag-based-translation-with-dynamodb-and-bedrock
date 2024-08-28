@@ -1,0 +1,46 @@
+{
+    "type":"multilingual_terminology",
+    "author":"",
+    "data":[
+        {
+            "mapping":{
+                "zh-cn": ["丘丘人的一小步"],
+                "zh-tw": ["丘丘人的一小步"],
+                "de-de": ["Ein kleiner Schritt für einen Hilichurl"],
+                "en-us": ["A Small Step for Hilichurls"],
+                "es-es": ["Un pequeño paso para los Hilichurls"],
+                "fr-fr": ["Un petit pas pour les Brutocollinus"],
+                "id-id": ["Langkah Kecil Hilichurl"],
+                "it-it": ["Un piccolo passo per gli Hilichurl"],
+                "ja-jp": ["ヒルチャールの一歩"],
+                "ko-kr": ["츄츄족의 작은 한 걸음"],
+                "pt-pt": ["Um Pequeno Passo de Hilichurl"],
+                "ru-ru": ["Маленький шаг для хиличурла"],
+                "th-th": ["ก้าวน้อย ๆ ของพวก Hilichurl"],
+                "tr-tr": ["Dağ Yabanileri İçin Küçük Bir Adım"],
+                "vi-vn": ["Một Bước Nhỏ Của Hilichurl"]
+            },
+            "entity_type":"Task"
+        },
+        {
+            "mapping":{
+                "zh-cn": ["邪恶的扩张"],
+                "zh-tw": ["邪惡的擴張"],
+                "de-de": ["Das Böse breitet sich aus"],
+                "en-us": ["Spreading Evil"],
+                "es-es": ["Propagación del mal"],
+                "fr-fr": ["Propagation du mal"],
+                "id-id": ["Kejahatan yang Menyebar"],
+                "it-it": ["Il male si diffonde"],
+                "ja-jp": ["拡張する邪悪"],
+                "ko-kr": ["악의 확산"],
+                "pt-pt": ["Expansão do Mal"],
+                "ru-ru": ["Распространяя зло"],
+                "th-th": ["ความชั่วร้ายกระจายตัว"],
+                "tr-tr": ["Yayılan Kötülük"],
+                "vi-vn": ["Sự Bành Trướng Của Tà Ác"]
+            },
+            "entity_type":"Task"
+        }
+    ]
+}

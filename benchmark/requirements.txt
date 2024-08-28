@@ -1,0 +1,4 @@
+locust==2.23.1
+langchain-core==0.1.50
+langchain==0.1.17
+boto3

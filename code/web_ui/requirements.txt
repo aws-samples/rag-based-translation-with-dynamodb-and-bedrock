@@ -1,0 +1,10 @@
+boto3
+streamlit
+pandas
+python-dotenv
+streamlit-ace
+pyyaml
+pandas
+openpyxl
+numpy
+# tempfile
