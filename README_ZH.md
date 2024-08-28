@@ -4,21 +4,21 @@
 
 ![demo](./demo.gif) 
 
-### Architecture Diagram
+### 架构图
 
 ![Infra](./infra.PNG)
 
-### Applicable Scenarios
+### 适用场景
 
-There are a large number of proprietary terms (that don't need translation) and numerous standard mappings between different languages, which cannot be added to prompt at once.
+存在大量的专有名词(无须翻译), 存在大量的不同语言之间的标准映射，不能够一次性把这些元信息添加到PE。
 
-### Implementation details
+### 实现方式
 
-Use DynamoDB to store mapping relationships for a large number of specialized terms. The metadata ingestion part is scheduled through Glue Job. The invocation part can be done offline (Glue job) or online (Lambda).
+通过DynamoDB来存储大量专词的映射关系，元数据摄入部分通过Glue Job进行调度。 调用部分，可以采用离线(Glue job)或者在线(Lambda)的方式进行。
 
-### Deployment Doc
+### 部署文档
 
-[Lark](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
+[飞书](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
 
 ### Contributors
 
@@ -26,13 +26,13 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
   <img src="https://contrib.rocks/image?repo=aws-samples/rag-based-translation-with-dynamodb-and-bedrock" />
 </a>
 
-### Invocation Examples
+### 调用例子
 
-- Online invocation through Lambda (three request types: segment_only|term_mapping|translate)
-    [Note] You need to specify the dictionary_id, which is the name of the corresponding specialized term mapping dictionary
-    - Segmentation only
+- 通过Lambda在线调用(三种请求类型，segment_only|term_mapping|translate)
+    【注意】需要指定dictionary_id, 这个是对应专词映射词典的名称
+    - 仅切词
 
-        payload reference
+        参考payload
         ```json
         {
             "src_contents": [
@@ -45,7 +45,7 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
             "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
         }
         ```
-        response reference
+        参考response
         ```json
         {
           "translations": [
@@ -59,22 +59,22 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
           ]
         }
         ```
-    - Retrieve term mapping
+    - 获取专词映射
 
-        payload reference
+        参考payload
         ```json
-    {
-        "src_contents": [ 
+		{
+		    "src_contents": [ 
                 "奇怪的渔人吐司可以达到下面效果，队伍中所有角色防御力提高88点，持续300秒。多人游戏时，仅对自己的角色生效。《原神手游》赤魔王图鉴，赤魔王能捉吗" 
             ],
         "src_lang":"zh-cn",
         "dest_lang":"en-us",
-        "request_type":"term_mapping",
+		    "request_type":"term_mapping",
         "dictionary_id": "dictionary_1",
-        "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
-    }
+		    "model_id":"anthropic.claude-3-sonnet-20240229-v1:0"
+		}
         ```
-        response reference
+        参考response
         ```json
         {
           "translations": [
@@ -100,8 +100,8 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
           ]
         }
         ```
-    - translate
-        payload reference
+    - 翻译
+        参考payload
         ```json
         // [request1]zh-cn => en-us
         {
@@ -165,7 +165,7 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
             "model_id":"anthropic.claude-3-haiku-20240307-v1:0"
         }
         ```
-        response reference
+        参考response
         ```json
         //resp1
         {
