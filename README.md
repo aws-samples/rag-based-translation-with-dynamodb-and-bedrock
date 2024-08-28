@@ -3,29 +3,23 @@
 </p>
 <br>
 
-# Rag-based-translation-with-dynamodb-and-bedrock
+There are a large number of proprietary terms (that don't need translation) and numerous standard mappings between different languages, which cannot be added to prompt of LLM at once.
 
-### Demo
+This solution use DynamoDB to store mapping relationships for a large number of specialized terms. The metadata ingestion part is scheduled through Glue Job. The translation invocation is triggered by Lambda (online), only retrieving relevant specialized term mappings to prompt the LLM for comparative translation.
+
+## Demo
 
 ![demo](./demo.gif) 
 
-### Architecture Diagram
+## Architecture Diagram
 
 ![Infra](./infra.PNG)
 
-### Applicable Scenarios
-
-There are a large number of proprietary terms (that don't need translation) and numerous standard mappings between different languages, which cannot be added to prompt at once.
-
-### Implementation details
-
-Use DynamoDB to store mapping relationships for a large number of specialized terms. The metadata ingestion part is scheduled through Glue Job. The invocation part can be done offline (Glue job) or online (Lambda).
-
-### Deployment Doc
+## Deployment Doc
 
 [Lark Doc](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
 
-### Invocation Examples
+## Invocation Examples
 
 - Online invocation through Lambda (three request types: segment_only|term_mapping|translate)
     [Note] You need to specify the dictionary_id, which is the name of the corresponding specialized term mapping dictionary
@@ -249,7 +243,7 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
         }
         ```
 
-### Contributors
+## Contributors
 
 - [yihuh](https://github.com/readybuilderone)
 - [ybalbert](https://github.com/ybalbert001)
