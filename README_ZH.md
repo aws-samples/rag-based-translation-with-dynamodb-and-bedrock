@@ -15,14 +15,6 @@
 
 ![Infra](./infra.PNG)
 
-## 适用场景
-
-存在大量的专有名词(无须翻译), 存在大量的不同语言之间的标准映射，不能够一次性把这些元信息添加到PE。
-
-## 实现方式
-
-通过DynamoDB来存储大量专词的映射关系，元数据摄入部分通过Glue Job进行调度。 调用部分，可以采用离线(Glue job)或者在线(Lambda)的方式进行。
-
 ## 部署文档
 
 [飞书文档](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
