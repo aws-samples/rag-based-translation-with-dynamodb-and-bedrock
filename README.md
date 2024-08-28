@@ -23,12 +23,7 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
 
 ### Deployment Doc
 
-[Lark](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
-
-### Contributors
-
-- [yihuh](https://github.com/readybuilderone)
-- [ybalbert](https://github.com/ybalbert001)
+[Lark Doc](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
 
 ### Invocation Examples
 
@@ -253,3 +248,8 @@ Use DynamoDB to store mapping relationships for a large number of specialized te
           ]
         }
         ```
+
+### Contributors
+
+- [yihuh](https://github.com/readybuilderone)
+- [ybalbert](https://github.com/ybalbert001)

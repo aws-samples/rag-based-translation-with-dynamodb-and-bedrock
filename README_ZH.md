@@ -23,13 +23,7 @@
 
 ### 部署文档
 
-[飞书](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
-
-### Contributors
-
-- [yihuh](https://github.com/readybuilderone)
-- [ybalbert](https://github.com/ybalbert001)
-
+[飞书文档](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
 
 ### 调用例子
 
@@ -254,3 +248,8 @@
           ]
         }
         ```
+
+### 贡献者
+
+- [yihuh](https://github.com/readybuilderone)
+- [ybalbert](https://github.com/ybalbert001)
