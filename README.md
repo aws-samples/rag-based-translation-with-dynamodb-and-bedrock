@@ -15,6 +15,12 @@ This solution use DynamoDB to store mapping relationships for a large number of 
 
 ![Infra](./infra.PNG)
 
+## Term files Example
+1. [dictionary_1_part_a.json](./docs/sample_terms/dictionary_1_part_a.json)
+2. [dictionary_1_part_b.json](./docs/sample_terms/dictionary_1_part_b.json)
+3. [dictionary_2_part_a.json](./docs/sample_terms/dictionary_2_part_a.json)
+4. [dictionary_3_synonym.json](./docs/sample_terms/dictionary_3_synonym.json)
+
 ## Deployment Doc
 
 [Lark Doc](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)

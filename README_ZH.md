@@ -15,6 +15,12 @@
 
 ![Infra](./infra.PNG)
 
+## 参考专词文件
+1. [dictionary_1_part_a.json](./docs/sample_terms/dictionary_1_part_a.json)
+2. [dictionary_1_part_b.json](./docs/sample_terms/dictionary_1_part_b.json)
+3. [dictionary_2_part_a.json](./docs/sample_terms/dictionary_2_part_a.json)
+4. [dictionary_3_synonym.json](./docs/sample_terms/dictionary_3_synonym.json)
+
 ## 部署文档
 
 [飞书文档](https://amzn-chn.feishu.cn/docx/TTFrdxWQ6oIh9txhAYvcxzO0nec)
