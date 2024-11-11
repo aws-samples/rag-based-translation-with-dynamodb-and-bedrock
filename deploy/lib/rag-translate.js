@@ -51,15 +51,20 @@ export class RagTranslateStack extends Stack {
         "lambda_online_processor", {
         code: DockerImageCode.fromImageAsset(join(__dirname, "../../code/online_process")),
         timeout: Duration.minutes(15),
-        memorySize: 1024,
+        memorySize: 2048,
         runtime: 'python3.9',
         functionName: 'translate_tool',
         architecture: Architecture.X86_64,
         environment: {
           user_dict_bucket:`${process.env.UPLOAD_BUCKET}`,
           user_dict_prefix:'translate',
-          bedrock_region:`${process.env.CDK_DEFAULT_REGION}`
+          bedrock_region:`us-west-2`
         },
+      });
+
+      const alias = new lambda.Alias(this, 'ProductionAlias', {
+        aliasName: 'staging',
+        version: online_processor.currentVersion,
       });
   
       online_processor.addToRolePolicy(new iam.PolicyStatement({

@@ -49,6 +49,8 @@ with col2:
 # 创建输入文本框以输入要翻译的文本
 input_text = st.text_area("请在此输入要翻译的文本", height=150)
 
+lambda_alias = st.selectbox("Lambda Alias", ["prod", "staging"])
+
 # 创建翻译按钮并显示结果
 if st.button("开始翻译"):
     if input_text:
@@ -63,6 +65,7 @@ if st.button("开始翻译"):
                 target_lang=target_lang,
                 dictionary_id=dictionary_name,
                 model_id=model_id,
+                lambda_alias=lambda_alias,
             )
 
             # 计算翻译耗时

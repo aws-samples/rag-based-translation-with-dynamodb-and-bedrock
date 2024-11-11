@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 # AWS and model configuration
 REGION = 'ap-southeast-1'
 MODEL_ID = 'anthropic.claude-3-haiku-20240307-v1:0'
-DICTIONARY_ID = 'rpg'
+DICTIONARY_ID = 'dict_2_1030'
 SOURCE_LANG = 'en-us'
 TARGET_LANG = 'zh-cn'
 LAMBDA_FUNCTION_NAME = 'translate_tool'
@@ -79,39 +79,49 @@ def main():
     lambda_client = create_lambda_client(REGION)
     
     # Content to be translated
-    
-    contents = [ "蚕食者之影在哪里能找到？", "蚕食者之影的弱点是什么？" ]
-    print(f"Original contents: {contents}")
-    print("--------------------")   
-    
-    # Create payload for Lambda function
-    payload = create_payload(contents, SOURCE_LANG, TARGET_LANG, DICTIONARY_ID, MODEL_ID, False)
-    
-    print(f"input: {payload}")
-    
-    # Invoke Lambda function
-    response = invoke_lambda_function(lambda_client, LAMBDA_FUNCTION_NAME, LAMBDA_ALIAS, payload)
-    print(f"response: {response}")
-    
-    # Extract results
-    if 'translations' in response:
-        for translation in response['translations']:
-            if 'term_mapping' in translation:
-                term_mapping = translation['term_mapping']
-                for mapping in term_mapping:
-                    print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
+    test_contents = [
+        '\r\n\t\r\n\thello\r\t\n\r',
+        '\t\r\nhello world\n\r\t',
+        '\r\r\n\thow are you\t\n\r\t\r',
+        '\n\t\rgood morning\r\n\t',
+        '\t\t\r\nnice to meet you\r\t\n',
+        '\r\n\tgoodbye\n\r',
+        '\t\r\nsee you later\t\r\n\t\r',
+        '\n\r\thave a nice day\r\t\n',
+        '\r\t\nthank you\n\t\r',
+        '\t\n\rexcuse me\r\n\t\r',
+        '\r\n\t\rpardon\t\n\r',
+        '\t\r\nsorry\r\t\n',
+        '\n\t\rwelcome\n\r\t',
+        '\r\t\nplease\t\r\n',
+        '\t\n\rthank you very much\r\t\n',
+        '\r\r\t\nyou are welcome\n\t\r',
+        '\t\n\rgood evening\r\n\t',
+        '\r\t\ngood night\t\r\n',
+        '\n\r\tbye bye\r\t\n',
+        '\t\r\nsee you tomorrow\n\r\t',
+        'have a nice day\r\r\r',
+        '\r\ngood night'
+    ]
 
-            translated_text = translation['translated_text']
-            print(f"Translated Text: {translated_text}")
+    for content in test_contents:
+        contents = [ content ]
+        # Create payload for Lambda function
+        payload = create_payload(contents, SOURCE_LANG, TARGET_LANG, DICTIONARY_ID, MODEL_ID, False)
+            
+        # Invoke Lambda function
+        response = invoke_lambda_function(lambda_client, LAMBDA_FUNCTION_NAME, LAMBDA_ALIAS, payload)
+        
+        # Extract results
+        if 'translations' in response:
+            for translation in response['translations']:
+                if 'term_mapping' in translation:
+                    term_mapping = translation['term_mapping']
+                    for mapping in term_mapping:
+                        print(f"Origin Term: {mapping[0]}, Translated: {mapping[1]}, Entity: {mapping[2]}")
 
-            model = translation['model']
-            print(f"Model: {model}")
-
-            glossary_config = translation['glossary_config']
-            print(f"Dict: {glossary_config}")
-
-            print("--------------------")   
-    
+                translated_text = translation['translated_text']
+                print(f"{repr(content)} -> {repr(translated_text)}")
 
 if __name__ == "__main__":
     main()

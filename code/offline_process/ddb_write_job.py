@@ -91,9 +91,7 @@ def update_dictionary_keys(bucket, object_key, lang_code, key_list):
             response = s3.get_object(Bucket=bucket, Key=dict_file_path)
             content = response['Body'].read().decode('utf-8')
 
-        if content:
-            content += "\n"
-        content += '\n'.join(key_list)
+        content = '\n'.join(key_list)
 
         # 写入文件
         s3.put_object(Bucket=bucket, Key=dict_file_path, Body=content)

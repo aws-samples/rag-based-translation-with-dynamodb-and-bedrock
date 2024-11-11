@@ -8,10 +8,10 @@ import pandas as pd
 from pathlib import Path
 # from dotenv import load_dotenv
 
-from streamlit_ace import st_ace
+# from streamlit_ace import st_ace
 
 from utils.utils import upload_to_s3, query_term, update_term_mapping, list_dictionary_ids, start_glue_job, get_glue_job_run_status
-from utils.utils import upload_bucket
+from utils.utils import upload_bucket, term_mapping_quality_check
 
 st.set_page_config(
     page_title="Term Config",
@@ -53,30 +53,65 @@ dictionary_name = new_dictionary_name if new_dictionary_name else dictionary_nam
 # 文件上传组件
 uploaded_file = st.file_uploader("选择要上传的文件", type=["json"])
 
-if st.button("上传"):
-    s3_key = f"translate/{dictionary_name}/{uploaded_file.name}"
-    print(f"s3_key:{s3_key}")
-    status, msg = upload_to_s3(uploaded_file, bucket, s3_key)
-    if not status:
-        st.error(f"上传失败: {msg}")
+upload_btn_status = False
+if uploaded_file:
+    warn_list, error_list = term_mapping_quality_check(uploaded_file)
+
+    if error_list:
+        st.error(f"共有{len(error_list)}个专词映射中包含空字符!")
+        # st.json(json.dumps(error_list))
+        json_str = json.dumps(error_list, indent=2, ensure_ascii=False)
+        json_bytes = json_str.encode('utf-8')  # 显式指定使用 UTF-8 编码
+        st.download_button(
+            label="📥 Download Error Report",
+            data=json_bytes,
+            file_name="error.json",
+            mime="application/json",
+            help="Click to download the full error report in JSON format"
+        )
     else:
-        st.write(msg)
-        placeholder = st.empty()
-        elapse_secs = 0
-        run_id = start_glue_job(s3_key, bucket, dictionary_name)
-        job_status = ''
-        while True:
-            job_status = get_glue_job_run_status(run_id)
-            if job_status == 'SUCCEEDED':
-                placeholder.write(f"glue job status : {job_status}")
-                break
-            elif job_status in ['STARTING', 'RUNNING']:
-                placeholder.write(f"glue job status: {job_status}, {elapse_secs} secconds elapsed")
-                time.sleep(10)
-                elapse_secs += 10
-            else:
-                placeholder.write(f"glue job status : {job_status}")
-                break
+        st.success("没有发现专词映射表包含空字符。")
+
+    if warn_list:
+        st.warning(f"共有{len(warn_list)}个专词映射中包含过短专词，会对专词质量造成影响!")
+        # st.json(json.dumps(warn_list))
+        warn_json = json.dumps(warn_list, indent=2, ensure_ascii=False)
+        warn_bytes = warn_json.encode('utf-8')  # 显式指定使用 UTF-8 编码
+        st.download_button(
+            label="Download Warn List",
+            data=warn_bytes,
+            file_name="warn.json",
+            mime="application/json"
+        )
+    else:
+        st.success("没有发现专词映射表包含过短专词。")
+
+    upload_btn_status = bool(error_list)
+
+    if st.button("上传", disabled=upload_btn_status):
+        s3_key = f"translate/{dictionary_name}/{uploaded_file.name}"
+        print(f"s3_key:{s3_key}")
+        status, msg = upload_to_s3(uploaded_file, bucket, s3_key)
+        if not status:
+            st.error(f"上传失败: {msg}")
+        else:
+            st.write(msg)
+            placeholder = st.empty()
+            elapse_secs = 0
+            run_id = start_glue_job(s3_key, bucket, dictionary_name)
+            job_status = ''
+            while True:
+                job_status = get_glue_job_run_status(run_id)
+                if job_status == 'SUCCEEDED':
+                    placeholder.write(f"glue job status : {job_status}")
+                    break
+                elif job_status in ['STARTING', 'RUNNING']:
+                    placeholder.write(f"glue job status: {job_status}, {elapse_secs} secconds elapsed")
+                    time.sleep(10)
+                    elapse_secs += 10
+                else:
+                    placeholder.write(f"glue job status : {job_status}")
+                    break
 
 st.divider()
 json_container = None
@@ -106,7 +141,7 @@ with col22:
             if edited_item is not None:
                 if edited_item.get('term') != searched_item.get('term'):
                     st.warning("只允许修改mapping和entity.")
-                else:     
+                else:
                     update_term_mapping(dictionary_name, edited_item.get('term'), edited_item.get('entity'), edited_item.get('mapping'))
                     st.success(f"已更新项目: {edited_item.get('term')}")
                     json_container.json(edited_item)

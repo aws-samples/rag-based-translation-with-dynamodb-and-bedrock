@@ -12,6 +12,7 @@ AWS_REGION = os.environ.get('region')
 AWS_ACCESS_KEY_ID=os.environ.get('ak')
 AWS_SECRET_ACCESS_KEY=os.environ.get('sk')
 MODEL_ID = os.environ.get('model_id')
+DICT_ID = os.environ.get('dict_id')
 # 创建 AWS Lambda 客户端
 LAMBDA_FUNCTION_NAME = 'translate_tool'
 
@@ -27,7 +28,7 @@ class CustomClient:
             "src_lang": src_lang,
             "dest_lang": dest_lang,
             "request_type": "translate",
-            "dictionary_id" : 'rpg',
+            "dictionary_id" : DICT_ID,
             "model_id": model_id
         }
 

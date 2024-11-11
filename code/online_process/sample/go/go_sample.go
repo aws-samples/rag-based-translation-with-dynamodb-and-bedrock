@@ -12,12 +12,13 @@ import (
 
 // Configuration constants
 const (
-	region             = "us-west-2"
+	region             = "ap-southeast-1"
 	modelID            = "anthropic.claude-3-haiku-20240307-v1:0"
 	dictionaryID       = "test_dict1"
 	sourceLang         = "zh-cn"
 	targetLang         = "en-us"
 	lambdaFunctionName = "translate_tool"
+	lambda_alias       = "prod"
 )
 
 // Payload represents the structure of the Lambda function payload
@@ -66,7 +67,7 @@ func createPayload(contents []string, srcLang, destLang, dictionaryID, modelID s
 }
 
 // invokeLambdaFunction invokes the Lambda function and returns the response
-func invokeLambdaFunction(client *lambda.Lambda, functionName string, payload Payload) (*Response, error) {
+func invokeLambdaFunction(client *lambda.Lambda, functionName string, aliasName string, payload Payload) (*Response, error) {
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling payload: %v", err)
@@ -74,6 +75,7 @@ func invokeLambdaFunction(client *lambda.Lambda, functionName string, payload Pa
 
 	input := &lambda.InvokeInput{
 		FunctionName: aws.String(functionName),
+		Qualifier:    aws.String(aliasName),
 		Payload:      payloadBytes,
 	}
 
@@ -104,7 +106,7 @@ func main() {
 	payload := createPayload(contents, sourceLang, targetLang, dictionaryID, modelID, false)
 
 	// Invoke Lambda function
-	response, err := invokeLambdaFunction(lambdaClient, lambdaFunctionName, payload)
+	response, err := invokeLambdaFunction(lambdaClient, lambdaFunctionName, lambda_alias, payload)
 	if err != nil {
 		log.Fatalf("Error invoking Lambda function: %v", err)
 	}

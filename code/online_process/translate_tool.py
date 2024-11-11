@@ -1,5 +1,4 @@
-import jieba
-import jieba.posseg as pseg
+import marisa_trie
 import boto3
 import os
 import re
@@ -7,7 +6,9 @@ import logging
 import json
 import time
 import asyncio
+
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -35,6 +36,9 @@ class LangCode(Enum):
     ZhCn = "zh-cn"
     ZhTw = "zh-tw"
 
+def build_trie(terms):
+    return marisa_trie.Trie(terms)
+
 def retrieve_prompt_template():
     ssm_key = 'translate_mihoyo_template'
     Translate_Prompt_Template = """You are the world's most professional translation tool, proficient in professional translation from {src_lang} to {dest_lang}.
@@ -56,6 +60,7 @@ Here is the original content:
 You need to follow below instructions:
 - Translation style: concise, easy to understand, similar to the style of orignal content. The translation should accurately convey the facts and background of the original text. Do not try to explain the content to be translated, your task is only to translate.
 - Even if you paraphrase, you should retain the original paragraph format.
+- You must format your output to strictly follow the format of the original content. You are prohibited from adding, removing, or merging line breaks.
 - For the terms in <glossaries>, you should keep them as original. 
 - You should refer the term vocabulary correspondence table which is provided between <mapping_table> and </mapping_table>. 
 - If the content is in {dest_lang}(target language) already,  leave it as is
@@ -76,7 +81,7 @@ Notice that your target language is {dest_lang}, Don't output any characters in 
     try:
         Translate_Prompt_Template = read_parameter(ssm_key)
     except Exception as e:
-        print(f"Can't Find Prompt from parameter store - {ssm_key}")
+        logger.warn(f"Can't Find Prompt from parameter store - {ssm_key}, use default prompt instead")
 
     return Translate_Prompt_Template
 
@@ -109,9 +114,10 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
     mapping_list = []
 
     for term in term_list:
-        print(f"find mapping of {term}")
+        
+        logger.info(f"find mapping of {term}")
         response = ddb_table.get_item(Key={'term': term})
-        print(response)
+        logger.info(f"ddb response: {response}")
         if "Item" in response.keys():
             item = response["Item"]
             mapping_info = item['mapping']
@@ -124,6 +130,26 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
     return mapping_list
 
 def replace_no_translation_text_to_placeholder(src_content):
+
+    # Extract prefix content (placeholders at the beginning of src_content)
+    prefix_content = ''
+    prefix_match = re.match(r'^[\s\t\r\n]*', src_content)
+    if prefix_match:
+        prefix_content = prefix_match.group(0)
+        src_content = src_content[len(prefix_content):]
+    # Extract suffix content (placeholders at the end of src_content)
+    suffix_content = ''
+    suffix_match = re.search(r'[\s\t\r\n]*$', src_content)
+    if suffix_match:
+        suffix_content = suffix_match.group(0)
+        src_content = src_content[:len(src_content) - len(suffix_content)]
+
+    affix = {
+        'prefix': prefix_content,
+        'suffix': suffix_content
+    }
+
+
     pattern = r'<span class="notranslate">(.*?)</span>'
     exclusions = re.findall(pattern, src_content)
 
@@ -131,13 +157,16 @@ def replace_no_translation_text_to_placeholder(src_content):
     for i, exclusion in enumerate(exclusions):
         src_content = src_content.replace(f'<span class="notranslate">{exclusion}</span>', placeholder.format(i))
     
-    return src_content, exclusions
+    return src_content, exclusions, affix
 
-def replace_placeholder_to_origin_text(translated_text, exclusions):
+def replace_placeholder_to_origin_text(translated_text, exclusions, affix):
     placeholder = "![{}](icon.png)"
     for i, exclusion in enumerate(exclusions):
         translated_text = translated_text.replace(placeholder.format(i), f'<span class="notranslate">{exclusion}</span>')
     
+    translated_text = translated_text.strip()
+    translated_text = affix['prefix'] + translated_text + affix['suffix']
+
     return translated_text
 
 def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping):
@@ -174,8 +203,8 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
         {"role": "assistant", "content": prefill_str}
     ]
 
-    print("messages:")
-    print(messages)
+    logger.info("messages:")
+    logger.info(messages)
 
     body = json.dumps(
             {
@@ -198,29 +227,34 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
             return rep_obj['content'][0]['text'].strip()
         except Exception as e:
             retry_count += 1
-            print(f"Attempt {retry_count} failed: {e}")
+            logger.error(f"Attempt {retry_count} failed: {e}")
             if retry_count == max_retries:
-                print("Maximum retries reached. Operation failed.")
+                logger.error("Maximum retries reached. Operation failed.")
             else:
-                print(f"Retrying in 1 seconds... (attempt {retry_count + 1})")
+                logger.error(f"Retrying in 1 seconds... (attempt {retry_count + 1})")
                 time.sleep(1)
 
     return None
 
-def mfm_segment(text, dictionary):
+def mfm_segment_trie(text, trie):
     words = []
-    while text:
-        for i in range(len(text), 0, -1):
-            if text[:i] in dictionary:
-                words.append(text[:i])
-                text = text[i:]
-                break
+    i = 0
+    n = len(text)
+    while i < n:
+        # 使用 trie.prefixes 方法找到所有可能的前缀
+        prefixes = trie.prefixes(text[i:])
+        if prefixes:
+            # 如果找到前缀，选择最长的一个
+            longest_prefix = max(prefixes, key=len)
+            words.append(longest_prefix)
+            i += len(longest_prefix)
         else:
-            text = text[1:]
-    return list(set(words))
+            # 如果没有找到前缀，跳过当前字符
+            i += 1
+    return words
 
 def list_language_paths(bucket_name, prefix_path):
-    print(f"[list_language_paths]: bucket_name: {bucket_name}, prefix_path: {prefix_path}")
+    logger.info(f"[list_language_paths]: bucket_name: {bucket_name}, prefix_path: {prefix_path}")
     s3 = boto3.client('s3')
 
     paginator = s3.get_paginator('list_objects_v2')
@@ -251,30 +285,43 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
 
     try:
         assert dictionary_id is not None
-
         is_updated, last_modified = get_dictionary_status(bucket, s3_prefix, dictionary_id)
-        print(f"is_updated:{is_updated}, last_modified:{last_modified}")
+        logger.info(f"is_updated:{is_updated}, last_modified:{last_modified}")
 
         if is_updated:
             s3 = boto3.client('s3')
             try:
-                dictionary_info_dict[dictionary_id] = { "last_modified" : last_modified, "terms" : {} }
+                dictionary_info_dict[dictionary_id] = { "last_modified" : last_modified, "trie" : {} }
+                en_terms = None
                 for lang_user_dict_path, lang_code in list_language_paths(bucket_name=bucket, prefix_path=f"{s3_prefix}/{dictionary_id}/"):
-                    print(f'lang_user_dict_path: {lang_user_dict_path}, lang_code:{lang_code}')
+                    if lang_code == LangCode.EnUs.value:
+                        logger.info(f'lang_user_dict_path: {lang_user_dict_path}, lang_code:{lang_code}')
+                        local_file = f'/tmp/{dictionary_id}_{lang_code}_user_dict.txt'
+                        user_dict_s3_key = f"{lang_user_dict_path}user_dict.txt"
+                        s3.download_file(bucket, user_dict_s3_key, local_file)
+                        with open(local_file, 'r') as file:
+                            lines = file.readlines()
+                            en_terms = set([ item.strip() for item in lines ])
+                            trie = build_trie(en_terms)
+                            dictionary_info_dict[dictionary_id]['trie'][lang_code] = trie
+                
+                for lang_user_dict_path, lang_code in list_language_paths(bucket_name=bucket, prefix_path=f"{s3_prefix}/{dictionary_id}/"):
+                    if lang_code == LangCode.EnUs.value:
+                        continue
+
+                    logger.info(f'lang_user_dict_path: {lang_user_dict_path}, lang_code:{lang_code}')
                     local_file = f'/tmp/{dictionary_id}_{lang_code}_user_dict.txt'
                     user_dict_s3_key = f"{lang_user_dict_path}user_dict.txt"
-
-                    print(f'bucket: {bucket}')
-                    print(f'user_dict_s3_key: {user_dict_s3_key}')
                     s3.download_file(bucket, user_dict_s3_key, local_file)
                     with open(local_file, 'r') as file:
                         lines = file.readlines()
-                        terms = set([ item.strip() for item in lines ])
-                        dictionary_info_dict[dictionary_id]['terms'][lang_code] = terms
-
-                    print(f'File downloaded successfully: {local_file}')
+                        terms = set([ item.strip() for item in lines ]) | en_terms
+                        trie = build_trie(terms)
+                        dictionary_info_dict[dictionary_id]['trie'][lang_code] = trie
+                
+                logger.info(f'File downloaded successfully: {local_file}')
             except Exception as e:
-                print(f'Error downloading file: {e}')
+                logger.exception(f'Error downloading file: {e}')
 
         if dictionary_id not in dictionary_info_dict:
             raise RuntimeError(f"There is no data for {dictionary_id}")
@@ -282,10 +329,10 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
         return True
 
     except Exception as e:
-        print(f'refresh_dictionary err: {e}')
+        logger.exception(f'refresh_dictionary err: {e}')
         return False
 
-async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, with_term_mapping):
+def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, with_term_mapping):
     global dictionary_info_dict, ddb_table_dict
 
     words = []
@@ -294,15 +341,13 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
 
     # if dictionary is not passed, words will be []
     if dictionary_id:
-        term_list = dictionary_info_dict.get(dictionary_id).get('terms').get(src_lang)
-        EN_term_list = dictionary_info_dict.get(dictionary_id).get('terms').get(LangCode.EnUs.value)
-        term_list.update(EN_term_list)
+        trie = dictionary_info_dict.get(dictionary_id).get('trie').get(src_lang)
 
         start_time = time.time()
-        words = mfm_segment(src_content, term_list)
+        words = mfm_segment_trie(src_content, trie)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"[task-{idx}][2] Elapsed time: {elapsed_time} seconds")
+        logger.info(f"[task-{idx}][2] Elapsed time: {elapsed_time} seconds")
 
     if request_type == 'segment_only':
         return {'words': words}
@@ -317,7 +362,7 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
         multilingual_term_mapping = retrieve_term_mapping(words, ddb_table_dict[dictionary_id], dest_lang)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"[task-{idx}][3] Elapsed time: {elapsed_time} seconds")
+        logger.info(f"[task-{idx}][3] Elapsed time: {elapsed_time} seconds")
 
     if request_type == 'term_mapping':
         json_obj["term_mapping"] = multilingual_term_mapping
@@ -328,21 +373,29 @@ async def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, 
 
     start_time = time.time()
 
-    src_content_with_placeholder, exclusions = replace_no_translation_text_to_placeholder(src_content)
+    src_content_with_placeholder, exclusions, affix = replace_no_translation_text_to_placeholder(src_content)
+    logger.info(f"src_content:{repr(src_content)}")
+    logger.info(f"src_content_with_placeholder:{repr(src_content_with_placeholder)}")
+    logger.info(f"exclusions:{exclusions}")
+    logger.info(f"affix:{affix}")
 
-    print(f"src_content_with_placeholder:{src_content_with_placeholder}")
-    print(f"exclusions:{exclusions}")
+    logger.info(f"src_content_with_placeholder:{src_content_with_placeholder}")
+    logger.info(f"exclusions:{exclusions}")
     prompt = construct_translate_prompt(src_content_with_placeholder, src_lang, dest_lang, multilingual_term_mapping)
+    logger.info(f"prompt:{prompt}")
+    translated_text_with_placeholder = invoke_bedrock(model_id=model_id, prompt=prompt, prefill_str=f'<translation_{dest_lang}>', stop=[f'</translation_{dest_lang}>'])
 
-    translated_text = invoke_bedrock(model_id=model_id, prompt=prompt, prefill_str=f'<translation_{dest_lang}>', stop=[f'</translation_{dest_lang}>'])
-    print(f"translated_text:{translated_text}")
-
-    json_obj["translated_text"] = replace_placeholder_to_origin_text(translated_text, exclusions)
+    
+    translated_text = replace_placeholder_to_origin_text(translated_text_with_placeholder, exclusions, affix)
+    logger.info(f"translated_text_with_placeholder:{repr(translated_text_with_placeholder)}")
+    logger.info(f"translated_text:{translated_text}")
+    logger.info(f"translated_text:{repr(translated_text)}")
+    json_obj["translated_text"] = translated_text
     json_obj["model"] = model_id
     json_obj["glossary_config"] = { "glossary": dictionary_id }
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"[task-{idx}][4] Elapsed time: {elapsed_time} seconds")
+    logger.info(f"[task-{idx}][4] Elapsed time: {elapsed_time} seconds")
     return json_obj
 
 # 对文本进行分词
@@ -383,15 +436,54 @@ def lambda_handler(event, context):
         succeded = refresh_dictionary(bucket, s3_prefix, dictionary_id)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"[1] Elapsed time: {elapsed_time} seconds")
+        logger.info(f"[1] Elapsed time: {elapsed_time} seconds")
 
         if not succeded:
             raise RuntimeError(f"Error: There is no user_dict for {dictionary_id} on S3 ")
 
     async def run_async():
-        tasks = [ process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, response_with_term_mapping) for idx, src_content in enumerate(src_contents) ]
+        loop = asyncio.get_running_loop()
+        with ThreadPoolExecutor() as pool:
+            tasks = [
+                loop.run_in_executor(
+                    pool,
+                    process_request,
+                    idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, response_with_term_mapping
+                )
+                for idx, src_content in enumerate(src_contents)
+            ]
         return await asyncio.gather(*tasks)
-
+    
     results = asyncio.run(run_async())
-
     return { "translations" : results }
+
+if __name__ == "__main__":
+    def _test(src_content):
+
+        src_content_with_placeholder, exclusions, line_break_count = replace_no_translation_text_to_placeholder(src_content)
+        translated_text = replace_placeholder_to_origin_text(src_content_with_placeholder, exclusions, line_break_count)
+        # print(f"src_content:{repr(src_content)}")
+        # print(f"src_content_with_placeholder:{repr(src_content_with_placeholder)}")
+        # print(f"exclusions:{exclusions}")
+        # print(f"line_break_count:{line_break_count}")
+        # print(f"translated_text:{repr(translated_text)}")
+
+        print(f"{src_content == translated_text}: {repr(src_content)} -> {repr(translated_text)}")
+    
+    import random
+
+    test_contents = [
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + " \nTest string 1" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Hello, world!" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Python is awesome" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Random newlines test" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Testing, testing, 1-2-3" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Newline madness" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Leading and trailing spaces" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "This is a test string" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Random number of newlines" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))),
+        ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10))) + "Final test string" + ''.join(random.choices(['\n', '\t', ' ', '\r'], k=random.randint(0, 10)))
+    ]
+
+    for src_content in test_contents:
+        _test(src_content)

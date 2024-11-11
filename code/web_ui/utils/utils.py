@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 import os
 import yaml
+from io import BytesIO
 
 load_dotenv()
 
@@ -71,7 +72,7 @@ def list_dictionary_ids():
     # Return the list of extracted dictionary IDs
     return translate_mapping_tables
 
-def translate_content(contents, source_lang, target_lang, dictionary_id, model_id):
+def translate_content(contents, source_lang, target_lang, dictionary_id, model_id, lambda_alias):
     lambda_client = boto3.client('lambda', region_name=deploy_region)
     payload = {
         "src_contents": contents,
@@ -87,7 +88,8 @@ def translate_content(contents, source_lang, target_lang, dictionary_id, model_i
     translate_response = lambda_client.invoke(
         FunctionName='translate_tool',
         InvocationType='RequestResponse',
-        Payload=json.dumps(payload)
+        Payload=json.dumps(payload),
+        Qualifier=lambda_alias
     )
     payload_json = json.loads(translate_response.get('Payload').read())
     if 'translations' in payload_json:
@@ -193,6 +195,38 @@ def get_glue_job_run_status(run_id, job_name='ingest_knowledge2ddb'):
         print(f"An error occurred: {str(e)}")
         return None
 
+def term_mapping_quality_check(uploaded_file, min_length=2):
+    file_content = uploaded_file.getvalue()
+    json_str = file_content.decode("utf-8")
+    terminology_data = json.loads(json_str)
+
+    error_list = []
+    warn_list = []
+
+    for entry in terminology_data['data']:
+        mapping = entry['mapping']
+
+        for language, terms in mapping.items():
+            # 验证专词是否为空字符串
+            empty_term = False
+            short_term = False
+            for term in terms:
+                # 验证词的长度，如果过短则记录到error_list
+                if len(term) == 0:
+                    error_list.append(mapping)
+                    empty_term = True
+                elif len(term) < min_length:
+                    warn_list.append(mapping)
+                    short_term = True
+
+                if empty_term or short_term:
+                    break
+
+            if empty_term or short_term:
+                break
+
+    return warn_list, error_list
+
 if __name__ == '__main__':
     pass
     # result = translate_content(
@@ -232,3 +266,122 @@ if __name__ == '__main__':
     #     "VI" : "Bánh Người Cá Kỳ Lạ"
     # }
     # update_term_mapping("dictionary_1", "奇怪的渔人吐司", 'Character', new_mapping_info)
+
+    def _test_term_mapping_quality_check():
+        json_content="""
+            {
+                "data": [
+                            {
+                            "mapping": {
+                                "de-de": [
+                                    "Goldkrebs"
+                                ],
+                                "en-us": [
+                                    "Golden Crab"
+                                ],
+                                "es-es": [
+                                    "Cangrejo dorado"
+                                ],
+                                "fr-fr": [
+                                    "Crabe doré"
+                                ],
+                                "id-id": [
+                                    "Golden Crab"
+                                ],
+                                "it-it": [
+                                    "Granchio dorato"
+                                ],
+                                "ja-jp": [
+                                    "黄金ガニ"
+                                ],
+                                "ko-kr": [
+                                    "골든크랩"
+                                ],
+                                "pt-pt": [
+                                    "Caranguejo-Dourado"
+                                ],
+                                "ru-ru": [
+                                    "Золотистый краб"
+                                ],
+                                "th-th": [
+                                    "Golden Crab"
+                                ],
+                                "tr-tr": [
+                                    "Altın Yengeç"
+                                ],
+                                "vi-vn": [
+                                    "Cua Hoàng Kim"
+                                ],
+                                "zh-cn": [
+                                    "黄金蟹", "g"
+                                ],
+                                "zh-tw": [
+                                    "黃金蟹"
+                                ]
+                            },
+                            "entity_type": "default"
+                        },
+                        {
+                            "mapping": {
+                                "de-de": [
+                                    "Sonnenkrebs"
+                                ],
+                                "en-us": [
+                                    "Sun Crab"
+                                ],
+                                "es-es": [
+                                    "Cangrejo solar"
+                                ],
+                                "fr-fr": [
+                                    "Crabe du soleil"
+                                ],
+                                "id-id": [
+                                    "Sun Crab"
+                                ],
+                                "it-it": [
+                                    "Granchio del sole"
+                                ],
+                                "ja-jp": [
+                                    "太陽ガニ"
+                                ],
+                                "ko-kr": [
+                                    "썬크랩"
+                                ],
+                                "pt-pt": [
+                                    "Caranguejo-do-Sol"
+                                ],
+                                "ru-ru": [
+                                    "Солнечный краб"
+                                ],
+                                "th-th": [
+                                    "Sun Crab"
+                                ],
+                                "tr-tr": [
+                                    "Güneş Yengeci"
+                                ],
+                                "vi-vn": [
+                                    "Cua Thái Dương"
+                                ],
+                                "zh-cn": [
+                                    "太阳蟹", ""
+                                ],
+                                "zh-tw": [
+                                    "太陽蟹"
+                                ]
+                            },
+                            "entity_type": "default"
+                        }
+                ]
+            }
+        """
+
+        # 创建一个类文件对象
+        mock_file = BytesIO(json_content.encode('utf-8'))
+
+        # 调用函数
+        warn_list, error_list = term_mapping_quality_check(mock_file, min_length=2)
+
+        print("Warnings:", warn_list)
+        print("Errors:", error_list)
+
+    _test_term_mapping_quality_check()
