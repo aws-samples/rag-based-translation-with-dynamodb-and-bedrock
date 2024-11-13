@@ -246,8 +246,12 @@ def mfm_segment_trie(text, trie):
         if prefixes:
             # 如果找到前缀，选择最长的一个
             longest_prefix = max(prefixes, key=len)
-            words.append(longest_prefix)
-            i += len(longest_prefix)
+            if len(longest_prefix) == 0:
+                i+= 1
+                continue
+            else:
+                words.append(longest_prefix)
+                i += len(longest_prefix)
         else:
             # 如果没有找到前缀，跳过当前字符
             i += 1
