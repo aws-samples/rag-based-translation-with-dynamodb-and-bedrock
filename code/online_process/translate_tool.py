@@ -319,7 +319,9 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
                     s3.download_file(bucket, user_dict_s3_key, local_file)
                     with open(local_file, 'r') as file:
                         lines = file.readlines()
-                        terms = set([ item.strip() for item in lines ]) | en_terms
+                        terms = set([ item.strip() for item in lines ])
+                        if en_terms:
+                            terms = terms | en_terms
                         trie = build_trie(terms)
                         dictionary_info_dict[dictionary_id]['trie'][lang_code] = trie
                 
