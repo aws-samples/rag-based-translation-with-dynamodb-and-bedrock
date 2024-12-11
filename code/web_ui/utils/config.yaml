@@ -25,7 +25,7 @@ support: # support contact info
   - xyz
 
 upload_bucket:
-  name: bucket_placeholder
+  name: 750521193989-rag-translate-bucket
 
 deploy_region: # region you want to deploy
-  - region_placeholder
+  - ap-southeast-1

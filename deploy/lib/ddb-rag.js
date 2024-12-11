@@ -159,6 +159,16 @@ export class DynamoDBRagStack extends Stack {
               })
       )
 
+    const translation_meta_table = new Table(this, "translation-meta-table", {
+      partitionKey: {
+        name: "dict",
+        type: AttributeType.STRING,
+      },
+      tableName: 'translation_meta',
+      removalPolicy: RemovalPolicy.DESTROY,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+    });
+
     // const rag_meta_en_table = new Table(this, "rag-meta-en-table", {
     //   partitionKey: {
     //     name: "term",

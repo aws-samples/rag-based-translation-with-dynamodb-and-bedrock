@@ -48,6 +48,10 @@ def list_dictionary_ids():
 
     Returns:
         list: A list of dictionary IDs extracted from the table names.
+        example: 
+        ['translate_mapping_aaa', 'translate_mapping_bbb', 'translate_mapping_ccc']
+        ['translate_mapping_aaa','translate_mapping_aaa_v1', 'translate_mapping_aaa_v2', 'translate_mapping_bbb','translate_mapping_bbb_v1', 'translate_mapping_bbb_v2','translate_mapping_ccc','translate_mapping_ccc_v1', 'translate_mapping_ccc_v2']
+
     """
     # Create a DynamoDB client
     dynamodb = boto3.client('dynamodb', region_name=deploy_region)
@@ -71,6 +75,68 @@ def list_dictionary_ids():
 
     # Return the list of extracted dictionary IDs
     return translate_mapping_tables
+
+def get_dict_with_version(table_list):
+    """
+    get the dictionary id with version
+    input:
+        table_list: list of table names, example:
+        ['translate_mapping_aaa', 'translate_mapping_aaa_v1', 'translate_mapping_aaa_v2', 'translate_mapping_bbb', 'translate_mapping_bbb_v1', 'translate_mapping_bbb_v2', 'translate_mapping_ccc']
+    output:
+        example:
+        {
+            'aaa': ['default', 'v1', 'v2'],
+            'bbb': ['default', 'v1', 'v2'],
+            'ccc': ['default', 'v1', 'v2'],
+        }
+    """
+    dict_with_version = {}
+    for table_name in table_list:
+        # Split into parts and handle version separately
+        if '_v' in table_name:
+            # Find the last occurrence of '_v' to separate version
+            base_name, version = table_name.rsplit('_v', 1)
+            version = 'v' + version
+            # Get dict_id by removing translate_mapping_ prefix
+            dict_id = base_name.removeprefix('translate_mapping_')
+        else:
+            dict_id = table_name.removeprefix('translate_mapping_')
+            version = None
+            
+        if dict_id not in dict_with_version:
+            dict_with_version[dict_id] = []
+        if version:  # Only append version if it exists
+            dict_with_version[dict_id].append(version)
+    # Sort versions numerically by extracting number after 'v'
+    for dict_id in dict_with_version:
+        versions = [v for v in dict_with_version[dict_id] if v.startswith('v')]
+        versions.sort(key=lambda x: int(x.removeprefix('v')))
+        dict_with_version[dict_id] = ['default'] + versions
+    
+    return dict_with_version
+
+def get_current_version(dict):
+    """
+    get the current version of the dictionary
+    """
+    # 查询dynamodb中table_name='translate_meta'的表，获取字典的当前版本
+    dynamodb = boto3.resource('dynamodb', region_name=deploy_region)
+    try:
+        translate_meta_table = dynamodb.Table('translate_meta')
+        response = translate_meta_table.get_item(Key={'dict': dict})
+        if 'Item' in response:  
+            return response['Item']['version']
+        else:
+            return None
+    except dynamodb.meta.client.exceptions.ResourceNotFoundException:
+        # Table doesn't exist
+        print(f"Table translate_meta doesn't exist, dict: {dict}")
+        return None
+
+def update_current_version(dict, version):
+    dynamodb = boto3.resource('dynamodb', region_name=deploy_region)
+    translate_meta_table = dynamodb.Table('translate_meta')
+    translate_meta_table.put_item(Item={'dict': dict, 'version': version})
 
 def translate_content(contents, source_lang, target_lang, dictionary_id, model_id, lambda_alias):
     lambda_client = boto3.client('lambda', region_name=deploy_region)
@@ -267,121 +333,127 @@ if __name__ == '__main__':
     # }
     # update_term_mapping("dictionary_1", "奇怪的渔人吐司", 'Character', new_mapping_info)
 
-    def _test_term_mapping_quality_check():
-        json_content="""
-            {
-                "data": [
-                            {
-                            "mapping": {
-                                "de-de": [
-                                    "Goldkrebs"
-                                ],
-                                "en-us": [
-                                    "Golden Crab"
-                                ],
-                                "es-es": [
-                                    "Cangrejo dorado"
-                                ],
-                                "fr-fr": [
-                                    "Crabe doré"
-                                ],
-                                "id-id": [
-                                    "Golden Crab"
-                                ],
-                                "it-it": [
-                                    "Granchio dorato"
-                                ],
-                                "ja-jp": [
-                                    "黄金ガニ"
-                                ],
-                                "ko-kr": [
-                                    "골든크랩"
-                                ],
-                                "pt-pt": [
-                                    "Caranguejo-Dourado"
-                                ],
-                                "ru-ru": [
-                                    "Золотистый краб"
-                                ],
-                                "th-th": [
-                                    "Golden Crab"
-                                ],
-                                "tr-tr": [
-                                    "Altın Yengeç"
-                                ],
-                                "vi-vn": [
-                                    "Cua Hoàng Kim"
-                                ],
-                                "zh-cn": [
-                                    "黄金蟹", "g"
-                                ],
-                                "zh-tw": [
-                                    "黃金蟹"
-                                ]
-                            },
-                            "entity_type": "default"
-                        },
-                        {
-                            "mapping": {
-                                "de-de": [
-                                    "Sonnenkrebs"
-                                ],
-                                "en-us": [
-                                    "Sun Crab"
-                                ],
-                                "es-es": [
-                                    "Cangrejo solar"
-                                ],
-                                "fr-fr": [
-                                    "Crabe du soleil"
-                                ],
-                                "id-id": [
-                                    "Sun Crab"
-                                ],
-                                "it-it": [
-                                    "Granchio del sole"
-                                ],
-                                "ja-jp": [
-                                    "太陽ガニ"
-                                ],
-                                "ko-kr": [
-                                    "썬크랩"
-                                ],
-                                "pt-pt": [
-                                    "Caranguejo-do-Sol"
-                                ],
-                                "ru-ru": [
-                                    "Солнечный краб"
-                                ],
-                                "th-th": [
-                                    "Sun Crab"
-                                ],
-                                "tr-tr": [
-                                    "Güneş Yengeci"
-                                ],
-                                "vi-vn": [
-                                    "Cua Thái Dương"
-                                ],
-                                "zh-cn": [
-                                    "太阳蟹", ""
-                                ],
-                                "zh-tw": [
-                                    "太陽蟹"
-                                ]
-                            },
-                            "entity_type": "default"
-                        }
-                ]
-            }
-        """
+    # def _test_term_mapping_quality_check():
+    #     json_content="""
+    #         {
+    #             "data": [
+    #                         {
+    #                         "mapping": {
+    #                             "de-de": [
+    #                                 "Goldkrebs"
+    #                             ],
+    #                             "en-us": [
+    #                                 "Golden Crab"
+    #                             ],
+    #                             "es-es": [
+    #                                 "Cangrejo dorado"
+    #                             ],
+    #                             "fr-fr": [
+    #                                 "Crabe doré"
+    #                             ],
+    #                             "id-id": [
+    #                                 "Golden Crab"
+    #                             ],
+    #                             "it-it": [
+    #                                 "Granchio dorato"
+    #                             ],
+    #                             "ja-jp": [
+    #                                 "黄金ガニ"
+    #                             ],
+    #                             "ko-kr": [
+    #                                 "골든크랩"
+    #                             ],
+    #                             "pt-pt": [
+    #                                 "Caranguejo-Dourado"
+    #                             ],
+    #                             "ru-ru": [
+    #                                 "Золотистый краб"
+    #                             ],
+    #                             "th-th": [
+    #                                 "Golden Crab"
+    #                             ],
+    #                             "tr-tr": [
+    #                                 "Altın Yengeç"
+    #                             ],
+    #                             "vi-vn": [
+    #                                 "Cua Hoàng Kim"
+    #                             ],
+    #                             "zh-cn": [
+    #                                 "黄金蟹", "g"
+    #                             ],
+    #                             "zh-tw": [
+    #                                 "黃金蟹"
+    #                             ]
+    #                         },
+    #                         "entity_type": "default"
+    #                     },
+    #                     {
+    #                         "mapping": {
+    #                             "de-de": [
+    #                                 "Sonnenkrebs"
+    #                             ],
+    #                             "en-us": [
+    #                                 "Sun Crab"
+    #                             ],
+    #                             "es-es": [
+    #                                 "Cangrejo solar"
+    #                             ],
+    #                             "fr-fr": [
+    #                                 "Crabe du soleil"
+    #                             ],
+    #                             "id-id": [
+    #                                 "Sun Crab"
+    #                             ],
+    #                             "it-it": [
+    #                                 "Granchio del sole"
+    #                             ],
+    #                             "ja-jp": [
+    #                                 "太陽ガニ"
+    #                             ],
+    #                             "ko-kr": [
+    #                                 "썬크랩"
+    #                             ],
+    #                             "pt-pt": [
+    #                                 "Caranguejo-do-Sol"
+    #                             ],
+    #                             "ru-ru": [
+    #                                 "Солнечный краб"
+    #                             ],
+    #                             "th-th": [
+    #                                 "Sun Crab"
+    #                             ],
+    #                             "tr-tr": [
+    #                                 "Güneş Yengeci"
+    #                             ],
+    #                             "vi-vn": [
+    #                                 "Cua Thái Dương"
+    #                             ],
+    #                             "zh-cn": [
+    #                                 "太阳蟹", ""
+    #                             ],
+    #                             "zh-tw": [
+    #                                 "太陽蟹"
+    #                             ]
+    #                         },
+    #                         "entity_type": "default"
+    #                     }
+    #             ]
+    #         }
+    #     """
 
-        # 创建一个类文件对象
-        mock_file = BytesIO(json_content.encode('utf-8'))
+    #     # 创建一个类文件对象
+    #     mock_file = BytesIO(json_content.encode('utf-8'))
 
-        # 调用函数
-        warn_list, error_list = term_mapping_quality_check(mock_file, min_length=2)
+    #     # 调用函数
+    #     warn_list, error_list = term_mapping_quality_check(mock_file, min_length=2)
 
-        print("Warnings:", warn_list)
-        print("Errors:", error_list)
+    #     print("Warnings:", warn_list)
+    #     print("Errors:", error_list)
 
-    _test_term_mapping_quality_check()
+    # _test_term_mapping_quality_check()
+
+    def _test_get_dict_with_version():
+        table_list = ['translate_mapping_aaa', 'translate_mapping_aaa_v13', 'translate_mapping_aaa_v2', 'translate_mapping_aaa_v3', 'translate_mapping_aaa_v5', 'translate_mapping_aaa_v9','translate_mapping_aaa_v10', 'translate_mapping_aaa_v11','translate_mapping_aaa_v21','translate_mapping_bbb', 'translate_mapping_bbb_v1', 'translate_mapping_bbb_v2', 'translate_mapping_ccc']
+        dict_with_version = get_dict_with_version(table_list)
+        print(dict_with_version)
+    _test_get_dict_with_version()

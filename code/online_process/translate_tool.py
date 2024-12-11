@@ -19,6 +19,8 @@ bedrock_region = os.environ.get('bedrock_region')
 bedrock = boto3.client(service_name='bedrock-runtime', region_name=bedrock_region)
 dynamodb = boto3.resource('dynamodb')
 
+Translate_Meta_Table_Name = 'translate_meta'
+
 class LangCode(Enum):
     DeDe = "de-de"
     EnUs = "en-us"
@@ -439,6 +441,25 @@ def lambda_handler(event, context):
 
     # if dictionary is not passed, dictionary will not be refreshed
     if dictionary_id:
+        #todo update dictionary id with version here
+        # 1.check translate_meta table exist, if not, keep dictionary_id unchanged
+        # 2.check translate_meta table exist, and dictionary_id is in translate_meta table, if not, keep dictionary_id unchanged
+        # 3.check translate_meta table exist, and dictionary_id is in translate_meta table, check version for dictionary_id 
+        #   if version is default, keep dictionary_id unchanged
+        #   if version is not default, update dictionary_id to dictionary_id_version
+
+        translate_meta_table = dynamodb.Table(Translate_Meta_Table_Name)
+        try:
+            response = translate_meta_table.get_item(Key={'dict': dictionary_id})
+            if 'Item' in response:
+                version = response['Item']['version']
+                if version != 'default':
+                    dictionary_id = f"{dictionary_id}_{version}"
+                    logger.info(f"update dictionary_id to {dictionary_id}")
+        except dynamodb.meta.client.exceptions.ResourceNotFoundException:
+            logger.warning(f"Table translate_meta doesn't exist, dictionary_id: {dictionary_id}")
+            pass    
+
         succeded = refresh_dictionary(bucket, s3_prefix, dictionary_id)
         end_time = time.time()
         elapsed_time = end_time - start_time

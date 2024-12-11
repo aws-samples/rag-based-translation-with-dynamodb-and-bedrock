@@ -1,5 +1,5 @@
 boto3
-streamlit
+streamlit == 1.37.0
 pandas
 python-dotenv
 streamlit-ace
