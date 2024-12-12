@@ -112,6 +112,16 @@ export class RagTranslateStack extends Stack {
               })
       )
 
+      const translation_meta_table = new Table(this, "translation-meta-table", {
+        partitionKey: {
+          name: "dict",
+          type: AttributeType.STRING,
+        },
+        tableName: 'translate_meta',
+        removalPolicy: RemovalPolicy.DESTROY,
+        billingMode: BillingMode.PAY_PER_REQUEST,
+      });
+
       // // Create VPC and Subnets
       // const vpcStack = new VpcStack(this,'vpc-stack',{env:process.env});
       // const vpc = vpcStack.vpc;
