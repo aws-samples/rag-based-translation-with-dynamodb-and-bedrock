@@ -138,6 +138,13 @@ def update_current_version(dict, version):
     translate_meta_table = dynamodb.Table('translate_meta')
     translate_meta_table.put_item(Item={'dict': dict, 'version': version})
 
+def build_mapping(src_term, target_term, entity_type):
+    entity_tag = f"[{entity_type}] "
+    if src_term and target_term and entity_type:
+        return f"{entity_tag}{src_term}=>{target_term}"
+    else:
+        return None
+
 def translate_content(contents, source_lang, target_lang, dictionary_id, model_id, lambda_alias):
     lambda_client = boto3.client('lambda', region_name=deploy_region)
     payload = {
@@ -161,7 +168,7 @@ def translate_content(contents, source_lang, target_lang, dictionary_id, model_i
     if 'translations' in payload_json:
         result = payload_json['translations'][0]
         term_mapping = result.get('term_mapping')
-        term_mapping_list = [ f"{tup[0]}=>{tup[1]}({tup[2]})" for tup in term_mapping ]
+        term_mapping_list = [ build_mapping(src_term=tup[0], target_term=tup[1], entity_type=tup[2]) for tup in term_mapping ]
         return result.get('translated_text'), '\n'.join(term_mapping_list)
     else:
         return payload_json.get("error"), ""

@@ -6,6 +6,7 @@ import logging
 import json
 import time
 import asyncio
+import string
 
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
@@ -238,7 +239,17 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
 
     return None
 
+def is_english(text):
+    unicode_punctuation = [' ','«','»','¿','‐','‑','‒','–','—','―','‖','‘','’','“','”','†','‡','•','…','‰','′','″','※','‼','⁇','⁈','⁉','₠','₡','₢','₣','₤','₥','₦','₧','₨','₩','₪','₫','€','₹','∀','∂','∃','∅','∇','∈','∉','∋','∑','−','√','∞','∠','∧','∨','∩','∪','　','、','。','〃','々','〈','〉','《','》','「','」','『','』','【','】','〔','〕','〖','〗','〜','！','＂','＃','＄','％','＆','＇','（','）','＊','＋','，','－','．','／','：','；','＜','＝','＞','？','＠','︰','︱','︳','﹉','﹐','﹑','﹒','﹔','﹕','﹖','﹗','｡','｢','｣','､','･']
+    allowed = string.ascii_letters + string.digits + string.punctuation + string.whitespace
+    allowed_list = list(allowed) + unicode_punctuation
+    return all(char in allowed_list for char in text)
+
 def mfm_segment_trie(text, trie):
+    if is_english(text):
+        words = text.split(' ')
+        return words
+
     words = []
     i = 0
     n = len(text)

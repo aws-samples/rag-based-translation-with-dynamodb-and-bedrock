@@ -119,7 +119,7 @@ Please translate directly according to the text content, keep the original forma
     vocabulary_prompt = "\n".join(vocabulary_prompt_list)
 
     def build_mapping(src_term, target_term, entity_type):
-        entity_tag = f"[{entity_type}] "
+        entity_tag = f"[{entity_type}] " if entity_type else ""
         if src_term and target_term and entity_type:
             return f"{entity_tag}{src_term}=>{target_term}"
         else:
