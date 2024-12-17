@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import cdk  from 'aws-cdk-lib';
-import { DynamoDBRagStack } from '../lib/ddb-rag.js';
 import {RagTranslateStack} from '../lib/rag-translate.js';
 import {RagWebserverStack} from '../lib/rag-webserver.js';
 import * as dotenv from 'dotenv' ;
