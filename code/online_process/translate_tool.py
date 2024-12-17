@@ -188,8 +188,8 @@ def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_te
     vocabulary_prompt = "\n".join(vocabulary_prompt_list)
 
     def build_mapping(src_term, target_term, entity_type):
-        entity_tag = f"[{entity_type}] "
-        if src_term and target_term and entity_type:
+        entity_tag = f"[{entity_type}] " if entity_type else ""
+        if src_term and target_term:
             return f"{entity_tag}{src_term}=>{target_term}"
         else:
             return None
