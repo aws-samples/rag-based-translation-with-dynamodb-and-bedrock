@@ -239,17 +239,7 @@ def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>
 
     return None
 
-def is_english(text):
-    unicode_punctuation = [' ','«','»','¿','‐','‑','‒','–','—','―','‖','‘','’','“','”','†','‡','•','…','‰','′','″','※','‼','⁇','⁈','⁉','₠','₡','₢','₣','₤','₥','₦','₧','₨','₩','₪','₫','€','₹','∀','∂','∃','∅','∇','∈','∉','∋','∑','−','√','∞','∠','∧','∨','∩','∪','　','、','。','〃','々','〈','〉','《','》','「','」','『','』','【','】','〔','〕','〖','〗','〜','！','＂','＃','＄','％','＆','＇','（','）','＊','＋','，','－','．','／','：','；','＜','＝','＞','？','＠','︰','︱','︳','﹉','﹐','﹑','﹒','﹔','﹕','﹖','﹗','｡','｢','｣','､','･']
-    allowed = string.ascii_letters + string.digits + string.punctuation + string.whitespace
-    allowed_list = list(allowed) + unicode_punctuation
-    return all(char in allowed_list for char in text)
-
 def mfm_segment_trie(text, trie):
-    if is_english(text):
-        words = text.split(' ')
-        return words
-
     words = []
     i = 0
     n = len(text)
@@ -265,6 +255,34 @@ def mfm_segment_trie(text, trie):
             else:
                 words.append(longest_prefix)
                 i += len(longest_prefix)
+        else:
+            # 如果没有找到前缀，跳过当前字符
+            i += 1
+    return words
+
+def mfm_segment_trie_en(text, trie):
+    segment_chars = string.punctuation + string.whitespace
+
+    words = []
+    i = 0
+    n = len(text)
+    while i < n:
+        # 使用 trie.prefixes 方法找到所有可能的前缀
+        prefixes = trie.prefixes(text[i:])
+        if prefixes:
+            # 如果找到前缀，选择最长的一个
+            longest_prefix = max(prefixes, key=len)
+            if len(longest_prefix) == 0:
+                i+= 1
+                continue
+            else:
+                # 检查这个最大匹配的前后字符是否为分隔符，比如空格或者标点符号
+                if text[i-1] in segment_chars and text[i+len(longest_prefix)] in segment_chars:
+                    words.append(longest_prefix)
+                    i += len(longest_prefix)
+                else:
+                    i += 1
+                    continue
         else:
             # 如果没有找到前缀，跳过当前字符
             i += 1
@@ -351,6 +369,12 @@ def refresh_dictionary(bucket, s3_prefix, dictionary_id) -> bool:
         logger.exception(f'refresh_dictionary err: {e}')
         return False
 
+def is_english(text):
+    unicode_punctuation = [' ','«','»','¿','‐','‑','‒','–','—','―','‖','‘','’','“','”','†','‡','•','…','‰','′','″','※','‼','⁇','⁈','⁉','₠','₡','₢','₣','₤','₥','₦','₧','₨','₩','₪','₫','€','₹','∀','∂','∃','∅','∇','∈','∉','∋','∑','−','√','∞','∠','∧','∨','∩','∪','　','、','。','〃','々','〈','〉','《','》','「','」','『','』','【','】','〔','〕','〖','〗','〜','！','＂','＃','＄','％','＆','＇','（','）','＊','＋','，','－','．','／','：','；','＜','＝','＞','？','＠','︰','︱','︳','﹉','﹐','﹑','﹒','﹔','﹕','﹖','﹗','｡','｢','｣','､','･']
+    allowed = string.ascii_letters + string.digits + string.punctuation + string.whitespace
+    allowed_list = list(allowed) + unicode_punctuation
+    return all(char in allowed_list for char in text)
+
 def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, request_type, model_id, with_term_mapping):
     global dictionary_info_dict, ddb_table_dict
 
@@ -363,7 +387,11 @@ def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, reques
         trie = dictionary_info_dict.get(dictionary_id).get('trie').get(src_lang)
 
         start_time = time.time()
-        words = mfm_segment_trie(src_content, trie)
+        if is_english(src_content):
+            words = mfm_segment_trie_en(src_content, trie)
+        else:
+            words = mfm_segment_trie(src_content, trie)
+            
         end_time = time.time()
         elapsed_time = end_time - start_time
         logger.info(f"[task-{idx}][2] Elapsed time: {elapsed_time} seconds")
