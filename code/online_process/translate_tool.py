@@ -277,7 +277,9 @@ def mfm_segment_trie_en(text, trie):
                 continue
             else:
                 # 检查这个最大匹配的前后字符是否为分隔符，比如空格或者标点符号
-                if text[i-1] in segment_chars and text[i+len(longest_prefix)] in segment_chars:
+                left_idx = i - 1
+                right_idx = i + len(longest_prefix)
+                if (left_idx < 0 or text[left_idx] in segment_chars) and (right_idx >= n or text[right_idx] in segment_chars):
                     words.append(longest_prefix)
                     i += len(longest_prefix)
                 else:

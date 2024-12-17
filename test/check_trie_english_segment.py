@@ -21,7 +21,9 @@ def mfm_segment_trie(text, trie):
                 continue
             else:
                 # 检查这个最大匹配的前后字符是否为分隔符，比如空格或者标点符号
-                if text[i-1] in segment_chars and text[i+len(longest_prefix)] in segment_chars:
+                left_idx = i - 1
+                right_idx = i + len(longest_prefix)
+                if (left_idx < 0 or text[left_idx] in segment_chars) and (right_idx >= n or text[right_idx] in segment_chars):
                     words.append(longest_prefix)
                     i += len(longest_prefix)
                 else:
@@ -70,3 +72,11 @@ term_list55 = mfm_segment_trie(text4, trie2)
 print(term_list55)
 term_list66 = mfm_segment_trie(text5, trie2)
 print(term_list66)
+
+text6 = "V As they peered into the Infinity Abyss, the explorers felt a mix of awe and Very terror at its endless depths."
+text7 = "As they peered into the Infinity Abyss, the explorers felt a mix of awe and terror at its endless depths. M"
+
+term_list77 = mfm_segment_trie(text6, trie2)
+print(term_list77)
+term_list88 = mfm_segment_trie(text7, trie2)
+print(term_list88)
