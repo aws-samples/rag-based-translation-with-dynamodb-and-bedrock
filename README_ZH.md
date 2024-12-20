@@ -9,7 +9,7 @@
 
 ## Demo
 
-![demo](./demo.gif) 
+https://github.com/user-attachments/assets/b31f7faf-6a84-44a0-9f76-b03c46ff19c0
 
 ## 架构图
 

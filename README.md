@@ -9,7 +9,7 @@ This solution use DynamoDB to store mapping relationships for a large number of 
 
 ## Demo
 
-![demo](./demo.gif) 
+https://github.com/user-attachments/assets/b31f7faf-6a84-44a0-9f76-b03c46ff19c0
 
 ## Architecture Diagram
 
