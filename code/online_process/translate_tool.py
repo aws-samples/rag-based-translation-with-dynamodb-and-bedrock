@@ -128,9 +128,11 @@ def retrieve_term_mapping(term_list, ddb_table, dest_lang):
             if dest_lang in mapping_info:
                 mapping_term = mapping_info.get(dest_lang)
                 if mapping_term and isinstance(mapping_term, list):
-                    mapping_list.append([term, mapping_term[0], entity])
+                    mapping_list.append((term, mapping_term[0], entity))
 
-    return mapping_list
+    unique_mapping_set = set(mapping_list)
+    unique_mapping_list = [list(item) for item in unique_mapping_set]
+    return unique_mapping_list
 
 def replace_no_translation_text_to_placeholder(src_content):
 
