@@ -228,6 +228,11 @@ const DictionaryManagementPage = () => {
       dispatch(clearJobStatus());
     }
 
+    // Clear previous quality check result before starting a new upload
+    if (qualityCheckResult) {
+      dispatch(clearQualityCheckResult());
+    }
+
     // If updating an existing dictionary, use the next version
     const version = !createNew ? getNextVersion(selectedDictionary) : undefined;
     
