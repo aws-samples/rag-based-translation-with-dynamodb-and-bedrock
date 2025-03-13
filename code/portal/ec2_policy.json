@@ -1,0 +1,62 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParametersByPath",
+        "ssm:PutParameter"
+      ],
+      "Resource": "arn:aws:ssm:*:*:parameter/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "comprehend:DetectDominantLanguage"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:ListTables",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem"
+      ],
+      "Resource": "arn:aws:dynamodb:*:*:table/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "lambda:InvokeFunction"
+      ],
+      "Resource": "arn:aws:lambda:*:*:function:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${UPLOAD_BUCKET}/*",
+        "arn:aws:s3:::${UPLOAD_BUCKET}"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "glue:GetJobRun",
+        "glue:StartJobRun"
+      ],
+      "Resource": "arn:aws:glue:*:*:job/*"
+    }
+    {
+        "Effect": "Allow",
+        "Action": "bedrock:ListFoundationModels",
+        "Resource": "*"
+    }
+  ]
+}

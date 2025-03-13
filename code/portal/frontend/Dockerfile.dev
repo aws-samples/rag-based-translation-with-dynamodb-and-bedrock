@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+# 接收构建参数，用于设置 npm 镜像源
+ARG NPM_REGISTRY=https://registry.npmjs.org/
+
+WORKDIR /app
+
+COPY package*.json ./
+
+# Install dependencies with improved network resilience
+RUN echo "registry=$NPM_REGISTRY" > .npmrc && \
+    npm config set registry $NPM_REGISTRY && \
+    npm config set timeout 120000 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000 && \
+    npm install --legacy-peer-deps
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

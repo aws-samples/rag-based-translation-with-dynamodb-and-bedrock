@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    image: liyuan123/portal-backend:latest
+    restart: always
+    container_name: llm-translate-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - AWS_REGION=${AWS_REGION:-ap-southeast-1}
+      - UPLOAD_BUCKET=${UPLOAD_BUCKET:-687752207838-rag-translate-bucket}
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-for-jwt-replace-in-production}
+      - USER_DEMO=${USER_DEMO:-}
+      - USER_ADMIN=${USER_ADMIN:-}
+      - USER_SUPERADMIN=${USER_SUPERADMIN:-}
+    networks:
+      - llm-translate-network
+
+  frontend:
+    image: liyuan123/portal-frontend:latest
+    restart: always
+    container_name: llm-translate-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - llm-translate-network
+
+networks:
+  llm-translate-network:
+    driver: bridge
