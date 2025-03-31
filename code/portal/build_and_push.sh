@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # 设置颜色输出
 GREEN='\033[0;32m'

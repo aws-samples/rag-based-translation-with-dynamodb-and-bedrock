@@ -271,6 +271,15 @@ class AWSService:
 
         try:
             response = self.bedrock.list_foundation_models()
+
+            cris_prefix = ''
+            if self.region.startswith('us')
+                cris_prefix = 'us.'
+            elif self.region.startswith('eu')
+                cris_prefix = 'eu.'
+            elif self.region.startswith('ap')
+                cris_prefix = 'apac.'
+
             # Filter for only Anthropic Claude models as they're used for translation
             models = []
             for model in response.get('modelSummaries', []):
@@ -281,7 +290,7 @@ class AWSService:
                 # Only include Anthropic Claude models
                 if providerName in ['Anthropic', 'Amazon'] and 'TEXT' in inputModalities and status != 'LEGACY':
                     # Add model ID with version
-                    models.append(model_id)
+                    models.append(f"{cris_prefix}{model_id}")
             return remove_context_window_suffix(models)
         except Exception as e:
             print(f"Error listing Bedrock foundation models: {str(e)}")
