@@ -273,11 +273,11 @@ class AWSService:
             response = self.bedrock.list_foundation_models()
 
             cris_prefix = ''
-            if self.region.startswith('us')
+            if self.region.startswith('us'):
                 cris_prefix = 'us.'
-            elif self.region.startswith('eu')
+            elif self.region.startswith('eu'):
                 cris_prefix = 'eu.'
-            elif self.region.startswith('ap')
+            elif self.region.startswith('ap'):
                 cris_prefix = 'apac.'
 
             # Filter for only Anthropic Claude models as they're used for translation

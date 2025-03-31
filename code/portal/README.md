@@ -33,3 +33,9 @@ docker push liyuan123/portal-frontend:{VERSION}
 cd backend & pip install -r requirements.txt
 ./start_servers.sh
 ```
+
+## 登陆须知
+三种角色登陆的用户名和信息
+USER_DEMO="demo_user,user,demo_password123"
+USER_ADMIN="admin_user,admin,admin_password456"
+USER_SUPERADMIN="super_admin,super-admin,superadmin_password789"
