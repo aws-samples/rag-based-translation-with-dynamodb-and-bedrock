@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    image: liyuan123/portal-backend:latest
+    image: liyuan123/portal-backend:1.0.0
     restart: always
     container_name: llm-translate-backend
     ports:
@@ -18,7 +18,7 @@ services:
       - llm-translate-network
 
   frontend:
-    image: liyuan123/portal-frontend:latest
+    image: liyuan123/portal-frontend:1.0.0
     restart: always
     container_name: llm-translate-frontend
     ports:

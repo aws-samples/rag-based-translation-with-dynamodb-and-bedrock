@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VERSION="1.0.0"
+
 # 设置颜色输出
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -90,7 +92,7 @@ fi
 docker build \
     --platform linux/amd64 \
     $BACKEND_BUILD_ARGS \
-    -t ${REGISTRY}/portal-backend:latest \
+    -t ${REGISTRY}/portal-backend:${VERSION} \
     -f backend/Dockerfile \
     ./backend
 
@@ -117,7 +119,7 @@ echo -e "${GREEN}使用 NPM 镜像源: ${NC}$NPM_REGISTRY"
 docker build \
     --platform linux/amd64 \
     $FRONTEND_BUILD_ARGS \
-    -t ${REGISTRY}/portal-frontend:latest \
+    -t ${REGISTRY}/portal-frontend:${VERSION} \
     -f frontend/Dockerfile \
     ./frontend
 
@@ -145,7 +147,7 @@ if [ "$PUSH" = true ]; then
     
     # 推送后端镜像
     echo -e "${GREEN}推送后端镜像...${NC}"
-    docker push ${REGISTRY}/portal-backend:latest
+    docker push ${REGISTRY}/portal-backend:${VERSION}
     
     if [ $? -ne 0 ]; then
         echo -e "${RED}后端镜像推送失败${NC}"
@@ -154,7 +156,7 @@ if [ "$PUSH" = true ]; then
     
     # 推送前端镜像
     echo -e "${GREEN}推送前端镜像...${NC}"
-    docker push ${REGISTRY}/portal-frontend:latest
+    docker push ${REGISTRY}/portal-frontend:${VERSION}
     
     if [ $? -ne 0 ]; then
         echo -e "${RED}前端镜像推送失败${NC}"
@@ -162,8 +164,8 @@ if [ "$PUSH" = true ]; then
     fi
     
     echo -e "\n${GREEN}所有镜像已成功推送到 Docker Hub${NC}"
-    echo -e "${YELLOW}后端镜像:${NC} ${REGISTRY}/portal-backend:latest"
-    echo -e "${YELLOW}前端镜像:${NC} ${REGISTRY}/portal-frontend:latest"
+    echo -e "${YELLOW}后端镜像:${NC} ${REGISTRY}/portal-backend:${VERSION}"
+    echo -e "${YELLOW}前端镜像:${NC} ${REGISTRY}/portal-frontend:${VERSION}"
 fi
 
 echo -e "\n${GREEN}操作完成!${NC}"
@@ -174,8 +176,8 @@ if [ "$PUSH" = true ]; then
     echo -e "在 Ubuntu 服务器上运行:"
     echo -e "  1. 确保已安装 Docker 和 Docker Compose"
     echo -e "  2. 创建 docker-compose.deploy.yml 文件，使用以下镜像:"
-    echo -e "     - ${REGISTRY}/portal-backend:latest"
-    echo -e "     - ${REGISTRY}/portal-frontend:latest"
+    echo -e "     - ${REGISTRY}/portal-backend:${VERSION}"
+    echo -e "     - ${REGISTRY}/portal-frontend:${VERSION}"
     echo -e "  3. 运行: docker-compose -f docker-compose.deploy.yml up -d"
 else
     echo -e "镜像已构建完成，可以使用 docker-compose.yml 在本地运行:"
