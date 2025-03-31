@@ -49,7 +49,7 @@ tab1, tab2, tab3 = st.tabs(["创建/更新专词映射表", "专词映射表版�
 with tab1:
     create_new_dict = st.checkbox("创建新的专词映射表", value=not all_dictionaries)
     if create_new_dict:
-        dictionary_name = st.text_input(label="构建新的专词映射表", value="")
+        dictionary_name = st.text_input(label="构建新的专词映射表", value="Default")
         if ' ' in dictionary_name:
             st.error("映射字典名称不能存在空格")
         dictionary_is_new = True

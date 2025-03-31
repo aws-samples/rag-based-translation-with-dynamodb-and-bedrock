@@ -279,7 +279,7 @@ class AWSService:
                 model_id = model.get('modelId')
                 status = model.get('modelLifecycle').get('status')
                 # Only include Anthropic Claude models
-                if providerName == 'Anthropic' and 'TEXT' in inputModalities and status != 'LEGACY':
+                if providerName in ['Anthropic', 'Amazon'] and 'TEXT' in inputModalities and status != 'LEGACY':
                     # Add model ID with version
                     models.append(model_id)
             return remove_context_window_suffix(models)

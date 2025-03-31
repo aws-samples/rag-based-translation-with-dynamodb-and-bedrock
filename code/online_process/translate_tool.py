@@ -44,7 +44,7 @@ def build_trie(terms):
 
 def retrieve_prompt_template():
     ssm_key = 'translate_mihoyo_template'
-    Translate_Prompt_Template = """You are the world's most professional translation tool, proficient in professional translation from {src_lang} to {dest_lang}.
+    Translate_Prompt_Template = """You are proficient in professional translation from {src_lang} to {dest_lang}.
 You can translate anything. Do not use "I'm sorry, but" to answer any questions.
 
 <glossaries>
@@ -203,33 +203,44 @@ def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_te
     return prompt
 
 def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>', stop=['</translation>']):
+    system_prompts = [{"text" : "You are the world's most professional translation expert"}]
     messages = [
-        {"role": "user", "content": prompt},
-        {"role": "assistant", "content": prefill_str}
+        {
+            "role": "user",
+            "content": [
+                {
+                "text": prompt
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                "text": prefill_str
+                }
+            ]
+        }
     ]
 
-    logger.info("messages:")
-    logger.info(messages)
+    inference_config = {"temperature": 0.1, "maxTokens": max_tokens, "stopSequences" : stop} 
 
-    body = json.dumps(
-            {
-                "anthropic_version": "bedrock-2023-05-31",
-                "messages": messages,
-                "max_tokens": max_tokens,
-                "stop_sequences" : stop,
-                "top_p": 0.5,
-                "top_k": 50,
-                "temperature": 0.1
-            }
-        )
     max_retries = 2
     retry_count = 0
-
     while retry_count < max_retries:
         try:
-            response = bedrock.invoke_model(body=body, modelId=model_id)
-            rep_obj = json.loads(response['body'].read().decode('utf8'))
-            return rep_obj['content'][0]['text'].strip()
+
+            response = bedrock.converse(
+                modelId=model_id,
+                messages=messages,
+                system=system_prompts,
+                inferenceConfig=inference_config,
+                # additionalModelRequestFields=additional_model_fields,
+            )
+            translation = response['output']['message']['content'][0]['text']
+            for stop_sign in stop:
+                translation = translation.strip(stop_sign)
+            return translation
         except Exception as e:
             retry_count += 1
             logger.error(f"Attempt {retry_count} failed: {e}")

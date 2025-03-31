@@ -20,7 +20,12 @@ sudo docker compose up -d
 
 ## 重新构建docker images(optional)
 ```
+# 构建然后推送
 ./build_and_push.sh --push
+
+# 直接推送
+docker push liyuan123/portal-backend:latest
+docker push liyuan123/portal-frontend:latest
 ```
 
 ## 本地运行前端和后端服务器(optional)
