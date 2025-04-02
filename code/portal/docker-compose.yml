@@ -18,7 +18,7 @@ services:
       - llm-translate-network
 
   frontend:
-    image: liyuan123/portal-frontend:1.0.2
+    image: liyuan123/portal-frontend:1.0.3
     restart: always
     container_name: llm-translate-frontend
     ports:
