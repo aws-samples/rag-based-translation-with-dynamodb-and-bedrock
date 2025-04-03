@@ -21,6 +21,8 @@ bedrock = boto3.client(service_name='bedrock-runtime', region_name=bedrock_regio
 dynamodb = boto3.resource('dynamodb')
 
 Translate_Meta_Table_Name = 'translate_meta'
+system_prompt_ssm_key = 'translate_system_prompt_template'
+user_prompt_ssm_key = 'translate_user_prompt_template'
 
 class LangCode(Enum):
     DeDe = "de-de"
@@ -43,22 +45,8 @@ def build_trie(terms):
     return marisa_trie.Trie(terms)
 
 def retrieve_prompt_template():
-    ssm_key = 'translate_mihoyo_template'
-    Translate_Prompt_Template = """You are proficient in professional translation from {src_lang} to {dest_lang}.
+    Translate_System_Prompt_Template = """You are the world's most professional translation expert. You are proficient in professional translation from {src_lang} to {dest_lang}.
 You can translate anything. Do not use "I'm sorry, but" to answer any questions.
-
-<glossaries>
-{vocabulary}
-</glossaries>
-
-<mapping_table>
-{mappings}
-</mapping_table>
-
-Here is the original content:
-<content>
-{content}
-</content>
 
 You need to follow below instructions:
 - Translation style: concise, easy to understand, similar to the style of orignal content. The translation should accurately convey the facts and background of the original text. Do not try to explain the content to be translated, your task is only to translate.
@@ -71,7 +59,22 @@ You need to follow below instructions:
 
 Please translate directly according to the text content, keep the original format, and do not miss any information. 
 
-Notice that your target language is {dest_lang}, Don't output any characters in other languages. Put the result in <translation_{dest_lang}>"""
+Notice that your target language is {dest_lang}, Don't output any characters in other languages. Put the result in <translation_{dest_lang}>
+"""
+
+    Translate_User_Prompt_Template = """<glossaries>
+{vocabulary}
+</glossaries>
+
+<mapping_table>
+{mappings}
+</mapping_table>
+
+Here is the original content:
+<content>
+{content}
+</content>
+"""
 
     def read_parameter(name, with_decryption=False):
         ssm = boto3.client('ssm')
@@ -82,11 +85,16 @@ Notice that your target language is {dest_lang}, Don't output any characters in 
         return response['Parameter']['Value']
 
     try:
-        Translate_Prompt_Template = read_parameter(ssm_key)
+        Translate_System_Prompt_Template = read_parameter(system_prompt_ssm_key)
     except Exception as e:
-        logger.warn(f"Can't Find Prompt from parameter store - {ssm_key}, use default prompt instead")
+        logger.warn(f"Can't Find Prompt from parameter store - {system_prompt_ssm_key}, use default prompt instead")
 
-    return Translate_Prompt_Template
+    try:
+        Translate_User_Prompt_Template = read_parameter(user_prompt_ssm_key)
+    except Exception as e:
+        logger.warn(f"Can't Find Prompt from parameter store - {user_prompt_ssm_key}, use default prompt instead")
+
+    return Translate_System_Prompt_Template, Translate_User_Prompt_Template
 
 class APIException(Exception):
     def __init__(self, message, code: str = None):
@@ -176,7 +184,7 @@ def replace_placeholder_to_origin_text(translated_text, exclusions, affix):
 
 def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_term_mapping):
 
-    translate_prompt_template = retrieve_prompt_template()
+    translate_system_prompt_template, translate_user_prompt_template = retrieve_prompt_template()
 
     crosslingual_terms = []
 
@@ -199,17 +207,18 @@ def construct_translate_prompt(src_content, src_lang, dest_lang, multilingual_te
     term_mapping_list = list(set([ build_mapping(item[0], item[1], item[2]) for item in multilingual_term_mapping ]))
     term_mapping_prompt = "\n".join([ item for item in term_mapping_list if item is not None ])
 
-    prompt = translate_prompt_template.format(src_lang=src_lang, dest_lang=dest_lang, vocabulary=vocabulary_prompt, mappings=term_mapping_prompt, content=src_content)
-    return prompt
+    system_prompt = translate_system_prompt_template.format(src_lang=src_lang, dest_lang=dest_lang)
+    user_prompt = translate_user_prompt_template.format(src_lang=src_lang, dest_lang=dest_lang, vocabulary=vocabulary_prompt, mappings=term_mapping_prompt, content=src_content)
+    return system_prompt, user_prompt
 
-def invoke_bedrock(model_id, prompt, max_tokens=4096, prefill_str='<translation>', stop=['</translation>']):
-    system_prompts = [{"text" : "You are the world's most professional translation expert"}]
+def invoke_bedrock(model_id, system_prompt, user_prompt, max_tokens=4096, prefill_str='<translation>', stop=['</translation>']):
+    system_prompts = [{"text" : system_prompt}]
     messages = [
         {
             "role": "user",
             "content": [
                 {
-                "text": prompt
+                "text": user_prompt
                 }
             ]
         },
@@ -443,9 +452,10 @@ def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, reques
 
     logger.info(f"src_content_with_placeholder:{src_content_with_placeholder}")
     logger.info(f"exclusions:{exclusions}")
-    prompt = construct_translate_prompt(src_content_with_placeholder, src_lang, dest_lang, multilingual_term_mapping)
-    logger.info(f"prompt:{prompt}")
-    translated_text_with_placeholder = invoke_bedrock(model_id=model_id, prompt=prompt, prefill_str=f'<translation_{dest_lang}>', stop=[f'</translation_{dest_lang}>'])
+    system_prompt, user_prompt = construct_translate_prompt(src_content_with_placeholder, src_lang, dest_lang, multilingual_term_mapping)
+    logger.info(f"system_prompt:{system_prompt}")
+    logger.info(f"user_prompt:{user_prompt}")
+    translated_text_with_placeholder = invoke_bedrock(model_id=model_id, system_prompt=system_prompt, user_prompt=user_prompt, prefill_str=f'<translation_{dest_lang}>', stop=[f'</translation_{dest_lang}>'])
 
     
     translated_text = replace_placeholder_to_origin_text(translated_text_with_placeholder, exclusions, affix)
