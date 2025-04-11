@@ -16,8 +16,8 @@ const (
 	Region             = "ap-southeast-1"
 	ModelID            = "anthropic.claude-3-haiku-20240307-v1:0"
 	DictionaryID       = "dict_1"
-	SourceLang         = "EN"
-	TargetLang         = "CHS"
+	SourceLang         = "en-us"
+	TargetLang         = "zh-cn"
 	LambdaFunctionName = "translate_tool"
 	AK                 = "XXXX"
 	SK                 = "YYYYY"
@@ -41,17 +41,19 @@ type Payload struct {
 	SrcLang                 string   `json:"src_lang"`
 	DestLang                string   `json:"dest_lang"`
 	RequestType             string   `json:"request_type"`
+	DictionaryID            string   `json:"dictionary_id"`
 	ModelID                 string   `json:"model_id"`
 	ResponseWithTermMapping bool     `json:"response_with_term_mapping"`
 }
 
 // createPayload creates the payload for the Lambda function
-func createPayload(contents []string, srcLang, destLang, modelID string, responseWithTermMapping bool) Payload {
+func createPayload(contents []string, srcLang, destLang, dictionaryID, modelID string, responseWithTermMapping bool) Payload {
 	return Payload{
 		SrcContents:             contents,
 		SrcLang:                 srcLang,
 		DestLang:                destLang,
 		RequestType:             "translate",
+		DictionaryID:            dictionaryID,
 		ModelID:                 modelID,
 		ResponseWithTermMapping: responseWithTermMapping,
 	}
@@ -93,7 +95,7 @@ func main() {
 	fmt.Println("--------------------")
 
 	// Create payload for Lambda function
-	payload := createPayload(contents, SourceLang, TargetLang, ModelID, false)
+	payload := createPayload(contents, SourceLang, TargetLang, dictionaryID, ModelID, false)
 
 	fmt.Printf("input: %+v\n", payload)
 
