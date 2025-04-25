@@ -83,7 +83,7 @@ export class RagTranslateStack extends Stack {
 
           const ingest_ddb_job = new glue.Job(this, 'ingest-knowledge-to-ddb',{
             executable: glue.JobExecutable.pythonShell({
-            glueVersion: glue.GlueVersion.V4_0,
+            glueVersion: glue.GlueVersion.V2_0,
             pythonVersion: glue.PythonVersion.THREE_NINE,
             script: glue.Code.fromAsset(path.join(__dirname, '../../code/offline_process/ddb_write_job.py')),
           }),
