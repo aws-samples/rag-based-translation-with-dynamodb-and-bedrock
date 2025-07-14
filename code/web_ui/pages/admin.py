@@ -181,7 +181,7 @@ with tab3:
     st.write(f"当前字典: {dictionary_name}")
 
     search_term = st.text_input("专词搜索")
-    searched_item = query_term(dictionary_name, search_term)
+    searched_item = query_term(dictionary_name, search_term.lower())
 
     if searched_item is None:
         st.warning(f"没有查到对应专词 - {search_term}")

@@ -412,9 +412,9 @@ def process_request(idx, src_content, src_lang, dest_lang, dictionary_id, reques
 
         start_time = time.time()
         if is_english(src_content):
-            words = mfm_segment_trie_en(src_content, trie)
+            words = mfm_segment_trie_en(src_content.lower(), trie)
         else:
-            words = mfm_segment_trie(src_content, trie)
+            words = mfm_segment_trie(src_content.lower(), trie)
             
         end_time = time.time()
         elapsed_time = end_time - start_time

@@ -91,7 +91,7 @@ async def get_dictionary_term(
     Query a term from a dictionary
     """
     try:
-        term_data = await query_term(dictionary_name, term)
+        term_data = await query_term(dictionary_name, term.lower())
         if term_data is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
