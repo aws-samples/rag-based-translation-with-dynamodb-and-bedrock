@@ -60,6 +60,9 @@ export class RagTranslateStack extends Stack {
           user_dict_prefix:'translate',
           bedrock_region:`us-west-2`
         },
+        currentVersionOptions: {
+          removalPolicy: RemovalPolicy.RETAIN,
+        },
       });
 
       const alias = new lambda.Alias(this, 'ProductionAlias', {
